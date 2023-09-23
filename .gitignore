@@ -1,0 +1,8 @@
+*.sqlite
+*/bin
+*/obj
+.vs
+.devcontainer
+.DS_Store
+*.sqlite-shm
+*.sqlite-wal
