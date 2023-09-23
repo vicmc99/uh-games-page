@@ -11,7 +11,7 @@ public class ApplicationDbContext : IdentityDbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options){}
 
-
+    // Faculies Domain
     public DbSet<Faculty> Faculties {get; set;}
     public DbSet<Major> Majors {get; set;}
     public DbSet<Athlete> Athletes {get; set;}
@@ -21,9 +21,14 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Leaderboard> Leaderboards { get; set; }
     public DbSet<LeaderboardLine> LeaderboardLines { get; set; }
 
+    // Sport Modalities Domain
     //public DbSet<Category> Categories { get; set; }
-    //public DbSet<Competition> Competitions { get; set; }
+    //public DbSet<Modality> Modalities { get; set; }
+    //public DbSet<Sport> Sports { get; set; }
     //public DbSet<Discipline> Disciplines { get; set; }
+
+    // Competitions Domain
+    //public DbSet<Competition> Competitions { get; set; }
     //public DbSet<Event> Events { get; set; }
     //public DbSet<EventParticipant> EventParticipants { get; set; }
     //public DbSet<Group> Groups { get; set; }
@@ -31,8 +36,6 @@ public class ApplicationDbContext : IdentityDbContext
     //public DbSet<GroupLine> GroupLines { get; set; }
     //public DbSet<League> Leagues { get; set; }
     //public DbSet<Location> Locations { get; set; }
-    //public DbSet<Modality> Modalities { get; set; }
-    //public DbSet<Sport> Sports { get; set; }
     //public DbSet<Tournament> Tournamets { get; set; }
     //public DbSet<TournamentEvent> TournamentEvents { get; set; }
 
