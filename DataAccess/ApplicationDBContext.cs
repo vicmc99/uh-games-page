@@ -22,10 +22,10 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<LeaderboardLine> LeaderboardLines { get; set; }
 
     // Sport Modalities Domain
-    //public DbSet<Category> Categories { get; set; }
-    //public DbSet<Modality> Modalities { get; set; }
-    //public DbSet<Sport> Sports { get; set; }
-    //public DbSet<Discipline> Disciplines { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Modality> Modalities { get; set; }
+    public DbSet<Sport> Sports { get; set; }
+    public DbSet<Discipline> Disciplines { get; set; }
 
     // Competitions Domain
     //public DbSet<Competition> Competitions { get; set; }

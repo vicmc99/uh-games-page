@@ -15,7 +15,6 @@ public class FacultyController : ControllerBase
     {
         _logger = logger;
         this.facultyService = facultyService;
-
     }
 
     [HttpGet("{id}")]
