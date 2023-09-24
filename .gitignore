@@ -2,6 +2,7 @@
 */bin
 */obj
 .vs
+.idea
 .devcontainer
 .DS_Store
 *.sqlite-shm
