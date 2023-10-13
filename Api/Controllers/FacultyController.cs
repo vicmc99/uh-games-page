@@ -17,7 +17,7 @@ public class FacultyController : ControllerBase
         this.facultyService = facultyService;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public FacultyDTO Get(int id)
     {
         return facultyService.Get(id, DateTime.Today.Year);
