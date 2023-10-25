@@ -1,5 +1,4 @@
 using Data.DTO;
-using Data.Model;
 using DataAccess.Repository;
 
 namespace Services.Domain;
@@ -12,8 +11,9 @@ public class ScheduleService : IScheduleService
     {
         this.repository = repository;
     }
+
     public EventDTO[] Get()
     {
-        
+        return Array.Empty<EventDTO>();
     }
 }
