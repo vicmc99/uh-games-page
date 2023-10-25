@@ -7,10 +7,10 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public class SportModalityController : ControllerBase
 {
-    private readonly ILogger<FacultyController> _logger;
+    private readonly ILogger<SportModalityController> _logger;
     private readonly ISportModalityService sportModalityService;
- 
-    public SportModalityController(ILogger<FacultyController> logger, ISportModalityService sportModalityService)
+
+    public SportModalityController(ILogger<SportModalityController> logger, ISportModalityService sportModalityService)
     {
         _logger = logger;
         this.sportModalityService = sportModalityService;
