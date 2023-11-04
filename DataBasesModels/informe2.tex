@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\geometry{a4paper, left=2.5cm, right=2.5cm, top=2cm, bottom=2cm}
+
+\title{Modelo de Seguridad para la Base de Datos de la Aplicación Web}
+\date{}
+\begin{document}
+
+\maketitle
+
+\section*{Resumen:}
+Este modelo de seguridad describe las medidas implementadas para garantizar la integridad, confidencialidad y disponibilidad de los datos en la base de datos de la aplicación web, siguiendo la arquitectura MVC. Se detallan las políticas de autenticación, autorización y protección de datos sensibles.
+
+\section{Autenticación de Usuarios:}
+
+\begin{enumerate}[label=1.\arabic*]
+\item Usuarios se dividen en dos clases: Usuarios con privilegios y Usuarios sin privilegios.
+\item Usuarios con privilegios (Administrador, Moderador, Periodista) deben proporcionar un nombre de usuario y una contraseña para autenticarse.
+\item Las contraseñas se almacenan en la base de datos como hashes utilizando la función hash SHA-256.
+
+Ejemplo de código en C# para autenticación:
+
+\begin{verbatim}
+public class Usuario
+{
+    public int Id { get; set; }
+    public string NombreUsuario { get; set; }
+    public string ContraseñaHash { get; set; }
+    public string Rol { get; set; }
+    // Otras propiedades
+}
+
+// Función para verificar las credenciales de un usuario
+public bool VerificarCredenciales(string nombreUsuario, string contraseña)
+{
+    // Buscar al usuario en la base de datos por nombre de usuario
+    var usuario = _dbContext.Usuarios.FirstOrDefault(u => u.NombreUsuario == nombreUsuario);
+
+    if (usuario != null)
+    {
+        // Verificar la contraseña utilizando el hash almacenado
+        var contraseñaHashIngresada = CalcularHashContraseña(contraseña, usuario.NombreUsuario);
+        return usuario.ContraseñaHash == contraseñaHashIngresada;
+    }
+    return false;
+}
+
+// Función para calcular el hash de la contraseña
+public string CalcularHashContraseña(string contraseña, string salt)
+{
+    using (var sha256 = SHA256.Create())
+    {
+        var contraseñaSalted = contraseña + salt;
+        var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(contraseñaSalted));
+        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+    }
+}
+\end{verbatim}
+
+\end{enumerate}
+
+\section{Autorización de Usuarios:}
+
+\begin{enumerate}[label=2.\arabic*]
+\item Se implementa un sistema de roles (Administrador, Moderador, Periodista) para controlar el acceso a las funcionalidades de la aplicación.
+\item Se utilizan atributos de autorización en el código para restringir el acceso a ciertas funciones basadas en los roles de los usuarios.
+
+Ejemplo de código en C# para autorización:
+
+\begin{verbatim}
+[Authorize(Roles = "Administrador")]
+public ActionResult GestionBaseDatos()
+{
+    // Esta acción solo está disponible para usuarios con rol "Administrador".
+    // Puedes realizar operaciones de gestión de base de datos aquí.
+    return View();
+}
+\end{verbatim}
+
+\end{enumerate}
+
+\section{Tokens Temporales:}
+
+\begin{enumerate}[label=3.\arabic*]
+\item Se proporciona un token temporal a los usuarios con privilegios tras la autenticación.
+\item El token tiene una duración de 2 minutos desde el último cambio realizado por el usuario.
+\item Se usa una función hash que incluye el nombre de usuario, un número pseudoaleatorio y la fecha/hora de inicio de sesión para generar el token.
+
+Ejemplo de código en C# para generación de tokens:
+
+\begin{verbatim}
+// Función para generar un token temporal
+public string GenerarTokenTemporal(string nombreUsuario)
+{
+    // Generar el token utilizando una función hash
+    var token = CalcularTokenTemporal(nombreUsuario);
+    // Almacenar el token en la memoria temporal
+    // y establecer su tiempo de expiración
+    // ...
+    return token;
+}
+
+// Función para calcular el token temporal
+public string CalcularTokenTemporal(string nombreUsuario)
+{
+    // Calcular el hash del token
+    // ...
+    return tokenCalculado;
+}
+\end{verbatim}
+
+\end{enumerate}
+
+\section{Seguridad de Datos Sensibles:}
+
+\begin{enumerate}[label=4.\arabic*]
+\item Los datos sensibles se almacenan de forma segura en la base de datos, como contraseñas y otros datos confidenciales.
+\item Las contraseñas se almacenan en forma de hash en la base de datos para evitar la exposición de contraseñas en texto claro.
+\item Se limita el acceso a operaciones que involucran datos sensibles solo a roles autorizados (Administrador, Moderador).
+
+Ejemplo de código en C# para seguridad de datos sensibles:
+
+\begin{verbatim}
+[HttpPost]
+[Authorize(Roles = "Administrador, Moderador, Periodista")]
+public ActionResult GuardarNoticia(Noticia noticia)
+{
+    // Guarda la noticia en la base de datos
+    _dbContext.Noticias.Add(noticia);
+    _dbContext.SaveChanges();
+    return RedirectToAction("Index");
+}
+\end{verbatim}
+
+\end{enumerate}
+
+\section{Gestión de Vulnerabilidades:}
+
+\begin{enumerate}[label=5.\arabic*]
+\item Dado que el usuario final no tiene privilegios para realizar cambios en la aplicación, se minimiza la exposición a posibles vulnerabilidades.
+\item Las credenciales de los usuarios privilegiados son supervisadas por el administrador, y se pueden cubrir en caso de compromiso.
+\item Se recomienda realizar copias de seguridad de los datos importantes cada semana para evitar la pérdida de datos en caso de un ataque al administrador.
+\end{enumerate}
+
+\end{document}

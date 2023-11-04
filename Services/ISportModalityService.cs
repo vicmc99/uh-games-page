@@ -6,3 +6,5 @@ public interface ISportModalityService
 {
     SportModalityDTO Get(int id);
 }
+
+
