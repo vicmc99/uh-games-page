@@ -1,0 +1,155 @@
+\documentclass{article}
+
+% Paquetes
+\usepackage[utf8]{inputenc} % Codificación de caracteres
+\usepackage[spanish]{babel} % Idioma español
+\usepackage{amsmath} % Matemáticas
+\usepackage{graphicx} % Imágenes
+\usepackage{hyperref} % Enlaces
+
+
+% Título
+\title{Título del documento}
+\author{Autor}
+\date{\today}
+
+% Estructura de diseño
+\newcommand{\diseno}[3]{\subsection{\textbf{{#1}} ({\underline{#2},} #3)}}
+
+% Estructura de diseñoID
+\newcommand{\disenoId}[3]{\subsection{\textbf{{#1}} ({\underline {ID{\_#1}}}, #3)}}
+
+%Estructura de relación
+\newcommand{\relation}[2]{\subsection{\textbf{{#1}} ({\underline{#2}})}}
+
+% Estructura de FK
+\newcommand{\fk}[2]{\noindent FK: #1 references to: #2 \\}
+
+
+% Contenido
+\begin{document}
+
+\maketitle % Generar título
+
+\section{Principales}
+%Atleta
+\diseno{Atleta}{ID\_Atleta}{Nombre, Segundo\_Nombre, Primer\_Apellido, Segundo\_Apellido,Apodo,Fecha\_Nacimiendo,Foto}
+%Facultad
+\diseno{Facultad}{ID\_Facultad}{Nombre,Acronimo,Mascota,Logo}
+%Evento
+\diseno{Evento}{ID\_Evento}{Fecha\_Hora, Localización}
+%Localización
+\diseno{Localización}{Localización}{}
+
+%Liga
+ \disenoId{Liga}{}{Fecha\_Inicio,Fecha\_Finalización}
+ 
+%Grupo
+\diseno{Grupo}{ID\_Grupo,ID\_Liga}{Nombre}
+%Facultad-Grupo
+\diseno{Grupo\-Facultad}{ID\_Facultad,ID\_Grupo}{Posición, Estadísticas}
+
+\fk{ID\_Facultad}{ Facultad}
+\fk{ID\_Grupo}{Grupo}
+
+%Atleta\-Grupo
+\diseno{Atleta\-Grupo}{ID\_Atleta, ID\_Grupo}{Posición, Estadísticas}
+\fk{ID\_Atleta}{Atleta}
+\fk{ID\_Grupo}{Grupo}
+
+
+
+
+%Tipos de campeonato
+\section{Campeonato}
+\diseno{Pertenecer\_Evento}{ID\_Campeonato, ID\_Evento}{}
+
+\subsection{Equipo con subdivisiones}
+\diseno{Equipo con subdivisiones}{ID\_Campeonato}{Nombre}
+\fk{ID\_Campeonato}{Campeonato}
+\diseno{Enfrentar\-Equipos\-Subdivisiones}{ID\_EquipoSubs,ID\_Atleta,ID\_Enfrentamiento}{Score}
+
+\diseno{Enfrentamiento\-Evento}{ID\_Enfrentamiento, ID\_Evento}{}
+
+\subsection{Gimnasia Musical}
+\diseno{Competencia Gimnasia Musical}{ID\_Campeonato}{Nombre}
+\fk{ID\_Campeonato}{Campeonato}
+\diseno{Composición}{ID\_Composición}{Nombre}
+\relation{Composicion\-Competencia}{ID\_Composición,ID\_Competencia}
+\relation{Composicion\-Atleta}{ID\_Composición, ID\_Atleta}
+\disenoId{Puntuacion}{}{}
+\relation{Composicion\-Puntuacion}{ID\_Composicion,ID\_Puntuacion}
+
+
+\subsection{Individuales}
+\diseno{Competencia Individual}{ID\_CampeonatoIndividual}{Nombre}
+\fk{ID\_CampeonatoIndividual}{Campeonato}
+\diseno{Participante}{ID\_CampeonatoIndividual,ID\_Atleta}{Score}
+\fk{ID\_CampeonatoIndividual}{Campeonato: Individuales}
+\fk{ID\_Atleta}{Atleta}
+\diseno{Miembro}{ID\_CampeonatoIndividual,ID\_Atleta}{Score}
+\fk{ID\_CampeonatoIndividual}{Campeonato: Individuales}
+\fk{ID\_Atleta}{Atleta}
+\diseno{Suplente}{ID\_CampeonatoIndividual,ID\_Atleta}{Score}
+\fk{ID\_CampeonatoIndividual}{Campeonato: Individuales}
+\fk{ID\_Atleta}{Atleta}
+
+\subsection{Competencia Equipos genericos}
+\diseno{Competencia EquiposGenericos}{ID\_CampeonatoEquiposGenericos}{Nombre}
+\fk{ID\_CampeonatoIndividual}{Campeonato}
+\diseno{Participante}{ID\_CampeonatoEquiposGenericos,ID\_Atleta}{Score}
+\fk{ID\_CampeonatoEquiposGenericos}{Campeonato: EquiposGenericos}
+\fk{ID\_Atleta}{Atleta}
+\diseno{Miembro}{ID\_CampeonatoEquiposGenericos,ID\_Atleta}{Score}
+\fk{ID\_CampeonatoEquiposGenericos}{Campeonato: EquiposGenericos}
+\diseno{Puntuacion}{ID\_CampeonatoEquiposGenericos,ID\_Evento}{Score}
+\fk{ID\_CampeonatoEquiposGenericos}{Campeonato: EquiposGenericos}
+\fk{ID\_Evento}{Evento}
+
+\section{Roles}
+Nota: Usuario es solo los que tienen permiso de cambio de datos en la API.
+\diseno{Usuario}{IDUsuario}{Nombre,Contraseña,FechaDeElevación}
+\diseno{Administrador}{ID\_Administrador}{}
+\fk{ID\_Administrador}{Usuario}
+\diseno{Moderador}{ID\_Moderador}{}
+\fk{ID\_Moderador}{Usuario}
+\relation{Asignar\-Cargo\-Moderador}{ID\_Administrador,ID\_Moderador,Fecha}
+\fk{ID\_Administrador}{Administrador}
+\fk{ID\_Moderador}{Moderador}
+\fk{Fecha}{Fecha}
+\relation{Relevar\-Cargo\-Moderador}{ID\_Administrador,ID\_Moderador,Fecha}
+\fk{ID\_Administrador}{Administrador}
+\fk{ID\_Moderador}{Moderador}
+\fk{Fecha}{Fecha}
+\diseno{Periodista}{ID\_Periodista}{}
+\fk{ID\_Periodista}{Usuario}
+\relation{Asignar\-Cargo\-Periodista}{ID\_Administrador,ID\_Periodista,Fecha}
+\fk{ID\_Administrador}{Administrador}
+\fk{ID\_Periodista}{Periodista}
+\fk{Fecha}{Fecha}
+\relation{Relevar\-Cargo\-Periodista}{ID\_Administrador,ID\_Periodista,Fecha}
+\fk{ID\_Administrador}{Administrador}
+\fk{ID\_Periodista}{Periodista}
+\fk{Fecha}{Fecha}
+\diseno{Comentarista}{ID\_Comentarista}{Correo\_Electronico,Pseudonimo,Contraseña}
+
+\section{Noticias}
+\diseno{Noticia}{ID\_Periodista,ID\_Evento}{Título}
+\fk{ID\_Periodista}{Periodista}
+\fk{ID\_Evento}{Evento}
+\fk{Fecha\-Hora}{Fecha\-Hora}
+\diseno{Fragmento}{ID\_Noticia,ID\_Fragmento}{Texto}
+\fk{ID\_Noticia}{Noticia}
+
+\section{Comentarios}
+\diseno{Comentario}{ID\_Comentarista,ID\_Noticia,Fecha\-Hora}{Texto}
+\fk{ID\_Noticia}{Noticia}
+\fk{Fecha\-Hora}{Fecha\-Hora}
+\fk{ID\_Comentarista}{Comentarista}
+
+\section{Comentaristas Restringidos}
+\relation{Comentarista\_Baneado}{ID\_Comentarista,ID\_Moderador,ID\_Comentario}
+\fk{ID\_Comentarista}{Comentarista}
+\fk{ID\_Moderador}{Moderador}
+\fk{ID\_Comentario}{Comentario}
+\end{document}
