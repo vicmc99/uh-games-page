@@ -4,7 +4,5 @@ namespace Services.Domain;
 
 public interface IFacultyService
 {
-
-    FacultyDTO Get(int id, int year);
-
+    FacultyDto Get(int id, int year);
 }

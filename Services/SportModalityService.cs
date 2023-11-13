@@ -13,13 +13,13 @@ public class SportModalityService : ISportModalityService
         this.repository = repository;
     }
 
-    public SportModalityDTO Get(int id)
+    public SportModalityDto Get(int id)
     {
         var modality = repository.Set<Modality>().FirstOrDefault(m => m.Id == id);
 
         var sport = repository.Set<Sport>().FirstOrDefault(s => s.Id == modality.SportId);
 
-        return new SportModalityDTO
+        return new SportModalityDto
         {
             Id = id,
             Sport = modality.Sport,

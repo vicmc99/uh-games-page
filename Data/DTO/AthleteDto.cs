@@ -1,8 +1,8 @@
-namespace Data.Model;
+namespace Data.DTO;
 
-public class Athlete
+public class AthleteDto
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; }
     public string Nick { get; set; }
     public DateTime DateOfBirth { get; set; }

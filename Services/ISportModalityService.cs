@@ -4,5 +4,5 @@ namespace Services.Domain;
 
 public interface ISportModalityService
 {
-    SportModalityDTO Get(int id);
+    SportModalityDto Get(int id);
 }

@@ -1,6 +1,6 @@
+using Data.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
-using Data.DTO;
 
 namespace Api.Controllers;
 
@@ -18,7 +18,7 @@ public class FacultyController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public FacultyDTO Get(int id)
+    public FacultyDto Get(int id)
     {
         return facultyService.Get(id, DateTime.Today.Year);
     }
