@@ -2,7 +2,7 @@ using Data.Model;
 
 namespace Data.DTO;
 
-public class SportModalityDTO
+public class SportModalityDto
 {
     public int Id {get; set;}
     public Sport Sport {get; set;}

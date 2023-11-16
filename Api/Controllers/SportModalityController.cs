@@ -17,7 +17,7 @@ public class SportModalityController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public SportModalityDTO Get(int id)
+    public SportModalityDto Get(int id)
     {
         return sportModalityService.Get(id);
     }
