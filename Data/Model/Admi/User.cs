@@ -1,10 +1,14 @@
-﻿namespace Data.Model;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace Data.Model;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 
+[Table("Users")]
 public class User
 {
+    [Key]
     public int Id { get; set; }
 
     [Required]

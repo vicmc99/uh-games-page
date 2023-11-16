@@ -3,6 +3,9 @@ namespace Data.Model;
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+[Table("banusers")]
 public class BanUser :User
 {
     [Required]

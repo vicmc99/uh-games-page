@@ -53,7 +53,9 @@ public class FacultyService : IFacultyService
             (from representative in repository.Set<Representative>()
                 join athlete in repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
                 where representative.Year == year
-                select (athlete, representative.FacultyId)).ToList();
+                select new { Athlete = athlete, FacultyId = representative.FacultyId }).ToList();
+
+
 
         var length = faculties.Length;
         var facultyDtos = new FacultyDto[length];
@@ -65,13 +67,13 @@ public class FacultyService : IFacultyService
             var actualAthletes = athletes.Where(a => a.FacultyId == faculties[i1].Id);
             var actualLeaderBoardLine = leaderboardLines.FirstOrDefault(l => l.FacultyId == faculties[i1].Id);
             facultyDtos[i] = new FacultyDto
-            {
+            {   
                 Id = faculties[i].Id,
                 Name = faculties[i].Name,
                 Mascot = faculties[i].Mascot,
                 Acronym = faculties[i].Acronym,
                 Athletes = actualAthletes.Select(
-                    a => new AthleteDto { Id = int.Parse(a.athlete.Id), Name = a.athlete.Name }),
+                    a => new AthleteDto { Id = int.Parse(a.Athlete.Id), Name = a.Athlete.Name }),
                 GoldMedals = actualLeaderBoardLine?.GoldMedals,
                 SilverMedals = actualLeaderBoardLine?.SilverMedals,
                 BronzeMedals = actualLeaderBoardLine?.BronzeMedals,

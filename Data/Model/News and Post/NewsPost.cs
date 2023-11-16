@@ -2,7 +2,7 @@ namespace Data.Model;
 using System.ComponentModel.DataAnnotations;
 public class NewsPost
 {
-    public int PostId { get; set; }
+    public int Id { get; set; }
     public string PostTitle { get; set; }
     public DateTime PostDate { get; set; }
     public Event RelatedEvent { get; set; }

@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Data.Model;
 
 public class EventTeamParticipant
 {
+    [Key]
     public int TeamId { get; set; }
     public NormalTeam Team { get; set; }
     public int EventId { get; set; }
