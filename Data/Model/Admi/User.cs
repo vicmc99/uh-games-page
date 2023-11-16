@@ -1,9 +1,11 @@
 ﻿namespace Data.Model;
 using System;
 using System.ComponentModel.DataAnnotations;
+
+
 public class User
 {
-    public virtual int Id { get; set; }
+    public int Id { get; set; }
 
     [Required]
     public string NickName { get; set; }
@@ -11,12 +13,10 @@ public class User
     [Display(Name = "First Name")]
     public string FirstName { get; set; }
     [Required]
-    [Display(Name = "First Last Name")]
-    public string FistLastName { get; set; }
-    [Display(Name = "Second Last Name")]
-    public string SecondLastName { get; set; }
+    [Display(Name = " Last Name")]
+    public string LastName { get; set; }
     [Required]
-    public string Password { get; set; }
+    public string Password { get; set; } //Hash SHA-256
     [Required]
     [DataType(DataType.Date)]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -24,5 +24,7 @@ public class User
     public DateTime SignUpDate { get; set; }
 
     [Required]
+    [DataType(DataType.EmailAddress)]
     public string Email { get; set; }
+ 
 }

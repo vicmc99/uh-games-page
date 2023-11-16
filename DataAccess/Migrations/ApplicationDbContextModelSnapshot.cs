@@ -48,6 +48,39 @@ namespace DataAccess.Migrations
                     b.ToTable("Athletes");
                 });
 
+            modelBuilder.Entity("Data.Model.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Data.Model.Discipline", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("SportId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SportId");
+
+                    b.ToTable("Disciplines");
+                });
+
             modelBuilder.Entity("Data.Model.Faculty", b =>
                 {
                     b.Property<int>("Id")
@@ -143,6 +176,35 @@ namespace DataAccess.Migrations
                     b.ToTable("Majors");
                 });
 
+            modelBuilder.Entity("Data.Model.Modality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DisciplineId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SportId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("DisciplineId");
+
+                    b.HasIndex("SportId");
+
+                    b.ToTable("Modalities");
+                });
+
             modelBuilder.Entity("Data.Model.Representative", b =>
                 {
                     b.Property<int>("Id")
@@ -170,6 +232,34 @@ namespace DataAccess.Migrations
                     b.HasIndex("MajorId");
 
                     b.ToTable("Representatives");
+                });
+
+            modelBuilder.Entity("Data.Model.Sport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Pictogram")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Rules")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Sports");
                 });
 
             modelBuilder.Entity("Data.Model.Team", b =>
@@ -407,6 +497,15 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Model.Discipline", b =>
+                {
+                    b.HasOne("Data.Model.Sport", "Sport")
+                        .WithMany()
+                        .HasForeignKey("SportId");
+
+                    b.Navigation("Sport");
+                });
+
             modelBuilder.Entity("Data.Model.LeaderboardLine", b =>
                 {
                     b.HasOne("Data.Model.Faculty", "Faculty")
@@ -431,6 +530,33 @@ namespace DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("Data.Model.Modality", b =>
+                {
+                    b.HasOne("Data.Model.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Discipline", "Discipline")
+                        .WithMany()
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Sport", "Sport")
+                        .WithMany()
+                        .HasForeignKey("SportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Discipline");
+
+                    b.Navigation("Sport");
                 });
 
             modelBuilder.Entity("Data.Model.Representative", b =>
@@ -458,6 +584,13 @@ namespace DataAccess.Migrations
                     b.Navigation("Major");
                 });
 
+            modelBuilder.Entity("Data.Model.Sport", b =>
+                {
+                    b.HasOne("Data.Model.Category", null)
+                        .WithMany("Sports")
+                        .HasForeignKey("CategoryId");
+                });
+
             modelBuilder.Entity("Data.Model.Team", b =>
                 {
                     b.HasOne("Data.Model.Faculty", "Faculty")
@@ -476,7 +609,7 @@ namespace DataAccess.Migrations
                         .HasForeignKey("AthleteId1");
 
                     b.HasOne("Data.Model.Team", "Team")
-                        .WithMany("Members")
+                        .WithMany()
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -537,6 +670,11 @@ namespace DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Data.Model.Category", b =>
+                {
+                    b.Navigation("Sports");
+                });
+
             modelBuilder.Entity("Data.Model.Faculty", b =>
                 {
                     b.Navigation("Majors");
@@ -547,11 +685,6 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Data.Model.Leaderboard", b =>
                 {
                     b.Navigation("LeaderboardLines");
-                });
-
-            modelBuilder.Entity("Data.Model.Team", b =>
-                {
-                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }

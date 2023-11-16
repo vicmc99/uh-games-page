@@ -1,8 +1,6 @@
+﻿namespace Data.Model;
 
-using Data.Model;
-
-public class SuperUser : Administrator
+public class SuperUser:User
 {
-   public override int Id { get; set; }
-   
+    
 }
