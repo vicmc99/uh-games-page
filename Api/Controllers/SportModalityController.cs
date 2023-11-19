@@ -8,17 +8,17 @@ namespace Api.Controllers;
 public class SportModalityController : ControllerBase
 {
     private readonly ILogger<SportModalityController> _logger;
-    private readonly ISportModalityService sportModalityService;
+    private readonly ISportModalityService _sportModalityService;
 
     public SportModalityController(ILogger<SportModalityController> logger, ISportModalityService sportModalityService)
     {
         _logger = logger;
-        this.sportModalityService = sportModalityService;
+        _sportModalityService = sportModalityService;
     }
 
     [HttpGet("{id:int}")]
     public SportModalityDto Get(int id)
     {
-        return sportModalityService.Get(id);
+        return _sportModalityService.Get(id);
     }
 }

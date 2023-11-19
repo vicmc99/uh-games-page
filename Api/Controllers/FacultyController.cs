@@ -5,26 +5,27 @@ using Services.Domain;
 namespace Api.Controllers;
 
 [ApiController]
-[Route("ap/[controller]")]
+[Route("api/[controller]")]
 public class FacultyController : ControllerBase
 {
+    private readonly IFacultyService _facultyService;
     private readonly ILogger<FacultyController> _logger;
-    private readonly IFacultyService facultyService;
 
-   public FacultyController(ILogger<FacultyController> logger, IFacultyService facultyService)
+    public FacultyController(ILogger<FacultyController> logger, IFacultyService facultyService)
     {
         _logger = logger;
-        this.facultyService = facultyService;
+        _facultyService = facultyService;
     }
-  /*
-    [HttpGet("{id}")]
-    public FacultyDto Get(int id)
+
+    [HttpGet]
+    public IEnumerable<FacultyDto> Get([FromQuery] int year)
     {
-        return facultyService.Get(id, DateTime.Today.Year);
-    }*/
-   [HttpGet("{id}")]
-   public async Task<ActionResult<FacultyDto>> Get(int id)
-   {
-      return  facultyService.Get(id, DateTime.Today.Year);
-   }
+        return _facultyService.GetAllFaculties(year);
+    }
+
+    [HttpGet]
+    public FacultyDto Get([FromQuery] int year, [FromQuery] int id)
+    {
+        return _facultyService.Get(id, year);
+    }
 }

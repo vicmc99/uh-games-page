@@ -6,21 +6,21 @@ namespace Services.Domain;
 
 public class FacultyService : IFacultyService
 {
-    private readonly IDataRepository repository;
+    private readonly IDataRepository _repository;
 
     public FacultyService(IDataRepository repository)
     {
-        this.repository = repository;
+        _repository = repository;
     }
 
     public FacultyDto Get(int id, int year)
     {
-        var faculty = repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
+        var faculty = _repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
         var leaderboardline =
-            repository.Set<LeaderboardLine>().FirstOrDefault(l => l.FacultyId == id && l.Year == year);
+            _repository.Set<LeaderboardLine>().FirstOrDefault(l => l.FacultyId == id && l.Year == year);
         var athletes =
-            (from representative in repository.Set<Representative>()
-                join athlete in repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
+            (from representative in _repository.Set<Representative>()
+                join athlete in _repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
                 where representative.Year == year
                 where representative.FacultyId == id
                 select athlete).ToList();
@@ -40,18 +40,18 @@ public class FacultyService : IFacultyService
         };
     }
 
-    public IEnumerable<FacultyDto> GetAllFaculties(int year, CancellationToken ct)
+    public FacultyDto[] GetAllFaculties(int year)
     {
-        var faculties = repository.Set<Faculty>().ToArray();
+        var faculties = _repository.Set<Faculty>().ToArray();
         if (faculties.Length == 0)
             return Array.Empty<FacultyDto>();
-        var leaderboard = repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
+        var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
         if (leaderboard is null)
             return Array.Empty<FacultyDto>();
         var leaderboardLines = leaderboard.LeaderboardLines;
         var athletes =
-            (from representative in repository.Set<Representative>()
-                join athlete in repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
+            (from representative in _repository.Set<Representative>()
+                join athlete in _repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
                 where representative.Year == year
                 select new { Athlete = athlete, FacultyId = representative.FacultyId }).ToList();
 
