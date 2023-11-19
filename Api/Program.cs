@@ -24,7 +24,12 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{// Takes only one of the controllers in the same route in case of conflict.
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+});
+
 
 
 
