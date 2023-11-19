@@ -15,20 +15,18 @@ namespace DataAccess.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.22");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.13");
 
             modelBuilder.Entity("Data.Model.Athlete", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FirstSurname")
+                    b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nick")
@@ -37,13 +35,10 @@ namespace DataAccess.Migrations
                     b.Property<string>("Photo")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SecondName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SecondSurname")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Athletes");
                 });
@@ -59,7 +54,29 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Data.Model.Competition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ModalityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModalityId");
+
+                    b.ToTable("Competitions");
                 });
 
             modelBuilder.Entity("Data.Model.Discipline", b =>
@@ -69,16 +86,86 @@ namespace DataAccess.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("SportId")
+                    b.Property<int>("SportId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.HasIndex("SportId");
 
                     b.ToTable("Disciplines");
+                });
+
+            modelBuilder.Entity("Data.Model.Event", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("Events");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Event");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Data.Model.EventTeamParticipant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ParticipantId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TeamEventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TeamEventId1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("ParticipantId");
+
+                    b.HasIndex("TeamEventId");
+
+                    b.HasIndex("TeamEventId1");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("EventParticipants");
                 });
 
             modelBuilder.Entity("Data.Model.Faculty", b =>
@@ -101,7 +188,109 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Faculties");
+                });
+
+            modelBuilder.Entity("Data.Model.Fragment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NewsPostId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("fragment")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewsPostId");
+
+                    b.ToTable("Fragment");
+                });
+
+            modelBuilder.Entity("Data.Model.Group", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LeagueId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Round")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeagueId");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Data.Model.GroupEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("GroupEvents");
+                });
+
+            modelBuilder.Entity("Data.Model.GroupLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AthleteId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Round")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Statistics")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AthleteId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("GroupLines");
                 });
 
             modelBuilder.Entity("Data.Model.Leaderboard", b =>
@@ -154,6 +343,53 @@ namespace DataAccess.Migrations
                     b.ToTable("LeaderboardLines");
                 });
 
+            modelBuilder.Entity("Data.Model.League", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Leagues");
+                });
+
+            modelBuilder.Entity("Data.Model.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GoogleMapsURL")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("LeagueId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("TournamentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeagueId");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("Locations");
+                });
+
             modelBuilder.Entity("Data.Model.Major", b =>
                 {
                     b.Property<int>("Id")
@@ -164,6 +400,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Years")
@@ -172,6 +409,9 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FacultyId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Majors");
                 });
@@ -205,14 +445,73 @@ namespace DataAccess.Migrations
                     b.ToTable("Modalities");
                 });
 
+            modelBuilder.Entity("Data.Model.NewsPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("PostDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PostTitle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RelatedEventId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("RelatedEventId");
+
+                    b.ToTable("NewsPost");
+                });
+
+            modelBuilder.Entity("Data.Model.PostComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CommentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Contents")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("NewsPostId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReviewById")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ReviewDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewsPostId");
+
+                    b.HasIndex("ReviewById");
+
+                    b.ToTable("PostComment");
+                });
+
             modelBuilder.Entity("Data.Model.Representative", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AthleteId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("AthleteId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("FacultyId")
                         .HasColumnType("INTEGER");
@@ -234,6 +533,20 @@ namespace DataAccess.Migrations
                     b.ToTable("Representatives");
                 });
 
+            modelBuilder.Entity("Data.Model.Score", b =>
+                {
+                    b.Property<int>("ScoreId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("NumberScore")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("ScoreId");
+
+                    b.ToTable("Score");
+                });
+
             modelBuilder.Entity("Data.Model.Sport", b =>
                 {
                     b.Property<int>("Id")
@@ -247,6 +560,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Pictogram")
@@ -259,6 +573,9 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Sports");
                 });
 
@@ -268,6 +585,10 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("FacultyId")
                         .HasColumnType("INTEGER");
 
@@ -276,6 +597,52 @@ namespace DataAccess.Migrations
                     b.HasIndex("FacultyId");
 
                     b.ToTable("Teams");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Team");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Data.Model.TeamComposition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ComposedTeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComposedTeamId");
+
+                    b.ToTable("TeamCompositions");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamCompositionScore", b =>
+                {
+                    b.Property<int>("CompositionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ComposedTeamsEventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CompositionId1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ScoreId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CompositionId");
+
+                    b.HasIndex("ComposedTeamsEventId");
+
+                    b.HasIndex("CompositionId1");
+
+                    b.HasIndex("ScoreId");
+
+                    b.ToTable("TeamCompositionScores");
                 });
 
             modelBuilder.Entity("Data.Model.TeamMember", b =>
@@ -287,22 +654,156 @@ namespace DataAccess.Migrations
                     b.Property<int>("AthleteId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AthleteId1")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("NormalTeamId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Role")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("TeamCompositionId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TeamId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AthleteId1");
+                    b.HasIndex("AthleteId");
+
+                    b.HasIndex("NormalTeamId");
+
+                    b.HasIndex("TeamCompositionId");
 
                     b.HasIndex("TeamId");
 
                     b.ToTable("TeamMembers");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamParticipantScore", b =>
+                {
+                    b.Property<int>("TeamId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ParticipantId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ScoreId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("TeamId");
+
+                    b.HasIndex("ParticipantId");
+
+                    b.HasIndex("ScoreId");
+
+                    b.ToTable("TeamParticipantScores");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamScore", b =>
+                {
+                    b.Property<int>("TeamId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ScoreId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TeamEventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TeamId1")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("TeamId");
+
+                    b.HasIndex("ScoreId");
+
+                    b.HasIndex("TeamEventId");
+
+                    b.HasIndex("TeamId1");
+
+                    b.ToTable("TeamScores");
+                });
+
+            modelBuilder.Entity("Data.Model.Tournament", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tournament");
+                });
+
+            modelBuilder.Entity("Data.Model.TournamentEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Round")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("TournamentEvents");
+                });
+
+            modelBuilder.Entity("Data.Model.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NickName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("SignUpDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -497,13 +998,224 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Data.Model.ComposedTeamsEvent", b =>
+                {
+                    b.HasBaseType("Data.Model.Event");
+
+                    b.HasDiscriminator().HasValue("ComposedTeamsEvent");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamEvent", b =>
+                {
+                    b.HasBaseType("Data.Model.Event");
+
+                    b.HasDiscriminator().HasValue("TeamEvent");
+                });
+
+            modelBuilder.Entity("Data.Model.ComposedTeam", b =>
+                {
+                    b.HasBaseType("Data.Model.Team");
+
+                    b.Property<int?>("ComposedTeamsEventId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ComposedTeamsEventId");
+
+                    b.HasDiscriminator().HasValue("ComposedTeam");
+                });
+
+            modelBuilder.Entity("Data.Model.NormalTeam", b =>
+                {
+                    b.HasBaseType("Data.Model.Team");
+
+                    b.HasDiscriminator().HasValue("NormalTeam");
+                });
+
+            modelBuilder.Entity("Data.Model.BanUser", b =>
+                {
+                    b.HasBaseType("Data.Model.User");
+
+                    b.Property<DateTime>("NoAccessDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BanUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Data.Model.Moderator", b =>
+                {
+                    b.HasBaseType("Data.Model.User");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("users");
+                });
+
+            modelBuilder.Entity("Data.Model.SuperUser", b =>
+                {
+                    b.HasBaseType("Data.Model.User");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SuperUser");
+                });
+
+            modelBuilder.Entity("Journalist", b =>
+                {
+                    b.HasBaseType("Data.Model.User");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("journalits");
+                });
+
+            modelBuilder.Entity("Data.Model.Competition", b =>
+                {
+                    b.HasOne("Data.Model.Modality", "Modality")
+                        .WithMany()
+                        .HasForeignKey("ModalityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Modality");
+                });
+
             modelBuilder.Entity("Data.Model.Discipline", b =>
                 {
                     b.HasOne("Data.Model.Sport", "Sport")
                         .WithMany()
-                        .HasForeignKey("SportId");
+                        .HasForeignKey("SportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Sport");
+                });
+
+            modelBuilder.Entity("Data.Model.Event", b =>
+                {
+                    b.HasOne("Data.Model.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Data.Model.EventTeamParticipant", b =>
+                {
+                    b.HasOne("Data.Model.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.TeamMember", "Participant")
+                        .WithMany()
+                        .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.TeamEvent", null)
+                        .WithMany("TeamParticipants")
+                        .HasForeignKey("TeamEventId");
+
+                    b.HasOne("Data.Model.TeamEvent", null)
+                        .WithMany("TeamSubstitutes")
+                        .HasForeignKey("TeamEventId1");
+
+                    b.HasOne("Data.Model.NormalTeam", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Participant");
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("Data.Model.Fragment", b =>
+                {
+                    b.HasOne("Data.Model.NewsPost", "NewsPost")
+                        .WithMany("fragments")
+                        .HasForeignKey("NewsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NewsPost");
+                });
+
+            modelBuilder.Entity("Data.Model.Group", b =>
+                {
+                    b.HasOne("Data.Model.League", "League")
+                        .WithMany()
+                        .HasForeignKey("LeagueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("League");
+                });
+
+            modelBuilder.Entity("Data.Model.GroupEvent", b =>
+                {
+                    b.HasOne("Data.Model.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("Data.Model.GroupLine", b =>
+                {
+                    b.HasOne("Data.Model.Athlete", "Athlete")
+                        .WithMany()
+                        .HasForeignKey("AthleteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Athlete");
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("Data.Model.LeaderboardLine", b =>
@@ -519,6 +1231,17 @@ namespace DataAccess.Migrations
                         .HasForeignKey("LeaderboardId");
 
                     b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("Data.Model.Location", b =>
+                {
+                    b.HasOne("Data.Model.League", null)
+                        .WithMany("Locations")
+                        .HasForeignKey("LeagueId");
+
+                    b.HasOne("Data.Model.Tournament", null)
+                        .WithMany("Locations")
+                        .HasForeignKey("TournamentId");
                 });
 
             modelBuilder.Entity("Data.Model.Major", b =>
@@ -559,11 +1282,51 @@ namespace DataAccess.Migrations
                     b.Navigation("Sport");
                 });
 
+            modelBuilder.Entity("Data.Model.NewsPost", b =>
+                {
+                    b.HasOne("Journalist", "Creator")
+                        .WithMany("NewsPosts")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Event", "RelatedEvent")
+                        .WithMany()
+                        .HasForeignKey("RelatedEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("RelatedEvent");
+                });
+
+            modelBuilder.Entity("Data.Model.PostComment", b =>
+                {
+                    b.HasOne("Data.Model.NewsPost", "NewsPost")
+                        .WithMany("Coments")
+                        .HasForeignKey("NewsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Moderator", "ReviewBy")
+                        .WithMany("AceptedComments")
+                        .HasForeignKey("ReviewById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NewsPost");
+
+                    b.Navigation("ReviewBy");
+                });
+
             modelBuilder.Entity("Data.Model.Representative", b =>
                 {
                     b.HasOne("Data.Model.Athlete", "Athlete")
                         .WithMany()
-                        .HasForeignKey("AthleteId");
+                        .HasForeignKey("AthleteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Data.Model.Faculty", "Faculty")
                         .WithMany("Representatives")
@@ -602,11 +1365,51 @@ namespace DataAccess.Migrations
                     b.Navigation("Faculty");
                 });
 
+            modelBuilder.Entity("Data.Model.TeamComposition", b =>
+                {
+                    b.HasOne("Data.Model.ComposedTeam", null)
+                        .WithMany("Compositions")
+                        .HasForeignKey("ComposedTeamId");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamCompositionScore", b =>
+                {
+                    b.HasOne("Data.Model.ComposedTeamsEvent", null)
+                        .WithMany("ComposedTeamScores")
+                        .HasForeignKey("ComposedTeamsEventId");
+
+                    b.HasOne("Data.Model.TeamComposition", "Composition")
+                        .WithMany()
+                        .HasForeignKey("CompositionId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Score", "Score")
+                        .WithMany()
+                        .HasForeignKey("ScoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Composition");
+
+                    b.Navigation("Score");
+                });
+
             modelBuilder.Entity("Data.Model.TeamMember", b =>
                 {
                     b.HasOne("Data.Model.Athlete", "Athlete")
                         .WithMany()
-                        .HasForeignKey("AthleteId1");
+                        .HasForeignKey("AthleteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.NormalTeam", null)
+                        .WithMany("Members")
+                        .HasForeignKey("NormalTeamId");
+
+                    b.HasOne("Data.Model.TeamComposition", null)
+                        .WithMany("Participants")
+                        .HasForeignKey("TeamCompositionId");
 
                     b.HasOne("Data.Model.Team", "Team")
                         .WithMany()
@@ -617,6 +1420,67 @@ namespace DataAccess.Migrations
                     b.Navigation("Athlete");
 
                     b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamParticipantScore", b =>
+                {
+                    b.HasOne("Data.Model.EventTeamParticipant", "Participant")
+                        .WithMany()
+                        .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Score", "Score")
+                        .WithMany()
+                        .HasForeignKey("ScoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Participant");
+
+                    b.Navigation("Score");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamScore", b =>
+                {
+                    b.HasOne("Data.Model.Score", "Score")
+                        .WithMany()
+                        .HasForeignKey("ScoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.TeamEvent", null)
+                        .WithMany("TeamScores")
+                        .HasForeignKey("TeamEventId");
+
+                    b.HasOne("Data.Model.NormalTeam", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Score");
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("Data.Model.TournamentEvent", b =>
+                {
+                    b.HasOne("Data.Model.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.Tournament", "Tournament")
+                        .WithMany()
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Tournament");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -670,6 +1534,81 @@ namespace DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Data.Model.ComposedTeam", b =>
+                {
+                    b.HasOne("Data.Model.ComposedTeamsEvent", null)
+                        .WithMany("ComposedTeams")
+                        .HasForeignKey("ComposedTeamsEventId");
+                });
+
+            modelBuilder.Entity("Data.Model.BanUser", b =>
+                {
+                    b.HasOne("Data.Model.User", null)
+                        .WithOne()
+                        .HasForeignKey("Data.Model.BanUser", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Data.Model.Moderator", b =>
+                {
+                    b.HasOne("Data.Model.User", null)
+                        .WithOne()
+                        .HasForeignKey("Data.Model.Moderator", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Data.Model.SuperUser", b =>
+                {
+                    b.HasOne("Data.Model.User", null)
+                        .WithOne()
+                        .HasForeignKey("Data.Model.SuperUser", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Journalist", b =>
+                {
+                    b.HasOne("Data.Model.User", null)
+                        .WithOne()
+                        .HasForeignKey("Journalist", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Data.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Data.Model.Category", b =>
                 {
                     b.Navigation("Sports");
@@ -685,6 +1624,64 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Data.Model.Leaderboard", b =>
                 {
                     b.Navigation("LeaderboardLines");
+                });
+
+            modelBuilder.Entity("Data.Model.League", b =>
+                {
+                    b.Navigation("Locations");
+                });
+
+            modelBuilder.Entity("Data.Model.NewsPost", b =>
+                {
+                    b.Navigation("Coments");
+
+                    b.Navigation("fragments");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamComposition", b =>
+                {
+                    b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("Data.Model.Tournament", b =>
+                {
+                    b.Navigation("Locations");
+                });
+
+            modelBuilder.Entity("Data.Model.ComposedTeamsEvent", b =>
+                {
+                    b.Navigation("ComposedTeamScores");
+
+                    b.Navigation("ComposedTeams");
+                });
+
+            modelBuilder.Entity("Data.Model.TeamEvent", b =>
+                {
+                    b.Navigation("TeamParticipants");
+
+                    b.Navigation("TeamScores");
+
+                    b.Navigation("TeamSubstitutes");
+                });
+
+            modelBuilder.Entity("Data.Model.ComposedTeam", b =>
+                {
+                    b.Navigation("Compositions");
+                });
+
+            modelBuilder.Entity("Data.Model.NormalTeam", b =>
+                {
+                    b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("Data.Model.Moderator", b =>
+                {
+                    b.Navigation("AceptedComments");
+                });
+
+            modelBuilder.Entity("Journalist", b =>
+                {
+                    b.Navigation("NewsPosts");
                 });
 #pragma warning restore 612, 618
         }

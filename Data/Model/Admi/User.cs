@@ -4,9 +4,8 @@ namespace Data.Model;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-
 [Table("Users")]
-public class User
+public  class User
 {
     [Key]
     public int Id { get; set; }

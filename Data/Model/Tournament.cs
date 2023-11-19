@@ -1,5 +1,7 @@
 namespace Data.Model;
-
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 public class Tournament
 {
     public int Id {get; set;}
