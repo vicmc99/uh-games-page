@@ -18,14 +18,12 @@ public class FacultyController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<FacultyDto> Get([FromQuery] int year)
+    public IEnumerable<FacultyDto> Get([FromQuery] int year, [FromQuery] int id = -1)
     {
-        return _facultyService.GetAllFaculties(year);
-    }
+        if (id != -1) return _facultyService.GetAllFaculties(year);
 
-    [HttpGet]
-    public FacultyDto Get([FromQuery] int year, [FromQuery] int id)
-    {
-        return _facultyService.Get(id, year);
+        var facultyDtos = new FacultyDto[1];
+        facultyDtos[0] = _facultyService.Get(id, year);
+        return facultyDtos;
     }
 }
