@@ -801,7 +801,7 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Userds");
 
                     b.UseTptMappingStrategy();
                 });
@@ -1043,7 +1043,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BanUsers", (string)null);
+                    b.ToTable("BanUsers");
                 });
 
             modelBuilder.Entity("Data.Model.Moderator", b =>
@@ -1055,7 +1055,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("users");
+                    b.ToTable("Moderators");
                 });
 
             modelBuilder.Entity("Data.Model.SuperUser", b =>

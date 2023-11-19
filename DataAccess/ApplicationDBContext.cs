@@ -65,8 +65,8 @@ public class ApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
     
-        modelBuilder.Entity<User>().ToTable("Users");
-        modelBuilder.Entity<BanUser>().ToTable("BanUsers");
+      //  modelBuilder.Entity<User>().ToTable("Users");
+       // modelBuilder.Entity<BanUser>().ToTable("BanUsers");
     
 
      

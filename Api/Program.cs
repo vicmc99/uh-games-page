@@ -37,7 +37,7 @@ using (var scope = app.Services.CreateScope())
 
     // Applies any pending migrations for the context to the database
     dbContext.Database.Migrate();
-
+    
     var dbInitializer = new DatabaseInitializer(dbContext);
     dbInitializer.EnsureInitialData();
 

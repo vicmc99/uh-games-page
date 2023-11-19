@@ -4,7 +4,7 @@ namespace Data.Model;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+[Table("BanUsers")]
 public class BanUser :User
 {
     [ForeignKey("User")]

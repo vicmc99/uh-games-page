@@ -5,7 +5,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 
 
-[Table("users")]
+[Table("Moderators")]
 public class Moderator:User
 {
     [ForeignKey("User")]
