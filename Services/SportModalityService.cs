@@ -6,18 +6,18 @@ namespace Services.Domain;
 
 public class SportModalityService : ISportModalityService
 {
-    private readonly IDataRepository repository;
+    private readonly IDataRepository _repository;
 
     public SportModalityService(IDataRepository repository)
     {
-        this.repository = repository;
+        _repository = repository;
     }
 
     public SportModalityDto Get(int id)
     {
-        var modality = repository.Set<Modality>().FirstOrDefault(m => m.Id == id);
+        var modality = _repository.Set<Modality>().FirstOrDefault(m => m.Id == id);
 
-        var sport = repository.Set<Sport>().FirstOrDefault(s => s.Id == modality.SportId);
+        var sport = _repository.Set<Sport>().FirstOrDefault(s => s.Id == modality.SportId);
 
         return new SportModalityDto
         {

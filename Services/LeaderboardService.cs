@@ -6,16 +6,16 @@ namespace Services.Domain;
 
 public class LeaderboardService
 {
-    private readonly IDataRepository repository;
+    private readonly IDataRepository _repository;
 
     public LeaderboardService(IDataRepository repository)
     {
-        this.repository = repository;
+        _repository = repository;
     }
 
     public LeaderboardDto Get(int year)
     {
-        var leaderboard = repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
+        var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
         if (leaderboard is null)
             return null;
         return new LeaderboardDto

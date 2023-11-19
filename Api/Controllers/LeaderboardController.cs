@@ -17,8 +17,8 @@ public class LeaderboardController : ControllerBase
         _leaderboardService = leaderboardService;
     }
 
-    [HttpGet("{year}")]
-    public LeaderboardDto Get(int year)
+    [HttpGet]
+    public LeaderboardDto Get([FromQuery] int year)
     {
         return _leaderboardService.Get(year);
     }
