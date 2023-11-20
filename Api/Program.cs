@@ -1,8 +1,7 @@
-
-using Microsoft.EntityFrameworkCore;
 using DataAccess;
-using InitialData;
 using DataAccess.Repository;
+using InitialData;
+using Microsoft.EntityFrameworkCore;
 using Services.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,8 +25,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -40,7 +37,6 @@ using (var scope = app.Services.CreateScope())
 
     var dbInitializer = new DatabaseInitializer(dbContext);
     dbInitializer.EnsureInitialData();
-
 }
 
 // Configure the HTTP request pipeline.

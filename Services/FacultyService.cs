@@ -32,7 +32,7 @@ public class FacultyService : IFacultyService
             Mascot = faculty.Mascot,
             Acronym = faculty.Acronym,
             Athletes = athletes.Select(
-                a => new AthleteDto { Id = int.Parse(a.Id), Name = a.Name }),
+                a => new AthleteDto { Id = a.Id, Name = a.Name }),
             GoldMedals = leaderboardline?.GoldMedals,
             SilverMedals = leaderboardline?.SilverMedals,
             BronzeMedals = leaderboardline?.BronzeMedals,
