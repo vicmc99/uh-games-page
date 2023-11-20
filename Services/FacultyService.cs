@@ -71,7 +71,7 @@ public class FacultyService : IFacultyService
                 Mascot = faculties[i].Mascot,
                 Acronym = faculties[i].Acronym,
                 Athletes = actualAthletes.Select(
-                    a => new AthleteDto { Id = int.Parse(a.athlete.Id), Name = a.athlete.Name }),
+                    a => new AthleteDto { Id = a.athlete.Id, Name = a.athlete.Name }),
                 GoldMedals = actualLeaderBoardLine?.GoldMedals,
                 SilverMedals = actualLeaderBoardLine?.SilverMedals,
                 BronzeMedals = actualLeaderBoardLine?.BronzeMedals,
