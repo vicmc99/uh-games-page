@@ -8,18 +8,22 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public class FacultyController : ControllerBase
 {
+    private readonly IFacultyService _facultyService;
     private readonly ILogger<FacultyController> _logger;
-    private readonly IFacultyService facultyService;
 
     public FacultyController(ILogger<FacultyController> logger, IFacultyService facultyService)
     {
         _logger = logger;
-        this.facultyService = facultyService;
+        _facultyService = facultyService;
     }
 
-    [HttpGet("{id}")]
-    public FacultyDto Get(int id)
+    [HttpGet]
+    public IEnumerable<FacultyDto> Get([FromQuery] int year, [FromQuery] int id = -1)
     {
-        return facultyService.Get(id, DateTime.Today.Year);
+        if (id != -1) return _facultyService.GetAllFaculties(year);
+
+        var facultyDtos = new FacultyDto[1];
+        facultyDtos[0] = _facultyService.Get(id, year);
+        return facultyDtos;
     }
 }

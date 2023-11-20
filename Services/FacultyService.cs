@@ -6,22 +6,22 @@ namespace Services.Domain;
 
 public class FacultyService : IFacultyService
 {
-    private readonly IDataRepository repository;
+    private readonly IDataRepository _repository;
 
     public FacultyService(IDataRepository repository)
     {
-        this.repository = repository;
+        _repository = repository;
     }
 
     public FacultyDto Get(int id, int year)
     {
-        var faculty = repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
+        var faculty = _repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
         var leaderboardline =
-            repository.Set<LeaderboardLine>().FirstOrDefault(l => l.FacultyId == id && l.Year == year);
+            _repository.Set<LeaderboardLine>().FirstOrDefault(l => l.FacultyId == id && l.Year == year);
         var athletes =
-            (from representative in repository.Set<Representative>()
-                join athlete in repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
-                where representative.Year == DateTime.Today.Year
+            (from representative in _repository.Set<Representative>()
+                join athlete in _repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
+                where representative.Year == year
                 where representative.FacultyId == id
                 select athlete).ToList();
 
@@ -40,9 +40,46 @@ public class FacultyService : IFacultyService
         };
     }
 
-    public IEnumerable<FacultyDto> GetAllFaculties(CancellationToken ct)
+    public FacultyDto[] GetAllFaculties(int year)
     {
-        throw new NotImplementedException();
+        var faculties = _repository.Set<Faculty>().ToArray();
+        if (faculties.Length == 0)
+            return Array.Empty<FacultyDto>();
+        var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
+        if (leaderboard is null)
+            return Array.Empty<FacultyDto>();
+        var leaderboardLines = leaderboard.LeaderboardLines;
+        var athletes =
+            (from representative in _repository.Set<Representative>()
+                join athlete in _repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
+                where representative.Year == year
+                select (athlete, representative.FacultyId)).ToList();
+
+        var length = faculties.Length;
+        var facultyDtos = new FacultyDto[length];
+
+
+        for (var i = 0; i < length; i++)
+        {
+            var i1 = i;
+            var actualAthletes = athletes.Where(a => a.FacultyId == faculties[i1].Id);
+            var actualLeaderBoardLine = leaderboardLines.FirstOrDefault(l => l.FacultyId == faculties[i1].Id);
+            facultyDtos[i] = new FacultyDto
+            {
+                Id = faculties[i].Id,
+                Name = faculties[i].Name,
+                Mascot = faculties[i].Mascot,
+                Acronym = faculties[i].Acronym,
+                Athletes = actualAthletes.Select(
+                    a => new AthleteDto { Id = int.Parse(a.athlete.Id), Name = a.athlete.Name }),
+                GoldMedals = actualLeaderBoardLine?.GoldMedals,
+                SilverMedals = actualLeaderBoardLine?.SilverMedals,
+                BronzeMedals = actualLeaderBoardLine?.BronzeMedals,
+                Ranking = actualLeaderBoardLine?.Ranking
+            };
+        }
+
+        return facultyDtos;
     }
 
     public IEnumerable<FacultyDto> GetParticipantFaculties(CancellationToken ct)

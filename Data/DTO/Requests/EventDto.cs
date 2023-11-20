@@ -1,5 +1,3 @@
-using Data.Model;
-
 namespace Data.DTO;
 
 public class EventDto
@@ -15,7 +13,7 @@ public class EventDto
 
     // type = "ParticipantScored"
     public IEnumerable<NormalTeamDto> ParticipantScoredTeams { get; set; }
-    public IEnumerable<TeamParticipantScore> ParticipantScores { get; set; }
+    public IEnumerable<TeamParticipantScoreDto> ParticipantScores { get; set; }
 
     // type = "TeamScored"
     public IEnumerable<TeamScoreDto> TeamScores { get; set; }
