@@ -13,4 +13,6 @@ public class Event
     [ForeignKey("Location")]
     public int LocationId { get; set; }
     public Location Location { get; set; }
+    
+    public string Type { get; set; }
 }
