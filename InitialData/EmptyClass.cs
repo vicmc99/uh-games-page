@@ -36,6 +36,8 @@ public class InitialDomainData
             new LeaderboardLine {Id = 1, FacultyId = 15, GoldMedals=12, SilverMedals=5, BronzeMedals =3, Ranking = 1, Year = 2023}
         };
     }
+    
+    
 
 }
 

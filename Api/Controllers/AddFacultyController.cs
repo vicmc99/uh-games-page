@@ -17,6 +17,7 @@ public class AddFacultyController:ControllerBase
         this.facultyService = facultyService;
     }
 
+   
   /*  
     [HttpPost]
     public async Task<ActionResult<FacultyDto>> CreateTodoItem(FacultyDto facultyDto)

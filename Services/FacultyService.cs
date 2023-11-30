@@ -42,12 +42,27 @@ public class FacultyService : IFacultyService
 
     public FacultyDto[] GetAllFaculties(int year)
     {
+        
+        var faculties = _repository.Set<Faculty>().ToArray();
+        var res = new List<FacultyDto>();
+        foreach (var v in faculties)
+        {
+            res.Add(new FacultyDto(){Id = v.Id, Name = v.Name});
+        }
+
+        return res.ToArray();
+    }
+
+    public FacultyDto[] GetAllFacultiesmm(int year)
+    {
         var faculties = _repository.Set<Faculty>().ToArray();
         if (faculties.Length == 0)
             return Array.Empty<FacultyDto>();
         var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
         if (leaderboard is null)
-            return Array.Empty<FacultyDto>();
+        { return Array.Empty<FacultyDto>(); 
+           
+        }
         var leaderboardLines = leaderboard.LeaderboardLines;
         var athletes =
             (from representative in _repository.Set<Representative>()

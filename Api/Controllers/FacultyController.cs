@@ -16,7 +16,8 @@ public class FacultyController : ControllerBase
         _logger = logger;
         _facultyService = facultyService;
     }
-
+}
+/*
     [HttpGet]
     public IEnumerable<FacultyDto> Get([FromQuery] int year, [FromQuery] int id = -1)
     {
@@ -26,4 +27,4 @@ public class FacultyController : ControllerBase
         facultyDtos[0] = _facultyService.Get(id, year);
         return facultyDtos;
     }
-}
+}*/
