@@ -1,6 +1,7 @@
 using Data.DTO;
 using Data.Model;
 using DataAccess.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.Domain;
 
@@ -15,16 +16,29 @@ public class EventService : IEventService
 
     public EventDto[] Get()
     {
-        var events = _repository.Set<Event>().ToArray();
-        if (events.Length == 0)
+        var events = _repository.Set<Event>().Include(e => e.Location);
+        if (!events.Any())
             return Array.Empty<EventDto>();
+        
         var eventDtos = new EventDto[events.Length];
+
         for (var i = 0; i < events.Length; i++)
         {
+            //switch expression for every type of event
+            var eventType = events[i] switch
+            {
+                TeamEvent _ => "TeamScored",
+                ComposedTeamsEvent _ => "Composed",
+                ParticipantScoredEvent _ => "ParticipantScored",
+                MatchEvent _ => "MatchEvent",
+                _ => "Unknown"
+            };
+            ;
+
             eventDtos[i] = new EventDto
             {
                 Id = events[i].Id,
-                Type = events[i].Type,
+                Type = eventType,
                 DateTime = events[i].DateTime,
                 Location = new LocationDto
                 {
