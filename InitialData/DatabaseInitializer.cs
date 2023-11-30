@@ -46,7 +46,14 @@ public class DatabaseInitializer: IDatabaseInitializer
 
         if (context.Set<LeaderboardLine>().Count() == 0)
             context.Set<LeaderboardLine>().AddRange(InitialDomainData.GetLeaderboardLines());
-
+         //TODO: delete after testing
+         
+         
+         
+         
+         
+         
+         
         context.SaveChanges();
     }
 
