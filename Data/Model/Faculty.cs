@@ -5,9 +5,7 @@ namespace Data.Model;
 [Index(nameof(Name), IsUnique = true)]
 
 public class Faculty {
-
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    
     public int Id {get; set;}
 
     public string Name {get; set;}

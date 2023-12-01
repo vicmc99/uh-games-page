@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 [Table("Moderators")]
 public class Moderator:User
 {
+    //public int ModeratorId { get; set; }
     [ForeignKey("User")]
     public int UserId { get; set; }
     [Required]

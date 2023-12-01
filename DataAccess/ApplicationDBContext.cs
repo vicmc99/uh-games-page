@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Data.Model;
-
+using Microsoft.Extensions.Logging;
 
 
 namespace DataAccess;
@@ -36,6 +36,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Competition> Competitions { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<EventTeamParticipant> EventParticipants { get; set; }
+    public DbSet<ParticipantScoredEvent>ParticipantScoredEvent { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<GroupEvent> GroupEvents { get; set; }
     public DbSet<GroupLine> GroupLines { get; set; }
@@ -53,6 +54,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<TeamScore> TeamScores { get; set; }
     public DbSet<TeamParticipantScore> TeamParticipantScores { get; set; }
+    
 
     //Users Domain
     public DbSet<User> Users { get; set; }
@@ -71,6 +73,11 @@ public class ApplicationDbContext : IdentityDbContext
 
      
     }
-
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .UseSqlite("Data Source=mydatabase.db")
+            .LogTo(Console.WriteLine, LogLevel.Information);
+    }
 }
    

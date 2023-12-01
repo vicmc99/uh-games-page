@@ -45,7 +45,9 @@ using (var scope = app.Services.CreateScope())
     
     var dbInitializer = new DatabaseInitializer(dbContext);
     dbInitializer.EnsureInitialData();
-
+    //delete after deb
+   
+    
 }
 
 // Configure the HTTP request pipeline.
