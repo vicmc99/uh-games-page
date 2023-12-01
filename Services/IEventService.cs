@@ -4,5 +4,5 @@ namespace Services.Domain;
 
 public interface IEventService
 {
-    EventDto[] Get();
+    IEnumerable<EventDto> Get();
 }

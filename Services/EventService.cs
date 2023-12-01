@@ -14,325 +14,202 @@ public class EventService : IEventService
         _repository = repository;
     }
 
-    public EventDto[] Get()
+    public IEnumerable<EventDto> Get()
     {
-        var events = _repository.Set<Event>().Include(e => e.Location);
+        var events = _repository.Set<Event>()
+            .Include(e => e.Location);
+
         if (!events.Any())
             return Array.Empty<EventDto>();
-        
-        var eventDtos = new EventDto[events.Length];
 
-        for (var i = 0; i < events.Length; i++)
+        var teamEvents = events.OfType<TeamEvent>()
+            .Include(e => e.TeamScores)
+            .ThenInclude(s => s.Team)
+            .ThenInclude(t => t.Members)
+            .ThenInclude(m => m.Athlete)
+            .Include(e => e.TeamScores)
+            .ThenInclude(s => s.Score)
+            .Include(e => e.TeamParticipants)
+            .ThenInclude(p => p.Participant)
+            .Include(e => e.TeamSubstitutes)
+            .ThenInclude(p => p.Participant);
+
+        var composedEvents = events.OfType<ComposedTeamsEvent>()
+            .Include(e => e.ComposedTeams)
+            .ThenInclude(t => t.Compositions)
+            .ThenInclude(c => c.Participants)
+            .ThenInclude(p => p.Athlete)
+            .Include(e => e.ComposedTeamScores)
+            .ThenInclude(s => s.Score);
+
+        var participantScoredEvents = events.OfType<ParticipantScoredEvent>()
+            .Include(e => e.ParticipantScoredTeams)
+            .ThenInclude(t => t.Members)
+            .ThenInclude(m => m.Athlete)
+            .Include(e => e.ParticipantScores)
+            .ThenInclude(s => s.Score)
+            .Include(e => e.ParticipantScores)
+            .ThenInclude(s => s.Participant)
+            .ThenInclude(p => p.Participant)
+            .ThenInclude(p => p.Athlete)
+            .Include(e => e.TeamSubstitutes)
+            .ThenInclude(s => s.Participant)
+            .ThenInclude(p => p.Athlete);
+
+        var matchEvents = events.OfType<MatchEvent>();
+
+        var eventDtos = new List<EventDto>();
+
+        eventDtos.AddRange(teamEvents.Select(e => new EventDto
         {
-            //switch expression for every type of event
-            var eventType = events[i] switch
-            {
-                TeamEvent _ => "TeamScored",
-                ComposedTeamsEvent _ => "Composed",
-                ParticipantScoredEvent _ => "ParticipantScored",
-                MatchEvent _ => "MatchEvent",
-                _ => "Unknown"
-            };
-            ;
-
-            eventDtos[i] = new EventDto
-            {
-                Id = events[i].Id,
-                Type = eventType,
-                DateTime = events[i].DateTime,
-                Location = new LocationDto
+            Id = e.Id,
+            Type = "TeamScored",
+            DateTime = e.DateTime,
+            Location = LocationToDto(e.Location),
+            TeamScores = from s in e.TeamScores
+                let teamMembers = s.Team.Members
+                let teamParticipants = e.TeamParticipants.Where(p => p.TeamId == s.TeamId)
+                    .Select(p => p.Participant)
+                let teamSubstitutes = e.TeamSubstitutes.Where(p => p.TeamId == s.TeamId)
+                    .Select(p => p.Participant)
+                let normalTeamDto = CreateNormalTeamDto(teamMembers, teamParticipants, teamSubstitutes, s.TeamId,
+                    s.Team.FacultyId)
+                select new TeamScoreDto
                 {
-                    Id = events[i].Location.Id,
-                    Name = events[i].Location.Name,
-                    Address = events[i].Location.Address,
-                    GoogleMapsUrl = events[i].Location.GoogleMapsURL
+                    Team = normalTeamDto, Score = new ScoreDto { Id = s.ScoreId, NumberScore = s.Score.NumberScore }
                 }
-            };
-            switch (eventDtos[i].Type)
-            {
-                //TODO: Set Where LINQ to match from ID's. Review ID's en DB. EventDTO have not way to connect with other clases.
-                case "Composed":
+        }));
 
-                    //Fill ComposedTeams param
-                    var composedTeams = _repository.Set<ComposedTeam>().ToArray();
-                    eventDtos[i].ComposedTeams = composedTeams.Select(composedTeam => new ComposedTeamDto
-                    {
-                        Id = composedTeam.Id,
-                        FacultyId = composedTeam.FacultyId,
-                        Compositions = composedTeam.Compositions.Select(composition => new CompositionDto
+        eventDtos.AddRange(composedEvents.Select(e => new EventDto
+        {
+            Id = e.Id,
+            Type = "Composed",
+            DateTime = e.DateTime,
+            Location = LocationToDto(e.Location),
+            ComposedTeams = from c in e.ComposedTeams
+                select new ComposedTeamDto
+                {
+                    Id = c.Id,
+                    FacultyId = c.FacultyId,
+                    Compositions = from composition in c.Compositions
+                        let participants = composition.Participants
+                        select new CompositionDto
                         {
                             Id = composition.Id,
-                            Participant = composition.Participants.Select(participant => new TeamMemberDto
-                            {
-                                Id = participant.Id,
-                                Team = new TeamDto
-                                {
-                                    Id = participant.Team.Id,
-                                    FacultyId = participant.Team.FacultyId
-                                },
-                                Athlete = new AthleteDto
-                                {
-                                    Id = participant.AthleteId,
-                                    Name = participant.Athlete.Name,
-                                    Nick = participant.Athlete.Nick,
-                                    Photo = participant.Athlete.Photo,
-                                    DateOfBirth = participant.Athlete.DateOfBirth
-                                },
-                                Role = participant.Role
-                            })
-                        })
-                    });
-
-                    //Fill CompositionScores params
-                    var compositionScores = _repository.Set<TeamCompositionScore>().ToArray();
-                    eventDtos[i].CompositionScores = compositionScores.Select(compositionScore =>
-                        new TeamCompositionScoreDto
-                        {
-                            CompositionId = compositionScore.CompositionId,
-                            Score = new ScoreDto
-                            {
-                                Id = compositionScore.ScoreId,
-                                NumberScore = compositionScore.Score.NumberScore
-                            }
-                        });
-
-                    break;
-                case "ParticipantScored":
-                    var participantScoredTeam = _repository.Set<NormalTeam>().ToArray();
-                    eventDtos[i].ParticipantScoredTeams = participantScoredTeam.Select(normalTeam =>
-                        new NormalTeamDto
-                        {
-                            Id = normalTeam.Id,
-                            FacultyId = normalTeam.FacultyId,
-                            Members = normalTeam.Members.Where(m => m.Role == "Member").Select(member =>
-                                new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                }),
-                            Participants = normalTeam.Members.Where(member => member.Role == "Participant")
-                                .Select(member => new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                }),
-                            Substitutes = normalTeam.Members.Where(member => member.Role == "Substitute")
-                                .Select(member => new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                })
-                        });
-                    var participantScoredScores = _repository.Set<TeamParticipantScore>().ToArray();
-                    eventDtos[i].ParticipantScores = participantScoredScores.Select(participantScore =>
-                        new TeamParticipantScoreDto
-                        {
-                            ParticipantId = participantScore.ParticipantId,
-                            Score = new ScoreDto
-                            {
-                                Id = participantScore.ScoreId,
-                                NumberScore = participantScore.Score.NumberScore
-                            }
-                        });
-                    break;
-                case "TeamScored":
-                    var teamScores = _repository.Set<TeamScore>().ToArray();
-                    eventDtos[i].TeamScores = teamScores.Select(teamScore => new TeamScoreDto
-                    {
-                        Team = new NormalTeamDto
-                        {
-                            FacultyId = teamScore.Team.FacultyId,
-                            Id = teamScore.Team.Id,
-                            Members = teamScore.Team.Members.Where(t => t.Role == "Member").Select(member =>
-                                new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                }),
-                            Participants = teamScore.Team.Members.Where(t => t.Role == "Participant").Select(member =>
-                                new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                }),
-                            Substitutes = teamScore.Team.Members.Where(t => t.Role == "Substitute").Select(member =>
-                                new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                })
-                        },
-                        Score = new ScoreDto
-                        {
-                            Id = teamScore.ScoreId,
-                            NumberScore = teamScore.Score.NumberScore
+                            Participants = from participant in participants
+                                select TeamMemberToDto(participant)
                         }
-                    });
-                    break;
-                case "MatchEvent":
-                    var matchEventTeams = _repository.Set<NormalTeam>().ToArray();
-                    eventDtos[i].MatchEventTeams = matchEventTeams.Select(normalTeam =>
-                        new NormalTeamDto
-                        {
-                            Id = normalTeam.Id,
-                            FacultyId = normalTeam.FacultyId,
-                            Members = normalTeam.Members.Where(m => m.Role == "Member").Select(member =>
-                                new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                }),
-                            Participants = normalTeam.Members.Where(member => member.Role == "Participant")
-                                .Select(member => new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                }),
-                            Substitutes = normalTeam.Members.Where(member => member.Role == "Substitute")
-                                .Select(member => new TeamMemberDto
-                                {
-                                    Id = member.Id,
-                                    Team = new TeamDto
-                                    {
-                                        Id = member.Team.Id,
-                                        FacultyId = member.Team.FacultyId
-                                    },
-                                    Athlete = new AthleteDto
-                                    {
-                                        Id = member.AthleteId,
-                                        Name = member.Athlete.Name,
-                                        Nick = member.Athlete.Nick,
-                                        Photo = member.Athlete.Photo,
-                                        DateOfBirth = member.Athlete.DateOfBirth
-                                    },
-                                    Role = member.Role
-                                })
-                        });
-                    var matches = _repository.Set<Match>().ToArray();
-                    eventDtos[i].Matches = matches.Select(match => new MatchDto
-                    {
-                        Id = match.MatchId,
-                        ParticipantScores = match.ParticipantScores.Select(participantScore =>
-                            new TeamParticipantScoreDto
-                            {
-                                ParticipantId = participantScore.ParticipantId,
-                                Score = new ScoreDto
-                                {
-                                    Id = participantScore.ScoreId,
-                                    NumberScore = participantScore.Score.NumberScore
-                                }
-                            })
-                    });
-                    break;
-            }
-        }
+                },
+            CompositionScores = from s in e.ComposedTeamScores
+                select new TeamCompositionScoreDto
+                {
+                    Score = ScoreToDto(s.Score),
+                    CompositionId = s.CompositionId
+                }
+        }));
 
-        var sortedList = eventDtos.ToList();
-        sortedList.Sort((x, y) => x.DateTime.CompareTo(y.DateTime));
-        return sortedList.ToArray();
+        eventDtos.AddRange(participantScoredEvents.Select(e => new EventDto
+        {
+            Id = e.Id,
+            Type = "ParticipantScored",
+            DateTime = e.DateTime,
+            Location = LocationToDto(e.Location),
+            ParticipantScoredTeams = from t in e.ParticipantScoredTeams
+                let teamMembers = t.Members
+                let teamParticipants = e.ParticipantScores.Where(s => s.TeamId == t.Id)
+                    .Select(s => s.Participant.Participant)
+                let teamSubstitutes = e.TeamSubstitutes.Where(s => s.TeamId == t.Id)
+                    .Select(s => s.Participant)
+                select CreateNormalTeamDto(teamMembers, teamParticipants, teamSubstitutes, t.Id,
+                    t.FacultyId),
+            ParticipantScores = from s in e.ParticipantScores
+                select new TeamParticipantScoreDto
+                {
+                    ParticipantId = s.ParticipantId,
+                    Score = ScoreToDto(s.Score)
+                }
+        }));
+
+        eventDtos.AddRange(matchEvents.Select(e => new EventDto
+        {
+            Id = e.Id,
+            Type = "MatchEvent",
+            DateTime = e.DateTime,
+            Location = LocationToDto(e.Location),
+            MatchEventTeams = from t in e.Teams
+                let members = t.Members
+                let participants =
+                    from m in e.Matches
+                    from p in m.ParticipantScores
+                    where p.TeamId == t.Id
+                    select p.Participant.Participant
+                select CreateNormalTeamDto(members, participants, null, t.Id, t.FacultyId),
+            Matches = from m in e.Matches
+                select new MatchDto
+                {
+                    Id = m.Id,
+                    ParticipantScores = from p in m.ParticipantScores
+                        select new TeamParticipantScoreDto
+                        {
+                            ParticipantId = p.ParticipantId,
+                            Score = ScoreToDto(p.Score)
+                        }
+                }
+        }));
+
+        return eventDtos.OrderBy(e => e.DateTime);
+    }
+
+    private static LocationDto LocationToDto(Location l)
+    {
+        return new LocationDto
+        {
+            Id = l.Id,
+            Address = l.Address,
+            GoogleMapsUrl = l.GoogleMapsURL,
+            Name = l.Name
+        };
+    }
+
+    private static ScoreDto ScoreToDto(Score s)
+    {
+        return new ScoreDto
+        {
+            Id = s.Id,
+            NumberScore = s.NumberScore
+        };
+    }
+
+    private static TeamMemberDto TeamMemberToDto(TeamMember m)
+    {
+        return new TeamMemberDto
+        {
+            Id = m.Id,
+            TeamId = m.TeamId,
+            Role = m.Role,
+            Athlete = new AthleteDto
+            {
+                Id = m.Athlete.Id,
+                Name = m.Athlete.Name,
+                Nick = m.Athlete.Nick,
+                Photo = m.Athlete.Photo,
+                DateOfBirth = m.Athlete.DateOfBirth
+            }
+        };
+    }
+
+    private static NormalTeamDto CreateNormalTeamDto(IEnumerable<TeamMember> members,
+        IEnumerable<TeamMember> participants,
+        IEnumerable<TeamMember> substitutes,
+        int id, int facultyId)
+    {
+        return new NormalTeamDto
+        {
+            Id = id,
+            FacultyId = facultyId,
+            Members = members?.Select(TeamMemberToDto),
+            Participants = participants?.Select(TeamMemberToDto),
+            Substitutes = substitutes?.Select(TeamMemberToDto)
+        };
     }
 }
