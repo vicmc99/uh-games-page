@@ -1,4 +1,5 @@
 ﻿
+using System.Reflection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Data.Model;
@@ -14,25 +15,37 @@ public class ApplicationDbContext : IdentityDbContext
     {
     }
 
-    // Faculies Domain
-    public DbSet<Faculty> Faculties { get; set; }
-    public DbSet<Major> Majors { get; set; }
-    public DbSet<Athlete> Athletes { get; set; }
-    public DbSet<Representative> Representatives { get; set; }
-    public DbSet<Leaderboard> Leaderboards { get; set; }
-    public DbSet<LeaderboardLine> LeaderboardLines { get; set; }
+    #region Faculies Domain
 
-    // Sport Modalities Domain
-    public DbSet<Category> Categories { get; set; }
+    public DbSet<Faculty> Faculties { get; set; }
+   // public DbSet<Major> Majors { get; set; }
+    public DbSet<Athlete> Athletes { get; set; }
+   /* public DbSet<Representative> Representatives { get; set; }
+    public DbSet<Leaderboard> Leaderboards { get; set; }
+    public DbSet<LeaderboardLine> LeaderboardLines { get; set; }*/
+
+    #endregion
+  
+
+  #region Sport Modalities Domain
+  /*  public DbSet<Category> Categories { get; set; }
     public DbSet<Modality> Modalities { get; set; }
     public DbSet<Sport> Sports { get; set; }
-    public DbSet<Discipline> Disciplines { get; set; }
+    public DbSet<Discipline> Disciplines { get; set; }*/
 
-    //Tournamet Domain
-    public DbSet<Tournament> Tournaments { get; set; }
-    public DbSet<TournamentEvent> TournamentEvents { get; set; }
+    #endregion
+    
 
-    // Competitions Domain
+    #region Tournamet Domain
+
+    /*public DbSet<Tournament> Tournaments { get; set; }
+    public DbSet<TournamentEvent> TournamentEvents { get; set; }*/
+
+    #endregion
+   
+
+    #region Competitions Domain
+    /*
     public DbSet<Competition> Competitions { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<EventTeamParticipant> EventParticipants { get; set; }
@@ -42,9 +55,10 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<GroupLine> GroupLines { get; set; }
     public DbSet<League> Leagues { get; set; }
     public DbSet<Location> Locations { get; set; }
-    public DbSet<Tournament> Tournamets { get; set; }
-
-    //Teams Domain
+    public DbSet<Tournament> Tournamets { get; set; }*/
+    #endregion
+    #region Teams Domain
+    /*
     public DbSet<Team> Teams { get; set; }
     public DbSet<ComposedTeamsEvent> ComposedTeamsEvents { get; set; }
     public DbSet<ComposedTeam> ComposedTeams { get; set; }
@@ -54,8 +68,8 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<TeamScore> TeamScores { get; set; }
     public DbSet<TeamParticipantScore> TeamParticipantScores { get; set; }
-    
-
+    */
+    #endregion
     //Users Domain
     public DbSet<User> Users { get; set; }
     public DbSet<SuperUser> SuperUsers { get; set; }
@@ -66,12 +80,21 @@ public class ApplicationDbContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-    
-      //  modelBuilder.Entity<User>().ToTable("Users");
-       // modelBuilder.Entity<BanUser>().ToTable("BanUsers");
-    
 
-     
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+     /*  
+       modelBuilder.Entity<User>().HasOne(e => e.Moderator)
+           .WithOne(e => e.User)
+           .HasForeignKey<Moderator>();
+       
+       modelBuilder.Entity<User>().HasOne(e => e.SuperUser)
+           .WithOne(e => e.User)
+           .HasForeignKey<SuperUser>();
+        
+       modelBuilder.Entity<User>().HasOne(e => e.Journalist)
+           .WithOne(e => e.User)
+           .HasForeignKey<Journalist>();*/
+
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

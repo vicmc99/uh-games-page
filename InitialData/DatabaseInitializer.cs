@@ -92,8 +92,8 @@ public class DatabaseInitializer: IDatabaseInitializer
         if (context.Set<Event>().Count() == 0)
             context.Set<Event>().AddRange(InitialDomainData.GetEvents());
         
-        if (context.Set<Team>().Count() == 0)
-            context.Set<Team>().AddRange(InitialDomainData.   GetTeams());
+       /* if (context.Set<Team>().Count() == 0)
+            context.Set<Team>().AddRange(InitialDomainData.   GetTeams());*/
         /*
         if (context.Set<TeamMember>().Count() == 0)
             context.Set<TeamMember>().AddRange(InitialDomainData. GetTeamMembers());
@@ -174,8 +174,8 @@ public class DatabaseInitializer: IDatabaseInitializer
          if (context.Set<Major>().Count() == 0)
                     context.Set<Major>().AddRange(InitialDomainData. GetMajors());
          
-         if (context.Set<ParticipantScoredEvent>().Count() == 0)
-                    context.Set<ParticipantScoredEvent>().AddRange(InitialDomainData. GetParticipantScoredEvents());
+         /*if (context.Set<ParticipantScoredEvent>().Count() == 0)
+                */    context.Set<ParticipantScoredEvent>().AddRange(InitialDomainData. GetParticipantScoredEvents());
          
          if (context.Set<Representative>().Count() == 0)
                     context.Set<Representative>().AddRange(InitialDomainData. GetRepresentatives());

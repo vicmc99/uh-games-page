@@ -53,8 +53,8 @@ public class EventService : IEventService
                                 Id = participant.Id,
                                 Team = new TeamDto
                                 {
-                                    Id = participant.Team.Id,
-                                    FacultyId = participant.Team.FacultyId
+                                    //Id = participant.Team.Id,
+                                    FacultyId =5
                                 },
                                 Athlete = new AthleteDto
                                 {

@@ -15,4 +15,7 @@ public class Event
     public Location Location { get; set; }
     
     public string Type { get; set; }
+    
+    
+    public ICollection<NewsPost>NewsPosts { get; set; }
 }

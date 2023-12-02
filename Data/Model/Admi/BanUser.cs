@@ -4,19 +4,15 @@ namespace Data.Model;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-[Table("BanUsers")]
-public class BanUser :User
+
+public class BanUser
 {
-    [ForeignKey("User")]
+    public int Id { get; set; }
     public int UserId { get; set; }
-    [Required]
     public User User { get; set; }
-    [Required]
-    [DataType(DataType.Date)]
-    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-    [Display(Name = "No access Date")]
+    public  int RoleId { get; set; }
+    public Role Role { get; set; }
     public DateTime NoAccessDate { get; set; }
     
- 
     
 }

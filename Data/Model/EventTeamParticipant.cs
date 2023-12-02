@@ -13,10 +13,14 @@ public class EventTeamParticipant
     public NormalTeam Team { get; set; }
     [ForeignKey("Event")]
     public int EventId { get; set; }
-    [Required]
+    [NotMapped]
     public Event Event { get; set; }
     [ForeignKey("TeamMember")]
     public int ParticipantId { get; set; }
     [Required]
     public TeamMember Participant { get; set; }
+    [ForeignKey("TeamEvent")]
+    public int TeamEventId { get; set; }
+    
+    public TeamEvent TeamEvent { get; set; }
 }

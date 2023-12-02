@@ -376,7 +376,7 @@ public class InitialDomainData
       //  Score = _score,
         ScoreId = _score.ScoreId,
       //  Team = _normalTeam,
-        TeamId = _normalTeam.Id,
+        Id = _normalTeam.Id,
     };
 
     public static List<TeamScore> GetTeamScores()
@@ -599,9 +599,7 @@ public class InitialDomainData
         LocationId = _location.Id,
         ParticipantScores = GetTeamParticipantScores(),
         TeamSubstitutes = GetEventTeamParticipants(),
-        ParticipantScoredTeams = GetNormalTeams(),
-        //Event = _event,
-        EventId = _event.Id
+        ParticipantScoredTeams = GetNormalTeams()
     };
 
     public static List<ParticipantScoredEvent> GetParticipantScoredEvents()
@@ -682,12 +680,12 @@ public class InitialDomainData
     private static User _user = new User()
     {
         Id = 1,
-        Email = "Miguelito.uh.cu",
-        Password = "Encriptada",
+       // Email = "Miguelito.uh.cu",
+       // Password = "Encriptada",
         FirstName = "Miguel",
         LastName = "Gonzalez",
-        NickName = "MiguelGonzalez",
-        SignUpDate = _dateTime,
+      //  NickName = "MiguelGonzalez",
+      //  SignUpDate = _dateTime,
         
 
 
@@ -707,8 +705,8 @@ public class InitialDomainData
         Id = 2,
         Email = "Miguelito.uh.cu",
         Password = "Encriptada",
-        FirstName = "Miguel",
-        LastName = "Gonzalez",
+     //   FirstName = "Miguel",
+      //  LastName = "Gonzalez",
         NickName = "MiguelGonzalez",
         SignUpDate = _dateTime,
         User = _user,
@@ -729,8 +727,8 @@ public class InitialDomainData
         Id = 3,
         Email = "Miguelito.uh.cu",
         Password = "Encriptada",
-        FirstName = "Miguel",
-        LastName = "Gonzalez",
+       // FirstName = "Miguel",
+       // LastName = "Gonzalez",
         NickName = "MiguelGonzalez",
         SignUpDate = _dateTime,
         User = _user,
@@ -754,8 +752,8 @@ public class InitialDomainData
         Id = 444,
         Email = "Miguelidvrsvto.uh.cu",
         Password = "Encriptada",
-        FirstName = "Miguedvfdl",
-        LastName = "Gonzalez",
+     //   FirstName = "Miguedvfdl",
+     //   LastName = "Gonzalez",
         NickName = "MiguelGonzalez",
         SignUpDate = _dateTime,
         User = _user,
@@ -780,13 +778,13 @@ public static List<Moderator> GetModerators()
 
 private static BanUser _banUser = new BanUser()
 {
-    Id = 10,
-    Email = "Miguelito.uh.cu",
-    Password = "Encriptada",
-    FirstName = "Miguel",
-    LastName = "Gonzalez",
-    NickName = "MiguelGonzalez",
-    SignUpDate = _dateTime,
+    //Id = 10,
+    //Email = "Miguelito.uh.cu",
+  //  Password = "Encriptada",
+  //  FirstName = "Miguel",
+  //  LastName = "Gonzalez",
+   // NickName = "MiguelGonzalez",
+  //  SignUpDate = _dateTime,
     User = _user,
     UserId = _user.Id,
     NoAccessDate = _dateTime,
@@ -833,11 +831,11 @@ private static void UpdateAdministrators()
         fragments = new List<Fragment>(),// GetFragments(),
         Coments = new List<PostComment>(), // GetPostComments() Add in GetPostComments,
         PostDate = _dateTime,
-        //Creator = _journalist,
-        CreatorId = _journalist.Id,
+        //Journalist = _journalist,
+        JournalistId = _journalist.Id,
         PostTitle = "Titulo de prueba",
        // RelatedEvent = _event,
-        RelatedEventId = _event.Id,
+        //RelatedEventId = _event.Id,
 
     };
 
@@ -853,7 +851,7 @@ private static void UpdateAdministrators()
     private static PostComment _postComment = new PostComment()
     {
         Id = 1,
-       // NewsPost = _newsPost,
+       // NewsPostConfig = _newsPost,
         NewsPostId = _newsPost.Id,
         Contents = "Esto es un comentario de prueba",
         CommentDate = _dateTime,

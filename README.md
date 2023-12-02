@@ -12,4 +12,7 @@ Para Eliminar la última migracion
  dotnet ef migrations remove  -p DataAccess/DataAccess.csproj -s Api/Api.csproj
 
 ```
-dotnet ef migrations add FixBugsInBoardLine -p DataAccess/DataAccess.csproj -s Api/Api.csproj
+Para actualizar la migración 
+````
+dotnet ef migrations script  
+````

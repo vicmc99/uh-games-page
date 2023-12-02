@@ -8,14 +8,16 @@ public class NewsPost
     [Required]
     public string PostTitle { get; set; }
     public DateTime PostDate { get; set; }
-    [ForeignKey("Event")]
-    public int RelatedEventId { get; set; }
-    [Required]
-    public Event RelatedEvent { get; set; }
-    [ForeignKey("Journalist")]
-    public int CreatorId { get; set; }
-    [Required]
-    public Journalist Creator { get; set; }
+   //TODO: descomentar despues de las migraciones de eventos
+   // public int RelatedEventId { get; set; }
+   
+    //public Event RelatedEvent { get; set; }
+    
+    public int JournalistId { get; set; }
+    
+    public Journalist Journalist { get; set; }
+    
+    public IEnumerable<ToReviewComments>CommentsToReview { get; set; }
     public IEnumerable<Fragment> fragments { get; set; } // Only fragments to 2k characters.
     public IEnumerable<PostComment> Coments { get; set; }
 }
