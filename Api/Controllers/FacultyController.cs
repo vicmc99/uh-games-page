@@ -17,6 +17,7 @@ public class FacultyController : ControllerBase
         _facultyService = facultyService;
     }
 
+
     [HttpGet]
     public IEnumerable<FacultyDto> Get([FromQuery] int year, [FromQuery] int id = -1)
     {

@@ -42,18 +42,35 @@ public class FacultyService : IFacultyService
 
     public FacultyDto[] GetAllFaculties(int year)
     {
+        
+        var faculties = _repository.Set<Faculty>().ToArray();
+        var res = new List<FacultyDto>();
+        foreach (var v in faculties)
+        {
+            res.Add(new FacultyDto(){Id = v.Id, Name = v.Name});
+        }
+
+        return res.ToArray();
+    }
+
+    public FacultyDto[] GetAllFacultiesmm(int year)
+    {
         var faculties = _repository.Set<Faculty>().ToArray();
         if (faculties.Length == 0)
             return Array.Empty<FacultyDto>();
         var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
         if (leaderboard is null)
-            return Array.Empty<FacultyDto>();
+        { return Array.Empty<FacultyDto>(); 
+           
+        }
         var leaderboardLines = leaderboard.LeaderboardLines;
         var athletes =
             (from representative in _repository.Set<Representative>()
                 join athlete in _repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
                 where representative.Year == year
-                select (athlete, representative.FacultyId)).ToList();
+                select new { Athlete = athlete, FacultyId = representative.FacultyId }).ToList();
+
+
 
         var length = faculties.Length;
         var facultyDtos = new FacultyDto[length];
@@ -65,13 +82,13 @@ public class FacultyService : IFacultyService
             var actualAthletes = athletes.Where(a => a.FacultyId == faculties[i1].Id);
             var actualLeaderBoardLine = leaderboardLines.FirstOrDefault(l => l.FacultyId == faculties[i1].Id);
             facultyDtos[i] = new FacultyDto
-            {
+            {   
                 Id = faculties[i].Id,
                 Name = faculties[i].Name,
                 Mascot = faculties[i].Mascot,
                 Acronym = faculties[i].Acronym,
                 Athletes = actualAthletes.Select(
-                    a => new AthleteDto { Id = a.athlete.Id, Name = a.athlete.Name }),
+                    a => new AthleteDto { Id = a.Athlete.Id, Name = a.Athlete.Name }),
                 GoldMedals = actualLeaderBoardLine?.GoldMedals,
                 SilverMedals = actualLeaderBoardLine?.SilverMedals,
                 BronzeMedals = actualLeaderBoardLine?.BronzeMedals,

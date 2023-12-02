@@ -1,7 +1,8 @@
-using DataAccess;
-using DataAccess.Repository;
-using InitialData;
+
 using Microsoft.EntityFrameworkCore;
+using DataAccess;
+using InitialData;
+using DataAccess.Repository;
 using Services.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +24,14 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{// Takes only one of the controllers in the same route in case of conflict.
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+});
+
+
+
 
 var app = builder.Build();
 
@@ -34,9 +42,10 @@ using (var scope = app.Services.CreateScope())
 
     // Applies any pending migrations for the context to the database
     dbContext.Database.Migrate();
-
+    
     var dbInitializer = new DatabaseInitializer(dbContext);
     dbInitializer.EnsureInitialData();
+
 }
 
 // Configure the HTTP request pipeline.
