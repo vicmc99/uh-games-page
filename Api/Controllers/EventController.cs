@@ -1,4 +1,4 @@
-using Data.DTO;
+using Data.DTO.Out;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
 

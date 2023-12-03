@@ -1,6 +1,9 @@
 using Data.DTO;
+using Data.DTO.In;
+using Data.DTO.Out;
 using Data.Model;
 using DataAccess.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.Domain;
 
@@ -40,67 +43,59 @@ public class FacultyService : IFacultyService
         };
     }
 
-    public FacultyDto[] GetAllFaculties(int year)
+    public IEnumerable<FacultyDto> GetAllFaculties(int year)
     {
-        
-        var faculties = _repository.Set<Faculty>().ToArray();
-        var res = new List<FacultyDto>();
-        foreach (var v in faculties)
-        {
-            res.Add(new FacultyDto(){Id = v.Id, Name = v.Name});
-        }
-
-        return res.ToArray();
-    }
-
-    public FacultyDto[] GetAllFacultiesmm(int year)
-    {
-        var faculties = _repository.Set<Faculty>().ToArray();
-        if (faculties.Length == 0)
+        var faculties = _repository.Set<Faculty>();
+        if (!faculties.Any())
             return Array.Empty<FacultyDto>();
+
         var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
-        if (leaderboard is null)
-        { return Array.Empty<FacultyDto>(); 
-           
-        }
+
+        if (leaderboard is null) return Array.Empty<FacultyDto>();
+
         var leaderboardLines = leaderboard.LeaderboardLines;
-        var athletes =
-            (from representative in _repository.Set<Representative>()
-                join athlete in _repository.Set<Athlete>() on representative.AthleteId equals athlete.Id
-                where representative.Year == year
-                select new { Athlete = athlete, FacultyId = representative.FacultyId }).ToList();
+
+        var athletes = _repository.Set<Representative>()
+            .Where(r => r.Year == year)
+            .Include(r => r.Athlete)
+            .Select(r => new
+            {
+                r.Athlete, r.FacultyId
+            });
 
 
-
-        var length = faculties.Length;
-        var facultyDtos = new FacultyDto[length];
-
-
-        for (var i = 0; i < length; i++)
-        {
-            var i1 = i;
-            var actualAthletes = athletes.Where(a => a.FacultyId == faculties[i1].Id);
-            var actualLeaderBoardLine = leaderboardLines.FirstOrDefault(l => l.FacultyId == faculties[i1].Id);
-            facultyDtos[i] = new FacultyDto
-            {   
-                Id = faculties[i].Id,
-                Name = faculties[i].Name,
-                Mascot = faculties[i].Mascot,
-                Acronym = faculties[i].Acronym,
+        var facultyDtos = from f in faculties
+            let actualAthletes = athletes.Where(a => a.FacultyId == f.Id)
+            let leaderboardLine = leaderboardLines.FirstOrDefault(l => l.FacultyId == f.Id)
+            select new FacultyDto
+            {
+                Id = f.Id,
+                Name = f.Name,
+                Mascot = f.Mascot,
+                Acronym = f.Acronym,
                 Athletes = actualAthletes.Select(
                     a => new AthleteDto { Id = a.Athlete.Id, Name = a.Athlete.Name }),
-                GoldMedals = actualLeaderBoardLine?.GoldMedals,
-                SilverMedals = actualLeaderBoardLine?.SilverMedals,
-                BronzeMedals = actualLeaderBoardLine?.BronzeMedals,
-                Ranking = actualLeaderBoardLine?.Ranking
+                GoldMedals = leaderboardLine?.GoldMedals,
+                SilverMedals = leaderboardLine?.SilverMedals,
+                BronzeMedals = leaderboardLine?.BronzeMedals,
+                Ranking = leaderboardLine?.Ranking,
+                Logo = f.Logo
             };
-        }
 
         return facultyDtos;
     }
 
-    public IEnumerable<FacultyDto> GetParticipantFaculties(CancellationToken ct)
+    public async void CreateFaculty(CreateFacultyDto createFacultyDto)
     {
-        throw new NotImplementedException();
+        var newFaculty = new Faculty
+        {
+            Acronym = createFacultyDto.Acronym,
+            Name = createFacultyDto.Name,
+            Mascot = createFacultyDto.Mascot,
+            Logo = createFacultyDto.Logo
+        };
+
+        await _repository.Set<Faculty>().Create(newFaculty);
+        await _repository.Save(default);
     }
 }

@@ -1,4 +1,4 @@
-namespace Data.DTO;
+namespace Data.DTO.Out;
 
 public class PlayerDto
 {

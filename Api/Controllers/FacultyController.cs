@@ -1,4 +1,5 @@
-using Data.DTO;
+using Data.DTO.In;
+using Data.DTO.Out;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
 
@@ -26,5 +27,11 @@ public class FacultyController : ControllerBase
         var facultyDtos = new FacultyDto[1];
         facultyDtos[0] = _facultyService.Get(id, year);
         return facultyDtos;
+    }
+
+    [HttpPost]
+    public void Create([FromBody] CreateFacultyDto createFacultyDto)
+    {
+        _facultyService.CreateFaculty(createFacultyDto);
     }
 }

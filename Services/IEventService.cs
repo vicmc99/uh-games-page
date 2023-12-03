@@ -1,4 +1,4 @@
-using Data.DTO;
+using Data.DTO.Out;
 
 namespace Services.Domain;
 
