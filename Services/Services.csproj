@@ -14,6 +14,8 @@
     <Folder Include="Mapping\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AutoBogus" Version="2.13.1" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.12" />
   </ItemGroup>
   <PropertyGroup>

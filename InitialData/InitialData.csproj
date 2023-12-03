@@ -12,6 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoBogus" Version="2.13.1" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
   </ItemGroup>
 </Project>

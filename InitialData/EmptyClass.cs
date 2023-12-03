@@ -1,11 +1,14 @@
-﻿using Data.Model;
+﻿using System.Text.Json;
+using Data.Model;
+using Bogus;
 
 namespace InitialData;
 
 public class InitialDomainData
 {
-
     private static DateTime _dateTime = new DateTime(2023, 1, 1);
+
+    #region Initial
 
     public static List<Faculty> GetFaculties()
     {
@@ -43,7 +46,9 @@ public class InitialDomainData
             new Faculty { Id = 18, Name = "Facultad de Turismo", Acronym = "FTur", Mascot = "Aviones" }
         };
     }
-
+    
+    private static Faculty _faculty = GetFaculties()[0];
+    
     public static List<LeaderboardLine> GetLeaderboardLines()
     {
         return new List<LeaderboardLine>()
@@ -54,10 +59,8 @@ public class InitialDomainData
             }
         };
     }
-
-//New Implementation
-    private static Faculty _faculty = GetFaculties()[0];
-  
+    
+    #region Score
 
     private static Score _score = new Score()
     {
@@ -76,7 +79,12 @@ public class InitialDomainData
         };
     }
 
-    
+
+    #endregion
+
+    #region Athlete
+
+      
     private static Athlete _athlete = new Athlete()
     {
         Id = 1, Nick = "Paco ",
@@ -94,6 +102,18 @@ public class InitialDomainData
         };
     }
 
+
+    #endregion
+    
+    #endregion
+    
+
+  
+
+//New Implementation
+
+   
+  
     private static Category _category = new Category()
         { Id = 1,
             Name = "Acuaticos",
@@ -677,128 +697,49 @@ public class InitialDomainData
     #endregion
 #region Administrators Domain
 
-    private static User _user = new User()
+
+    private static Faker<User> GetFakerUser()
     {
-        Id = 1,
-       // Email = "Miguelito.uh.cu",
-       // Password = "Encriptada",
-        FirstName = "Miguel",
-        LastName = "Gonzalez",
-      //  NickName = "MiguelGonzalez",
-      //  SignUpDate = _dateTime,
         
+        return new Faker<User>()
+            .RuleFor(u => u.FirstName, f => f.Name.FirstName())
+            .RuleFor(y => y.LastName, f => f.Name.LastName())
+            .RuleFor(u => u.BornDate, f => f.Date.Past(2, new DateTime(2020, 2, 1)));
 
-
-    };
-
-    public static List<User> GetUsers()
-    {
-        return new List<User>()
-        {
-            _user
-        };
     }
 
+    public static List<User> GetUsers(int count =1)=>  GetFakerUser().Generate(count);
+   
 
-    private static SuperUser _superUser = new SuperUser()
-    {
-        Id = 2,
-        Email = "Miguelito.uh.cu",
-        Password = "Encriptada",
-     //   FirstName = "Miguel",
-      //  LastName = "Gonzalez",
-        NickName = "MiguelGonzalez",
-        SignUpDate = _dateTime,
-        User = _user,
-         UserId = _user.Id,
-         
-    };
 
-    public static List<SuperUser> GetSuperUsers()
-    {
-        return new List<SuperUser>()
-        {
-            _superUser
-        };
-    }
+    private static Faker<SuperUser>GetFakerSuperUser()=> Helpers<SuperUser>.GetFakerUser<SuperUser>();
 
-    private static Journalist _journalist = new Journalist()
-    {
-        Id = 3,
-        Email = "Miguelito.uh.cu",
-        Password = "Encriptada",
-       // FirstName = "Miguel",
-       // LastName = "Gonzalez",
-        NickName = "MiguelGonzalez",
-        SignUpDate = _dateTime,
-        User = _user,
-        UserId = _user.Id,
-        NewsPosts = new List<NewsPost>(),//Add in GetNewsPosts
+    public static List<SuperUser> GetSuperUsers(int count = 1) => GetFakerSuperUser().Generate(count);
+   
+
+    private static Faker<Journalist>GetFakerJournalist=> Helpers<Journalist>.GetFakerUser<Journalist>();
+    public static List<Journalist> GetJournalists(int count = 1) => GetFakerJournalist.Generate(count);
+   
         
 
+    private static Faker<Moderator> GetFakerModerator() => Helpers<Moderator>.GetFakerUser<Moderator>();
 
-    };
 
-    public static List<Journalist> GetJournalists()
-    {  
-        return new List<Journalist>()
-        {
-            _journalist
-        };
-    }
 
-    private static Moderator _moderator = new Moderator()
-    {
-        Id = 444,
-        Email = "Miguelidvrsvto.uh.cu",
-        Password = "Encriptada",
-     //   FirstName = "Miguedvfdl",
-     //   LastName = "Gonzalez",
-        NickName = "MiguelGonzalez",
-        SignUpDate = _dateTime,
-        User = _user,
-        UserId = _user.Id,
-        AceptedComments = new List<PostComment>(),//Add in GetPostComments
-        
-        
 
-    };
+    public static List<Moderator> GetModerators(int count = 1) => GetFakerModerator().Generate(count);
 
-public static List<Moderator> GetModerators()
+
+private static Faker<BanUser> GetFakerBanUser()
 {
-    GetFragments();
-    
-      // _moderator.AceptedComments = GetPostComments();
-       return new List<Moderator>()
-       {
-           _moderator
-       };
-   }
+    return new Faker<BanUser>()
+        .RuleFor(b=>b.NoAccessDate,f=>f.Date.Between(new DateTime(2023, 1, 1)
+                                                , new DateTime(2023, 12, 31)));)
+}
+
+public static List<BanUser> GetBanUsers(int count = 1) => GetFakerBanUser().Generate(count);
 
 
-private static BanUser _banUser = new BanUser()
-{
-    //Id = 10,
-    //Email = "Miguelito.uh.cu",
-  //  Password = "Encriptada",
-  //  FirstName = "Miguel",
-  //  LastName = "Gonzalez",
-   // NickName = "MiguelGonzalez",
-  //  SignUpDate = _dateTime,
-    User = _user,
-    UserId = _user.Id,
-    NoAccessDate = _dateTime,
-    
-
-};
-
-public static List<BanUser>GetBanUsers()
-   {
-       return new List<BanUser>()
-       {
-           _banUser
-       };
-   }
 
 private static void UpdateAdministrators()
 {
@@ -809,68 +750,46 @@ private static void UpdateAdministrators()
 
   #region News and Post Domain
     // DEVS:Primero crear el fragmento despues actulizar su noticia correspondiente 
-    private static Fragment _fragment = new Fragment()
+    private static Faker<Fragment> GetFakerFragment()
     {
-        Id = 1,
-        fragment = "Esto es un fragmento",
-        NewsPost = new NewsPost() ,//_newsPost,
-        NewsPostId =-1, //_newsPost.Id,
-        
-    };
-    public static List<Fragment> GetFragments()
-    {
-        return new List<Fragment>()
-        {
-            _fragment
-        };
+       
+        return new Faker<Fragment>()
+            .RuleFor(r => r.fragment, f => f.Lorem.Paragraph(5));
     }
 
-    private static NewsPost _newsPost = new NewsPost()
+    public static List<Fragment> GetFragments(int count = 1) => GetFakerFragment().Generate(count);
+   
+
+    private static Faker<NewsPost> GetFakerNewsPost()
     {
-        Id = 1,
-        fragments = new List<Fragment>(),// GetFragments(),
-        Coments = new List<PostComment>(), // GetPostComments() Add in GetPostComments,
-        PostDate = _dateTime,
-        //Journalist = _journalist,
-        JournalistId = _journalist.Id,
-        PostTitle = "Titulo de prueba",
-       // RelatedEvent = _event,
-        //RelatedEventId = _event.Id,
-
-    };
-
-    public static List<NewsPost> GetNewsPosts()
-    {
-        _newsPost.Coments = GetPostComments();
-        return new List<NewsPost>()
-        {
-            _newsPost
-        };
-    }
-    
-    private static PostComment _postComment = new PostComment()
-    {
-        Id = 1,
-       // NewsPostConfig = _newsPost,
-        NewsPostId = _newsPost.Id,
-        Contents = "Esto es un comentario de prueba",
-        CommentDate = _dateTime,
-       // ReviewBy = _moderator,
-        ReviewById = _moderator.Id,
-        ReviewDate = _dateTime,
-
-
-
-    };
-
-    public static List<PostComment> GetPostComments()
-    {
-        return new List<PostComment>()
-        {
-            _postComment
-        };
+       
+       return new Faker<NewsPost>()
+           .RuleFor(n => n.PostTitle, f => f.Lorem.Lines(1))
+           .RuleFor(p => p.PostDate,
+                    f => f.Date.Between(new DateTime(2023, 1, 1)
+                                        , new DateTime(2023, 12, 31)));
     }
 
+    public static List<NewsPost> GetNewsPosts(int count = 1) => GetFakerNewsPost().Generate(count);
+   
+
+    private static Faker<PostComment> GetFakerPostComment()
+    {
+      
+        return new Faker<PostComment>()
+            .RuleFor(p=>p.CommentDate,
+                     f=>f.Date.Between(new DateTime(2023,1,1)
+                                       ,new DateTime(2023,12,31)))
+            .RuleFor(p=>p.ReviewDate,
+                     f=>f.Date.Between(new DateTime(2023,1,1)
+                                       ,new DateTime(2023,12,31)))
+            .RuleFor(p=>p.Contents,f=>f.Lorem.Paragraph(5))
+            
+      
+    }
+
+    public static List<PostComment> GetPostComments(int count = 1) => GetFakerPostComment().Generate(count);
+           
 
 
 
