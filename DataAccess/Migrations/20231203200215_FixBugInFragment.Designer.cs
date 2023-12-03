@@ -3,6 +3,7 @@ using System;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231203200215_FixBugInFragment")]
+    partial class FixBugInFragment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.13");
@@ -130,7 +133,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -219,7 +222,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -244,13 +247,15 @@ namespace DataAccess.Migrations
                     b.HasIndex("NickName", "Password")
                         .IsUnique();
 
-                    b.ToTable("SuperUsers");
+                    b.ToTable("SuperUser");
                 });
 
             modelBuilder.Entity("Data.Model.ToReviewComments", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("NewsPostId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CommentDate")
@@ -260,10 +265,7 @@ namespace DataAccess.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("NewsPostId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id", "NewsPostId");
 
                     b.HasIndex("NewsPostId");
 
@@ -314,7 +316,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -554,7 +556,8 @@ namespace DataAccess.Migrations
                     b.HasOne("Data.Model.User", "User")
                         .WithMany("BanUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Journalist");
 
@@ -590,8 +593,7 @@ namespace DataAccess.Migrations
                 {
                     b.HasOne("Journalist", "Journalist")
                         .WithMany("NewsPosts")
-                        .HasForeignKey("JournalistId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("JournalistId");
 
                     b.Navigation("Journalist");
                 });
@@ -599,13 +601,16 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Data.Model.PostComment", b =>
                 {
                     b.HasOne("Data.Model.NewsPost", "NewsPost")
-                        .WithMany("Coments")
-                        .HasForeignKey("NewsPostId");
+                        .WithMany()
+                        .HasForeignKey("NewsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Data.Model.Moderator", "ReviewBy")
                         .WithMany("AceptedComments")
                         .HasForeignKey("ReviewById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("NewsPost");
 
@@ -625,8 +630,10 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Data.Model.ToReviewComments", b =>
                 {
                     b.HasOne("Data.Model.NewsPost", "NewsPost")
-                        .WithMany("CommentsToReview")
-                        .HasForeignKey("NewsPostId");
+                        .WithMany()
+                        .HasForeignKey("NewsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("NewsPost");
                 });
@@ -701,10 +708,6 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("Data.Model.NewsPost", b =>
                 {
-                    b.Navigation("Coments");
-
-                    b.Navigation("CommentsToReview");
-
                     b.Navigation("fragments");
                 });
 

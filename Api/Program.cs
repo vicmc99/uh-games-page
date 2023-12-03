@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using DataAccess;
 using InitialData;
 using DataAccess.Repository;
-using Services.Domain;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +17,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 //builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 builder.Services.AddTransient<IDataRepository, DataRepository>();
-builder.Services.AddTransient<IFacultyService, FacultyService>();
+//TODO:Quitar rapido es solo para configurar la ORM builder.Services.AddTransient<IFacultyService, FacultyService>();
 
 // Add controller services to build the api.
 builder.Services.AddControllers();

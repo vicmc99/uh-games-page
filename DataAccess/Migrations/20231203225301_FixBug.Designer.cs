@@ -3,6 +3,7 @@ using System;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231203225301_FixBug")]
+    partial class FixBug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.13");
@@ -130,7 +133,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -150,9 +153,6 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.HasIndex("NickName", "Password")
                         .IsUnique();
 
                     b.ToTable("Moderators");
@@ -219,7 +219,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -239,9 +239,6 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.HasIndex("NickName", "Password")
                         .IsUnique();
 
                     b.ToTable("SuperUsers");
@@ -314,7 +311,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -334,9 +331,6 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.HasIndex("NickName", "Password")
                         .IsUnique();
 
                     b.ToTable("Journalists");

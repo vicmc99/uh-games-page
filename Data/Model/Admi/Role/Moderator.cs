@@ -8,4 +8,5 @@ using System.ComponentModel.DataAnnotations;
 public class Moderator:Role
 {
     public IEnumerable<PostComment> AceptedComments { get; set; }
+    
 }

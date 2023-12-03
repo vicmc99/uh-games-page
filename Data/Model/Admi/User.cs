@@ -14,8 +14,9 @@ public  class User
     
     public string LastName { get; set; }
 
+    public string Email { get; set; }
     public DateTime BornDate { get; set; }
-
+    
     public ICollection<BanUser> BanUsers { get; set; }
     
     #region Roles

@@ -77,23 +77,24 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Journalist> Journalists { get; set; }
     public DbSet<BanUser> BanUsers { get; set; }
 
+   #region News Post Domain
+
+   public DbSet<Fragment>Fragments { get; set; }
+   public DbSet<NewsPost>NewsPosts { get; set; }
+   public DbSet<ToReviewComments>ToReviewComments { get; set; }
+   public DbSet<PostComment>PostComments { get; set; }
+   #endregion
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-     /*  
-       modelBuilder.Entity<User>().HasOne(e => e.Moderator)
-           .WithOne(e => e.User)
-           .HasForeignKey<Moderator>();
-       
-       modelBuilder.Entity<User>().HasOne(e => e.SuperUser)
-           .WithOne(e => e.User)
-           .HasForeignKey<SuperUser>();
         
-       modelBuilder.Entity<User>().HasOne(e => e.Journalist)
-           .WithOne(e => e.User)
-           .HasForeignKey<Journalist>();*/
+      
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        
+           
+     
+    
 
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

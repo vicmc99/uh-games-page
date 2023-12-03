@@ -3,6 +3,7 @@ using System;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231203204420_AddCommentrelationConfig")]
+    partial class AddCommentrelationConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.13");
@@ -130,7 +133,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -219,7 +222,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -244,7 +247,7 @@ namespace DataAccess.Migrations
                     b.HasIndex("NickName", "Password")
                         .IsUnique();
 
-                    b.ToTable("SuperUsers");
+                    b.ToTable("SuperUser");
                 });
 
             modelBuilder.Entity("Data.Model.ToReviewComments", b =>
@@ -314,7 +317,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("BanUserId")
+                    b.Property<int>("BanUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NickName")
@@ -554,7 +557,8 @@ namespace DataAccess.Migrations
                     b.HasOne("Data.Model.User", "User")
                         .WithMany("BanUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Journalist");
 

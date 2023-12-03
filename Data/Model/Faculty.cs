@@ -16,7 +16,7 @@ public class Faculty {
 
     public string Logo {get; set;}
 
-    public ICollection<Major> Majors {get; set;}
+ //   public ICollection<Major> Majors {get; set;}
 
-    public ICollection<Representative> Representatives {get; set;}
+  //  public ICollection<Representative> Representatives {get; set;}
 }
