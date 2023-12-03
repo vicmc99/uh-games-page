@@ -19,7 +19,10 @@ public class FacultyService : IFacultyService
     public FacultyDto Get(int id, int year)
     {
         var faculty = _repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
-        var leaderboardline =
+
+        if (faculty is null) return null;
+
+        var leaderboardLine =
             _repository.Set<LeaderboardLine>().FirstOrDefault(l => l.FacultyId == id && l.Year == year);
         var athletes =
             (from representative in _repository.Set<Representative>()
@@ -36,10 +39,10 @@ public class FacultyService : IFacultyService
             Acronym = faculty.Acronym,
             Athletes = athletes.Select(
                 a => new AthleteDto { Id = a.Id, Name = a.Name }),
-            GoldMedals = leaderboardline?.GoldMedals,
-            SilverMedals = leaderboardline?.SilverMedals,
-            BronzeMedals = leaderboardline?.BronzeMedals,
-            Ranking = leaderboardline?.Ranking
+            GoldMedals = leaderboardLine?.GoldMedals ?? 0,
+            SilverMedals = leaderboardLine?.SilverMedals ?? 0,
+            BronzeMedals = leaderboardLine?.BronzeMedals ?? 0,
+            Ranking = leaderboardLine?.Ranking
         };
     }
 
@@ -75,9 +78,9 @@ public class FacultyService : IFacultyService
                 Acronym = f.Acronym,
                 Athletes = actualAthletes.Select(
                     a => new AthleteDto { Id = a.Athlete.Id, Name = a.Athlete.Name }),
-                GoldMedals = leaderboardLine?.GoldMedals,
-                SilverMedals = leaderboardLine?.SilverMedals,
-                BronzeMedals = leaderboardLine?.BronzeMedals,
+                GoldMedals = leaderboardLine?.GoldMedals ?? 0,
+                SilverMedals = leaderboardLine?.SilverMedals ?? 0,
+                BronzeMedals = leaderboardLine?.BronzeMedals ?? 0,
                 Ranking = leaderboardLine?.Ranking,
                 Logo = f.Logo
             };

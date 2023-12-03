@@ -2,5 +2,5 @@ namespace Data.Model;
 
 public class NormalTeam : Team
 {
-    public ICollection<TeamMember> Members { get; set; }
+    public IEnumerable<TeamMember> Members { get; set; }
 }
