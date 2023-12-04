@@ -10,9 +10,10 @@
     <None Remove="Mapping\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Agregations\" />
     <Folder Include="Domain\" />
     <Folder Include="Mapping\" />
-    <Folder Include="Relations\" />
+    <Folder Include="Relations\ComposedTeamsService\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.12" />

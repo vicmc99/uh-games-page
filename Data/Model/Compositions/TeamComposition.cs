@@ -8,6 +8,6 @@ public class TeamComposition
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-
+    //TODO:Add Name???
     public IEnumerable<TeamMember> Participants { get; set; }
 }

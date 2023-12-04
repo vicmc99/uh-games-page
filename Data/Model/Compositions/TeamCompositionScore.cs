@@ -7,4 +7,6 @@ public class TeamCompositionScore
 
     public int ScoreId { get; set; }
     public Score Score { get; set; }
+    
 }
+

@@ -2,7 +2,7 @@
 using Data.Model;
 using DataAccess.Repository;
 
-namespace Services.Relations.TeamMemberService;
+namespace Services.Agregations.TeamMemberService;
 
 public class TeamMemberService:ITeamMemberService
 {

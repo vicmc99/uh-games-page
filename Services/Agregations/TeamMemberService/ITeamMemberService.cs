@@ -1,6 +1,6 @@
 ﻿using Data.DTO.In.Teams;
 
-namespace Services.Relations.TeamMemberService;
+namespace Services.Agregations.TeamMemberService;
 
 public interface ITeamMemberService
 {
