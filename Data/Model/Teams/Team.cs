@@ -3,15 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Model;
 
-public class TeamMember
+public class Team
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-
-    public int TeamId { get; set; }
-    public Team Team { get; set; }
-    public int AthleteId { get; set; }
-    public Athlete Athlete { get; set; }
-    public string Role { get; set; }
+    
+    public string Name { get; set; }
+    public int FacultyId { get; set; }
+    public Faculty Faculty { get; set; }
 }
