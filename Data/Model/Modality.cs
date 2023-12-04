@@ -16,12 +16,4 @@ public class Modality
     public int CategoryId { get; set; }
     public Category Category { get; set; }
     public string Sex { get; set; }
-
-    //public Sex Sex { get; set; }
-}
-
-public enum Sex
-{
-    Male,
-    Female
 }

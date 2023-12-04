@@ -1,6 +1,6 @@
 namespace Data.Model;
 
-public class EventTeamParticipant
+public class TeamEventParticipant
 {
     public int TeamId { get; set; }
 

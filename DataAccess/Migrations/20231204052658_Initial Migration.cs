@@ -124,7 +124,22 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Score",
+                name: "Locations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Address = table.Column<string>(type: "TEXT", nullable: true),
+                    GoogleMapsURL = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Scores",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -133,11 +148,11 @@ namespace DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Score", x => x.Id);
+                    table.PrimaryKey("PK_Scores", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tournament",
+                name: "Tournaments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -147,7 +162,7 @@ namespace DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tournament", x => x.Id);
+                    table.PrimaryKey("PK_Tournaments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -300,6 +315,26 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Teams",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FacultyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Discriminator = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Teams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Teams_Faculties_FacultyId",
+                        column: x => x.FacultyId,
+                        principalTable: "Faculties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LeaderboardLines",
                 columns: table => new
                 {
@@ -350,30 +385,73 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Locations",
+                name: "Events",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Address = table.Column<string>(type: "TEXT", nullable: true),
-                    GoogleMapsURL = table.Column<string>(type: "TEXT", nullable: true),
-                    LeagueId = table.Column<int>(type: "INTEGER", nullable: true),
-                    TournamentId = table.Column<int>(type: "INTEGER", nullable: true)
+                    DateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    LocationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Type = table.Column<string>(type: "TEXT", nullable: true),
+                    Discriminator = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
+                    table.PrimaryKey("PK_Events", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Locations_Leagues_LeagueId",
+                        name: "FK_Events_Locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LeagueLocation",
+                columns: table => new
+                {
+                    LeagueId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationsId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeagueLocation", x => new { x.LeagueId, x.LocationsId });
+                    table.ForeignKey(
+                        name: "FK_LeagueLocation_Leagues_LeagueId",
                         column: x => x.LeagueId,
                         principalTable: "Leagues",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Locations_Tournament_TournamentId",
+                        name: "FK_LeagueLocation_Locations_LocationsId",
+                        column: x => x.LocationsId,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LocationTournament",
+                columns: table => new
+                {
+                    LocationsId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TournamentId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LocationTournament", x => new { x.LocationsId, x.TournamentId });
+                    table.ForeignKey(
+                        name: "FK_LocationTournament_Locations_LocationsId",
+                        column: x => x.LocationsId,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LocationTournament_Tournaments_TournamentId",
                         column: x => x.TournamentId,
-                        principalTable: "Tournament",
-                        principalColumn: "Id");
+                        principalTable: "Tournaments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -431,160 +509,52 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Events",
+                name: "TeamCompositions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    DateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    LocationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Type = table.Column<string>(type: "TEXT", nullable: true),
-                    Discriminator = table.Column<string>(type: "TEXT", nullable: false)
+                    ComposedTeamId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.PrimaryKey("PK_TeamCompositions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Events_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_TeamCompositions_Teams_ComposedTeamId",
+                        column: x => x.ComposedTeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Modalities",
+                name: "TeamMembers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SportId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DisciplineId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Sex = table.Column<string>(type: "TEXT", nullable: true)
+                    TeamId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AthleteId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Role = table.Column<string>(type: "TEXT", nullable: true),
+                    NormalTeamId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Modalities", x => x.Id);
+                    table.PrimaryKey("PK_TeamMembers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Modalities_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
+                        name: "FK_TeamMembers_Athletes_AthleteId",
+                        column: x => x.AthleteId,
+                        principalTable: "Athletes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Modalities_Disciplines_DisciplineId",
-                        column: x => x.DisciplineId,
-                        principalTable: "Disciplines",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Modalities_Sports_SportId",
-                        column: x => x.SportId,
-                        principalTable: "Sports",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GroupEvents",
-                columns: table => new
-                {
-                    GroupId = table.Column<int>(type: "INTEGER", nullable: false),
-                    EventId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GroupEvents", x => new { x.EventId, x.GroupId });
-                    table.ForeignKey(
-                        name: "FK_GroupEvents_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GroupEvents_Groups_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Groups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Teams",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FacultyId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Discriminator = table.Column<string>(type: "TEXT", nullable: false),
-                    ComposedTeamsEventId = table.Column<int>(type: "INTEGER", nullable: true),
-                    ParticipantScoredEventId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Teams", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Teams_Events_ComposedTeamsEventId",
-                        column: x => x.ComposedTeamsEventId,
-                        principalTable: "Events",
+                        name: "FK_TeamMembers_Teams_NormalTeamId",
+                        column: x => x.NormalTeamId,
+                        principalTable: "Teams",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Teams_Events_ParticipantScoredEventId",
-                        column: x => x.ParticipantScoredEventId,
-                        principalTable: "Events",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Teams_Faculties_FacultyId",
-                        column: x => x.FacultyId,
-                        principalTable: "Faculties",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TournamentEvents",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    TournamentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Round = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TournamentEvents", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TournamentEvents_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TournamentEvents_Tournament_TournamentId",
-                        column: x => x.TournamentId,
-                        principalTable: "Tournament",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Competitions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ModalityId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Year = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Competitions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Competitions_Modalities_ModalityId",
-                        column: x => x.ModalityId,
-                        principalTable: "Modalities",
+                        name: "FK_TeamMembers_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -625,21 +595,117 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TeamCompositions",
+                name: "ComposedTeamComposedTeamsEvent",
+                columns: table => new
+                {
+                    ComposedTeamsEventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ComposedTeamsId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComposedTeamComposedTeamsEvent", x => new { x.ComposedTeamsEventId, x.ComposedTeamsId });
+                    table.ForeignKey(
+                        name: "FK_ComposedTeamComposedTeamsEvent_Events_ComposedTeamsEventId",
+                        column: x => x.ComposedTeamsEventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComposedTeamComposedTeamsEvent_Teams_ComposedTeamsId",
+                        column: x => x.ComposedTeamsId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GroupEvents",
+                columns: table => new
+                {
+                    GroupId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupEvents", x => new { x.EventId, x.GroupId });
+                    table.ForeignKey(
+                        name: "FK_GroupEvents_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GroupEvents_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Matches",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ComposedTeamId = table.Column<int>(type: "INTEGER", nullable: true)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TeamCompositions", x => x.Id);
+                    table.PrimaryKey("PK_Matches", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TeamCompositions_Teams_ComposedTeamId",
-                        column: x => x.ComposedTeamId,
-                        principalTable: "Teams",
+                        name: "FK_Matches_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MatchEventNormalTeam",
+                columns: table => new
+                {
+                    MatchEventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MatchedTeamsId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MatchEventNormalTeam", x => new { x.MatchEventId, x.MatchedTeamsId });
+                    table.ForeignKey(
+                        name: "FK_MatchEventNormalTeam_Events_MatchEventId",
+                        column: x => x.MatchEventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MatchEventNormalTeam_Teams_MatchedTeamsId",
+                        column: x => x.MatchedTeamsId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NormalTeamParticipantScoredEvent",
+                columns: table => new
+                {
+                    ParticipantScoredEventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ParticipantScoredTeamsId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NormalTeamParticipantScoredEvent", x => new { x.ParticipantScoredEventId, x.ParticipantScoredTeamsId });
+                    table.ForeignKey(
+                        name: "FK_NormalTeamParticipantScoredEvent_Events_ParticipantScoredEventId",
+                        column: x => x.ParticipantScoredEventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NormalTeamParticipantScoredEvent_Teams_ParticipantScoredTeamsId",
+                        column: x => x.ParticipantScoredTeamsId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -660,9 +726,9 @@ namespace DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TeamScores_Score_ScoreId",
+                        name: "FK_TeamScores_Scores_ScoreId",
                         column: x => x.ScoreId,
-                        principalTable: "Score",
+                        principalTable: "Scores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -674,25 +740,86 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TournamentEvents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    TournamentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Round = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TournamentEvents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TournamentEvents_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TournamentEvents_Tournaments_TournamentId",
+                        column: x => x.TournamentId,
+                        principalTable: "Tournaments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Modalities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SportId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DisciplineId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Sex = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Modalities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Modalities_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Modalities_Disciplines_DisciplineId",
+                        column: x => x.DisciplineId,
+                        principalTable: "Disciplines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Modalities_Sports_SportId",
+                        column: x => x.SportId,
+                        principalTable: "Sports",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TeamCompositionScores",
                 columns: table => new
                 {
                     CompositionId = table.Column<int>(type: "INTEGER", nullable: false),
                     ScoreId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ComposedTeamsEventId = table.Column<int>(type: "INTEGER", nullable: true)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TeamCompositionScores", x => new { x.CompositionId, x.ScoreId });
                     table.ForeignKey(
-                        name: "FK_TeamCompositionScores_Events_ComposedTeamsEventId",
-                        column: x => x.ComposedTeamsEventId,
+                        name: "FK_TeamCompositionScores_Events_EventId",
+                        column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_TeamCompositionScores_Score_ScoreId",
+                        name: "FK_TeamCompositionScores_Scores_ScoreId",
                         column: x => x.ScoreId,
-                        principalTable: "Score",
+                        principalTable: "Scores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -704,52 +831,12 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TeamMembers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    TeamId = table.Column<int>(type: "INTEGER", nullable: false),
-                    AthleteId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Role = table.Column<string>(type: "TEXT", nullable: true),
-                    NormalTeamId = table.Column<int>(type: "INTEGER", nullable: true),
-                    TeamCompositionId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TeamMembers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TeamMembers_Athletes_AthleteId",
-                        column: x => x.AthleteId,
-                        principalTable: "Athletes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TeamMembers_TeamCompositions_TeamCompositionId",
-                        column: x => x.TeamCompositionId,
-                        principalTable: "TeamCompositions",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_TeamMembers_Teams_NormalTeamId",
-                        column: x => x.NormalTeamId,
-                        principalTable: "Teams",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_TeamMembers_Teams_TeamId",
-                        column: x => x.TeamId,
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EventParticipants",
                 columns: table => new
                 {
                     TeamId = table.Column<int>(type: "INTEGER", nullable: false),
                     EventId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ParticipantId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ParticipantScoredEventId = table.Column<int>(type: "INTEGER", nullable: true)
+                    ParticipantId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -760,11 +847,6 @@ namespace DataAccess.Migrations
                         principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EventParticipants_Events_ParticipantScoredEventId",
-                        column: x => x.ParticipantScoredEventId,
-                        principalTable: "Events",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_EventParticipants_TeamMembers_ParticipantId",
                         column: x => x.ParticipantId,
@@ -780,7 +862,7 @@ namespace DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EventTeamSubstitute",
+                name: "EventSubstitutes",
                 columns: table => new
                 {
                     TeamId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -789,23 +871,84 @@ namespace DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EventTeamSubstitute", x => new { x.EventId, x.TeamId, x.SubstituteId });
+                    table.PrimaryKey("PK_EventSubstitutes", x => new { x.EventId, x.TeamId, x.SubstituteId });
                     table.ForeignKey(
-                        name: "FK_EventTeamSubstitute_Events_EventId",
+                        name: "FK_EventSubstitutes_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EventTeamSubstitute_TeamMembers_SubstituteId",
+                        name: "FK_EventSubstitutes_TeamMembers_SubstituteId",
                         column: x => x.SubstituteId,
                         principalTable: "TeamMembers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EventTeamSubstitute_Teams_TeamId",
+                        name: "FK_EventSubstitutes_Teams_TeamId",
                         column: x => x.TeamId,
                         principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ParticipantScoredEventSubstitutes",
+                columns: table => new
+                {
+                    TeamId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubstituteId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ParticipantScoredEventId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ParticipantScoredEventSubstitutes", x => new { x.EventId, x.TeamId, x.SubstituteId });
+                    table.ForeignKey(
+                        name: "FK_ParticipantScoredEventSubstitutes_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ParticipantScoredEventSubstitutes_Events_ParticipantScoredEventId",
+                        column: x => x.ParticipantScoredEventId,
+                        principalTable: "Events",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ParticipantScoredEventSubstitutes_TeamMembers_SubstituteId",
+                        column: x => x.SubstituteId,
+                        principalTable: "TeamMembers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ParticipantScoredEventSubstitutes_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TeamCompositionTeamMember",
+                columns: table => new
+                {
+                    ParticipantsId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TeamCompositionId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TeamCompositionTeamMember", x => new { x.ParticipantsId, x.TeamCompositionId });
+                    table.ForeignKey(
+                        name: "FK_TeamCompositionTeamMember_TeamCompositions_TeamCompositionId",
+                        column: x => x.TeamCompositionId,
+                        principalTable: "TeamCompositions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TeamCompositionTeamMember_TeamMembers_ParticipantsId",
+                        column: x => x.ParticipantsId,
+                        principalTable: "TeamMembers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -818,7 +961,7 @@ namespace DataAccess.Migrations
                     TeamId = table.Column<int>(type: "INTEGER", nullable: false),
                     ParticipantId = table.Column<int>(type: "INTEGER", nullable: false),
                     ScoreId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ParticipantScoredEventId = table.Column<int>(type: "INTEGER", nullable: true)
+                    MatchId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -830,14 +973,14 @@ namespace DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TeamParticipantScores_Events_ParticipantScoredEventId",
-                        column: x => x.ParticipantScoredEventId,
-                        principalTable: "Events",
+                        name: "FK_TeamParticipantScores_Matches_MatchId",
+                        column: x => x.MatchId,
+                        principalTable: "Matches",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_TeamParticipantScores_Score_ScoreId",
+                        name: "FK_TeamParticipantScores_Scores_ScoreId",
                         column: x => x.ScoreId,
-                        principalTable: "Score",
+                        principalTable: "Scores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -850,6 +993,26 @@ namespace DataAccess.Migrations
                         name: "FK_TeamParticipantScores_Teams_TeamId",
                         column: x => x.TeamId,
                         principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Competitions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ModalityId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Year = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Competitions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Competitions_Modalities_ModalityId",
+                        column: x => x.ModalityId,
+                        principalTable: "Modalities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -897,6 +1060,11 @@ namespace DataAccess.Migrations
                 column: "ModalityId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ComposedTeamComposedTeamsEvent_ComposedTeamsId",
+                table: "ComposedTeamComposedTeamsEvent",
+                column: "ComposedTeamsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Disciplines_SportId",
                 table: "Disciplines",
                 column: "SportId");
@@ -905,11 +1073,6 @@ namespace DataAccess.Migrations
                 name: "IX_EventParticipants_ParticipantId",
                 table: "EventParticipants",
                 column: "ParticipantId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EventParticipants_ParticipantScoredEventId",
-                table: "EventParticipants",
-                column: "ParticipantScoredEventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventParticipants_TeamId",
@@ -922,13 +1085,13 @@ namespace DataAccess.Migrations
                 column: "LocationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EventTeamSubstitute_SubstituteId",
-                table: "EventTeamSubstitute",
+                name: "IX_EventSubstitutes_SubstituteId",
+                table: "EventSubstitutes",
                 column: "SubstituteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EventTeamSubstitute_TeamId",
-                table: "EventTeamSubstitute",
+                name: "IX_EventSubstitutes_TeamId",
+                table: "EventSubstitutes",
                 column: "TeamId");
 
             migrationBuilder.CreateIndex(
@@ -962,13 +1125,13 @@ namespace DataAccess.Migrations
                 column: "LeaderboardId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Locations_LeagueId",
-                table: "Locations",
-                column: "LeagueId");
+                name: "IX_LeagueLocation_LocationsId",
+                table: "LeagueLocation",
+                column: "LocationsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Locations_TournamentId",
-                table: "Locations",
+                name: "IX_LocationTournament_TournamentId",
+                table: "LocationTournament",
                 column: "TournamentId");
 
             migrationBuilder.CreateIndex(
@@ -981,6 +1144,16 @@ namespace DataAccess.Migrations
                 table: "Majors",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Matches_EventId",
+                table: "Matches",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MatchEventNormalTeam_MatchedTeamsId",
+                table: "MatchEventNormalTeam",
+                column: "MatchedTeamsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Modalities_CategoryId",
@@ -996,6 +1169,26 @@ namespace DataAccess.Migrations
                 name: "IX_Modalities_SportId",
                 table: "Modalities",
                 column: "SportId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NormalTeamParticipantScoredEvent_ParticipantScoredTeamsId",
+                table: "NormalTeamParticipantScoredEvent",
+                column: "ParticipantScoredTeamsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ParticipantScoredEventSubstitutes_ParticipantScoredEventId",
+                table: "ParticipantScoredEventSubstitutes",
+                column: "ParticipantScoredEventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ParticipantScoredEventSubstitutes_SubstituteId",
+                table: "ParticipantScoredEventSubstitutes",
+                column: "SubstituteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ParticipantScoredEventSubstitutes_TeamId",
+                table: "ParticipantScoredEventSubstitutes",
+                column: "TeamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Representatives_AthleteId",
@@ -1029,15 +1222,20 @@ namespace DataAccess.Migrations
                 column: "ComposedTeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeamCompositionScores_ComposedTeamsEventId",
+                name: "IX_TeamCompositionScores_EventId",
                 table: "TeamCompositionScores",
-                column: "ComposedTeamsEventId");
+                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TeamCompositionScores_ScoreId",
                 table: "TeamCompositionScores",
                 column: "ScoreId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeamCompositionTeamMember_TeamCompositionId",
+                table: "TeamCompositionTeamMember",
+                column: "TeamCompositionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TeamMembers_AthleteId",
@@ -1050,11 +1248,6 @@ namespace DataAccess.Migrations
                 column: "NormalTeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeamMembers_TeamCompositionId",
-                table: "TeamMembers",
-                column: "TeamCompositionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TeamMembers_TeamId",
                 table: "TeamMembers",
                 column: "TeamId");
@@ -1065,15 +1258,15 @@ namespace DataAccess.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TeamParticipantScores_MatchId",
+                table: "TeamParticipantScores",
+                column: "MatchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TeamParticipantScores_ParticipantId",
                 table: "TeamParticipantScores",
                 column: "ParticipantId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamParticipantScores_ParticipantScoredEventId",
-                table: "TeamParticipantScores",
-                column: "ParticipantScoredEventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TeamParticipantScores_ScoreId",
@@ -1087,19 +1280,9 @@ namespace DataAccess.Migrations
                 column: "TeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Teams_ComposedTeamsEventId",
-                table: "Teams",
-                column: "ComposedTeamsEventId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Teams_FacultyId",
                 table: "Teams",
                 column: "FacultyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Teams_ParticipantScoredEventId",
-                table: "Teams",
-                column: "ParticipantScoredEventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TeamScores_EventId",
@@ -1145,10 +1328,13 @@ namespace DataAccess.Migrations
                 name: "Competitions");
 
             migrationBuilder.DropTable(
+                name: "ComposedTeamComposedTeamsEvent");
+
+            migrationBuilder.DropTable(
                 name: "EventParticipants");
 
             migrationBuilder.DropTable(
-                name: "EventTeamSubstitute");
+                name: "EventSubstitutes");
 
             migrationBuilder.DropTable(
                 name: "GroupEvents");
@@ -1160,10 +1346,28 @@ namespace DataAccess.Migrations
                 name: "LeaderboardLines");
 
             migrationBuilder.DropTable(
+                name: "LeagueLocation");
+
+            migrationBuilder.DropTable(
+                name: "LocationTournament");
+
+            migrationBuilder.DropTable(
+                name: "MatchEventNormalTeam");
+
+            migrationBuilder.DropTable(
+                name: "NormalTeamParticipantScoredEvent");
+
+            migrationBuilder.DropTable(
+                name: "ParticipantScoredEventSubstitutes");
+
+            migrationBuilder.DropTable(
                 name: "Representatives");
 
             migrationBuilder.DropTable(
                 name: "TeamCompositionScores");
+
+            migrationBuilder.DropTable(
+                name: "TeamCompositionTeamMember");
 
             migrationBuilder.DropTable(
                 name: "TeamParticipantScores");
@@ -1193,43 +1397,46 @@ namespace DataAccess.Migrations
                 name: "Majors");
 
             migrationBuilder.DropTable(
+                name: "TeamCompositions");
+
+            migrationBuilder.DropTable(
+                name: "Matches");
+
+            migrationBuilder.DropTable(
                 name: "TeamMembers");
 
             migrationBuilder.DropTable(
-                name: "Score");
+                name: "Scores");
+
+            migrationBuilder.DropTable(
+                name: "Tournaments");
 
             migrationBuilder.DropTable(
                 name: "Disciplines");
 
             migrationBuilder.DropTable(
-                name: "Athletes");
-
-            migrationBuilder.DropTable(
-                name: "TeamCompositions");
-
-            migrationBuilder.DropTable(
-                name: "Sports");
-
-            migrationBuilder.DropTable(
-                name: "Teams");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Leagues");
 
             migrationBuilder.DropTable(
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Faculties");
+                name: "Athletes");
+
+            migrationBuilder.DropTable(
+                name: "Teams");
+
+            migrationBuilder.DropTable(
+                name: "Sports");
 
             migrationBuilder.DropTable(
                 name: "Locations");
 
             migrationBuilder.DropTable(
-                name: "Leagues");
+                name: "Faculties");
 
             migrationBuilder.DropTable(
-                name: "Tournament");
+                name: "Categories");
         }
     }
 }
