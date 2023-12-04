@@ -14,7 +14,17 @@ public class SportService:ISportService
     
     public async void PostSport(CreateSportDto createSportDto)
     {
-        var sport = CreateSportDto.FromEntity(createSportDto);
+        var sport =
+            new Sport()
+            {
+                Name = createSportDto.Name,
+                Description = createSportDto.Description,
+                Rules = createSportDto.Rules,
+                Pictogram = createSportDto.Pictogram,
+                Category =_repository.Set<Category>()
+                    .FirstOrDefault(e=>e.Id==createSportDto.CategoryId)
+                
+            };
         await _repository.Set<Sport>().Create(sport);
         await _repository.Save(default);
 

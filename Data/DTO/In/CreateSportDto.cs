@@ -11,17 +11,8 @@ public class CreateSportDto
     public string Description { get; set; }
     public string Rules { get; set; }
     public string Pictogram { get; set; }
-
-    public static Sport FromEntity(CreateSportDto sport)
-    {
-        return new Sport()
-        {
-            Id = sport.Id,
-            Name = sport.Name,
-            Description = sport.Description,
-            Rules = sport.Rules,
-            Pictogram = sport.Pictogram
-
-        };
-    }
+    
+    public int CategoryId { get; set; }
+    
+    
 }

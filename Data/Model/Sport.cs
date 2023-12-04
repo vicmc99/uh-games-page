@@ -14,4 +14,8 @@ public class Sport
     public string Description { get; set; }
     public string Rules { get; set; }
     public string Pictogram { get; set; }
+    
+    public int CategoryId { get; set; }
+    
+    public Category Category { get; set; }
 }

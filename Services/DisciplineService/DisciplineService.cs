@@ -10,13 +10,16 @@ public class DisciplineService:IDisciplineService
 
     public DisciplineService(IDataRepository repository)=>_repository = repository;
     
-    public void PostDiscipline(CreateDisciplineDto createDisciplineDto)
+    public async void PostDiscipline(CreateDisciplineDto createDisciplineDto)
     {
-        var discipline=new Discipline()
+        var discipline = new Discipline()
         {
             Name = createDisciplineDto.Name,
-            Sport=_repository.Set<Sport>()
-                .FirstOrDefault(e=>e.Id==createDisciplineDto.SportId)
-        }
+            Sport = _repository.Set<Sport>()
+                .FirstOrDefault(e => e.Id == createDisciplineDto.SportId)
+        };
+        
+        await _repository.Set<Discipline>().Create(discipline);
+        await _repository.Save(default);
     }
 }
