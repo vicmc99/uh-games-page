@@ -10,5 +10,5 @@ public class Leaderboard
     public int Id { get; set; }
 
     public int Year { get; set; }
-    public IQueryable<LeaderboardLine> LeaderboardLines { get; set; }
+    public IEnumerable<LeaderboardLine> LeaderboardLines { get; set; }
 }
