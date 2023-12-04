@@ -1,6 +1,6 @@
 namespace Data.Model;
 
-public class EventTeamParticipant
+public class EventTeamSubstitute
 {
     public int TeamId { get; set; }
 
@@ -10,6 +10,6 @@ public class EventTeamParticipant
 
     public TeamEvent Event { get; set; }
 
-    public int ParticipantId { get; set; }
-    public TeamMember Participant { get; set; }
+    public int SubstituteId { get; set; }
+    public TeamMember Substitute { get; set; }
 }

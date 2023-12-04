@@ -1,15 +1,17 @@
-
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
 namespace Data.Model;
-[Index(nameof(Name), IsUnique = true)]
+
 public class Athlete
 {
-    
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
+
     public string Name { get; set; }
     public string Nick { get; set; }
-    public DateTime DateOfBirth { get; set; }
+    public DateOnly DateOfBirth { get; set; }
     public string Photo { get; set; }
 }

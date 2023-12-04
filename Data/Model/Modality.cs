@@ -1,30 +1,27 @@
-namespace Data.Model;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Data.Model;
+
 public class Modality
 {
-    public int Id {get; set;}
-    [ForeignKey("Sport")]
-    public int SportId {get; set;}
-    [Required]
-    public Sport Sport {get; set;}
-    [ForeignKey("Discipline")]
-    public int DisciplineId {get; set;}
-    [Required]
-    public Discipline Discipline {get; set;}
-    [ForeignKey("Category")]
-    public int CategoryId {get; set;}
-    [Required]
-    public Category Category {get; set;}
-    public string Sex {get; set;}
-    
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+
+    public int SportId { get; set; }
+    public Sport Sport { get; set; }
+    public int DisciplineId { get; set; }
+    public Discipline Discipline { get; set; }
+    public int CategoryId { get; set; }
+    public Category Category { get; set; }
+    public string Sex { get; set; }
+
     //public Sex Sex { get; set; }
 }
 
 public enum Sex
 {
     Male,
-    Female,
- 
+    Female
 }

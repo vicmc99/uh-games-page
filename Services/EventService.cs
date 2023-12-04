@@ -34,7 +34,7 @@ public class EventService : IEventService
             .Include(e => e.TeamParticipants)
             .ThenInclude(p => p.Participant)
             .Include(e => e.TeamSubstitutes)
-            .ThenInclude(p => p.Participant);
+            .ThenInclude(p => p.Substitute);
 
         var composedEvents = events.OfType<ComposedTeamsEvent>()
             .Include(e => e.ComposedTeams)
@@ -52,7 +52,6 @@ public class EventService : IEventService
             .ThenInclude(s => s.Score)
             .Include(e => e.ParticipantScores)
             .ThenInclude(s => s.Participant)
-            .ThenInclude(p => p.Participant)
             .ThenInclude(p => p.Athlete)
             .Include(e => e.TeamSubstitutes)
             .ThenInclude(s => s.Participant)
@@ -73,7 +72,7 @@ public class EventService : IEventService
                 let teamParticipants = e.TeamParticipants.Where(p => p.TeamId == s.TeamId)
                     .Select(p => p.Participant)
                 let teamSubstitutes = e.TeamSubstitutes.Where(p => p.TeamId == s.TeamId)
-                    .Select(p => p.Participant)
+                    .Select(p => p.Substitute)
                 let normalTeamDto = CreateNormalTeamDto(teamMembers, teamParticipants, teamSubstitutes, s.TeamId,
                     s.Team.FacultyId)
                 select new TeamScoreDto
@@ -119,7 +118,7 @@ public class EventService : IEventService
             ParticipantScoredTeams = from t in e.ParticipantScoredTeams
                 let teamMembers = t.Members
                 let teamParticipants = e.ParticipantScores.Where(s => s.TeamId == t.Id)
-                    .Select(s => s.Participant.Participant)
+                    .Select(s => s.Participant)
                 let teamSubstitutes = e.TeamSubstitutes.Where(s => s.TeamId == t.Id)
                     .Select(s => s.Participant)
                 select CreateNormalTeamDto(teamMembers, teamParticipants, teamSubstitutes, t.Id,
@@ -144,7 +143,7 @@ public class EventService : IEventService
                     from m in e.Matches
                     from p in m.ParticipantScores
                     where p.TeamId == t.Id
-                    select p.Participant.Participant
+                    select p.Participant
                 select CreateNormalTeamDto(members, participants, null, t.Id, t.FacultyId),
             Matches = from m in e.Matches
                 select new MatchDto

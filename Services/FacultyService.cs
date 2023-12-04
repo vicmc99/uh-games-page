@@ -19,7 +19,10 @@ public class FacultyService : IFacultyService
     public FacultyDto Get(int id, int year)
     {
         var faculty = _repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
-        var leaderboardline =
+
+        if (faculty is null) return null;
+
+        var leaderboardLine =
             _repository.Set<LeaderboardLine>().FirstOrDefault(l => l.FacultyId == id && l.Year == year);
         var athletes =
             (from representative in _repository.Set<Representative>()
@@ -27,6 +30,11 @@ public class FacultyService : IFacultyService
                 where representative.Year == year
                 where representative.FacultyId == id
                 select athlete).ToList();
+
+        var goldMedals = leaderboardLine?.GoldMedals ?? 0;
+        var silverMedals = leaderboardLine?.SilverMedals ?? 0;
+        var bronzeMedals = leaderboardLine?.BronzeMedals ?? 0;
+        var ranking = leaderboardLine?.Ranking ?? null;
 
         return new FacultyDto
         {
@@ -36,10 +44,10 @@ public class FacultyService : IFacultyService
             Acronym = faculty.Acronym,
             Athletes = athletes.Select(
                 a => new AthleteDto { Id = a.Id, Name = a.Name }),
-            GoldMedals = leaderboardline?.GoldMedals,
-            SilverMedals = leaderboardline?.SilverMedals,
-            BronzeMedals = leaderboardline?.BronzeMedals,
-            Ranking = leaderboardline?.Ranking
+            GoldMedals = goldMedals,
+            SilverMedals = silverMedals,
+            BronzeMedals = bronzeMedals,
+            Ranking = ranking
         };
     }
 
@@ -67,6 +75,10 @@ public class FacultyService : IFacultyService
         var facultyDtos = from f in faculties
             let actualAthletes = athletes.Where(a => a.FacultyId == f.Id)
             let leaderboardLine = leaderboardLines.FirstOrDefault(l => l.FacultyId == f.Id)
+            let goldMedals = leaderboardLine != null ? leaderboardLine.GoldMedals : 0
+            let silverMedals = leaderboardLine != null ? leaderboardLine.SilverMedals : 0
+            let bronzeMedals = leaderboardLine != null ? leaderboardLine.BronzeMedals : 0
+            let ranking = leaderboardLine != null ? leaderboardLine.Ranking : -1
             select new FacultyDto
             {
                 Id = f.Id,
@@ -75,10 +87,10 @@ public class FacultyService : IFacultyService
                 Acronym = f.Acronym,
                 Athletes = actualAthletes.Select(
                     a => new AthleteDto { Id = a.Athlete.Id, Name = a.Athlete.Name }),
-                GoldMedals = leaderboardLine?.GoldMedals,
-                SilverMedals = leaderboardLine?.SilverMedals,
-                BronzeMedals = leaderboardLine?.BronzeMedals,
-                Ranking = leaderboardLine?.Ranking,
+                GoldMedals = goldMedals,
+                SilverMedals = silverMedals,
+                BronzeMedals = bronzeMedals,
+                Ranking = ranking,
                 Logo = f.Logo
             };
 
