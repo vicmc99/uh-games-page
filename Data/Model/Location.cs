@@ -1,11 +1,15 @@
-namespace Data.Model;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Data.Model;
+
 public class Location
 {
-    public int Id {get; set;}
-    public string Name {get; set;}
-    public string Address {get; set;}
-    public string GoogleMapsURL {get; set;}
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+    public string Address { get; set; }
+    public string GoogleMapsURL { get; set; }
 }

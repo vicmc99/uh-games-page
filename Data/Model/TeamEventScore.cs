@@ -1,13 +1,11 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Data.Model;
 
-public class TeamScore
+public class TeamEventScore
 {
+    public TeamEvent Event { get; set; }
+    public int EventId { get; set; }
     public Score Score { get; set; }
     public int ScoreId { get; set; }
     public NormalTeam Team { get; set; }
-    [Key]
     public int TeamId { get; set; }
 }

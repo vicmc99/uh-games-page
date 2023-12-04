@@ -9,7 +9,7 @@ public class Competition
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    [ForeignKey("Model.Modality")] public int ModalityId { get; set; }
+    public int ModalityId { get; set; }
 
     public Modality Modality { get; set; }
     public int Year { get; set; }

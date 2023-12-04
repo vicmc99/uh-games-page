@@ -1,21 +1,19 @@
-namespace Data.Model;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Data.Model;
+
 public class Representative
 {
-    public int Id {get; set;}
-    [ForeignKey("Faculty")]
-    public int FacultyId {get; set;}
-    [Required]
-    public Faculty Faculty {get; set;}
-    [ForeignKey("Athlete")]
-    public int AthleteId {get; set;}
-    [Required]
-    public Athlete Athlete {get; set;}
-    [ForeignKey("Major")]
-    public int MajorId {get; set;}
-    [Required]
-    public Major Major {get; set;}
-    public int Year {get; set;}
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+
+    public int FacultyId { get; set; }
+    public Faculty Faculty { get; set; }
+    public int AthleteId { get; set; }
+    public Athlete Athlete { get; set; }
+    public int MajorId { get; set; }
+    public Major Major { get; set; }
+    public int Year { get; set; }
 }
