@@ -54,7 +54,7 @@ public class EventService : IEventService
             .ThenInclude(s => s.Participant)
             .ThenInclude(p => p.Athlete)
             .Include(e => e.TeamSubstitutes)
-            .ThenInclude(s => s.Participant)
+            .ThenInclude(s => s.Substitute)
             .ThenInclude(p => p.Athlete);
 
         var matchEvents = events.OfType<MatchEvent>();
@@ -120,7 +120,7 @@ public class EventService : IEventService
                 let teamParticipants = e.ParticipantScores.Where(s => s.TeamId == t.Id)
                     .Select(s => s.Participant)
                 let teamSubstitutes = e.TeamSubstitutes.Where(s => s.TeamId == t.Id)
-                    .Select(s => s.Participant)
+                    .Select(s => s.Substitute)
                 select CreateNormalTeamDto(teamMembers, teamParticipants, teamSubstitutes, t.Id,
                     t.FacultyId),
             ParticipantScores = from s in e.ParticipantScores
@@ -137,7 +137,7 @@ public class EventService : IEventService
             Type = "MatchEvent",
             DateTime = e.DateTime,
             Location = LocationDto.FromEntity(e.Location),
-            MatchEventTeams = from t in e.Teams
+            MatchEventTeams = from t in e.MatchedTeams
                 let members = t.Members
                 let participants =
                     from m in e.Matches
