@@ -78,7 +78,9 @@ public class EventService : IEventService
                 select new TeamScoreDto
                 {
                     Team = normalTeamDto, Score = new ScoreDto { Id = s.ScoreId, NumberScore = s.Score.NumberScore }
-                }
+                },
+            SportModality = SportModalityDto.FromEntity(e.SportModality),
+            SportModalityId = e.SportModalityId
         }));
 
         eventDtos.AddRange(composedEvents.Select(e => new EventDto
@@ -106,7 +108,9 @@ public class EventService : IEventService
                 {
                     Score = ScoreDto.FromEntity(s.Score),
                     CompositionId = s.CompositionId
-                }
+                },
+            SportModality = SportModalityDto.FromEntity(e.SportModality),
+            SportModalityId = e.SportModalityId
         }));
 
         eventDtos.AddRange(participantScoredEvents.Select(e => new EventDto
@@ -128,7 +132,9 @@ public class EventService : IEventService
                 {
                     ParticipantId = s.ParticipantId,
                     Score = ScoreDto.FromEntity(s.Score)
-                }
+                },
+            SportModality = SportModalityDto.FromEntity(e.SportModality),
+            SportModalityId = e.SportModalityId
         }));
 
         eventDtos.AddRange(matchEvents.Select(e => new EventDto
@@ -155,7 +161,9 @@ public class EventService : IEventService
                             ParticipantId = p.ParticipantId,
                             Score = ScoreDto.FromEntity(p.Score)
                         }
-                }
+                },
+            SportModality = SportModalityDto.FromEntity(e.SportModality),
+            SportModalityId = e.SportModalityId
         }));
 
         return eventDtos.OrderBy(e => e.DateTime);
@@ -219,7 +227,6 @@ public class EventService : IEventService
                         .Where(t => composedTeams.ComposedTeamsId.Contains(t.Id)),
                     ComposedTeamScores = composedTeams.CompositionId.Select(c => new TeamCompositionScore
                     {
-                        
                         CompositionId = c,
                         Composition = _repository.Set<TeamComposition>().FirstOrDefault(t => t.Id == c),
                         ScoreId = composedScore.Id,
