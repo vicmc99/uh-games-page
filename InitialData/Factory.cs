@@ -16,8 +16,6 @@ public class Factory
     
     private Random   random { get; set; }= new Random();
 
-    //private List<PostComment>_GetpostComments() =>_newsPosts.SelectMany(x => x.Coments).ToList();
-
     private List<PostComment> _GetpostComments()
     {
         var res = new List<PostComment>();
@@ -32,22 +30,7 @@ public class Factory
     
     private List<User>GetUsersForMatch(float proportion = 5)=>FilterUsers<User>(_users, u => random.Next(0, 2) <= 1/proportion);
     
-    /*
-    private List<T> _GetUsersWithType<T>(Func<List<PostComment>,User,T> fun,int maxCount=5,float proportion=1.7f)
-    {
-        
-        var i = 0;
-        var result = new List<T>();
-        foreach (var v in GetUsersForMatch())
-        {
-            
-            if(i>maxCount+1){break;}
-             result.Add(fun(_postComments.FindAll(x=>random.Next(0,5)<proportion),v)); 
-        }
-        if(maxCount>0&&result.Count<1){return _GetUsersWithType(fun,maxCount,proportion);}
-        return result;
-    }
-*/
+  
     public List<Moderator> GetModerators { get; private set; }
 
     public List<Journalist> GetJournalist { get; private set; }
@@ -86,13 +69,7 @@ public class Factory
         }
 res.Add(journalist);
         return res;
-        /* var divided = Helpers<User>.DivideEvenly(users, n);
-         foreach (var v in divided)
-         {
-             res.Add(v.ToList());
-         }
-
-        */
+     
     }
     
    
@@ -102,22 +79,15 @@ res.Add(journalist);
             var postComment = _GetpostComments();
                     var result = new List<Moderator>();
                     foreach (var v in users)
-                    {
-                      //  if(i>maxCount+1 ||postComment.Count<1){break;}
-                       // var r = AdmisSeed.GetModerator(FilterUsers<PostComment>(postComment, u => random.Next(0, 2) <= 1/proportion).FindAll(x => random.Next(0, 5) < proportion),
-                                                     //  v);
-                                                     var r = AdmisSeed.GetModerator(postComment, v);
-                       // postComment = postComment.Except(r.AceptedComments).ToList();
+                    { 
+                        var r = AdmisSeed.GetModerator(postComment, v);
+                     
                          result.Add(r); 
                          
                     }
+            
 
-                    if (postComment.Count > 0)
-                    {
-                      //  this.GetPostComments = _GetpostComments().Except(postComment).ToList();
-                    }
-
-                    if(maxCount>0&&result.Count<1){return _GetModerators(users,maxCount,proportion);}
+                   
                     return result;
         }
 
@@ -130,13 +100,12 @@ res.Add(journalist);
             if(i>maxCount+1){break;}
 
            
-               //t(FilterUsers<NewsPost>(_newsPosts, u => random.Next(0, 2) <= 1 / proportion),
-              // v);
+             
             var r = AdmisSeed.GetJournalist(_newsPosts, v);
             result.Add(r);
                          
         }
-      // if(maxCount>0&&result.Count<1){return _GetJournalist(users,maxCount,proportion);}
+    
         return result;
     }
 
@@ -170,21 +139,7 @@ res.Add(journalist);
     
 }
 
-/*
- public static void Start()
-    {
-        
-        var journalist = new JournalistFactory().GetJournalist(news);
-        var commets = news.SelectMany(x => x.Coments).ToList();
-        var moderator = new ModeratorFactory().GetModerator(commets);
-        var superUser = new SuperUserFactory().GetSuperUser();
-        var journalistUser = new UserFactory().GetUser(journalist);
-        var moderatorUser = new UserFactory().GetUser(moderator);
-        var SuperUserUser = new UserFactory().GetUser(superUser);
-        
-    }
 
-*/
 
 
 
