@@ -169,13 +169,17 @@ public class EventService : IEventService
             case "TeamScored":
                 if (eventDto is not CreateTeamEventDto teamEvent)
                     throw new ArgumentException("Invalid event type");
+
                 var teamScoredScore = new Score { NumberScore = 0 };
+
                 var team = new TeamEvent
                 {
                     Type = teamEvent.Type,
                     LocationId = teamEvent.LocationId,
                     Location = location,
-                    DateTime = teamEvent.DateTime
+                    DateTime = teamEvent.DateTime,
+                    SportModalityId = teamEvent.SportModalityId,
+                    SportModality = _repository.Set<Modality>().FirstOrDefault(m => m.Id == teamEvent.SportModalityId)
                 };
 
                 await _repository.Set<Score>().Create(teamScoredScore);
@@ -204,7 +208,6 @@ public class EventService : IEventService
                 var composedScore = new Score { NumberScore = 0 };
 
                 await _repository.Set<Score>().Create(composedScore);
-                //await _repository.Save(default);
 
                 var composedTeamsEvent = new ComposedTeamsEvent
                 {
@@ -220,7 +223,10 @@ public class EventService : IEventService
                         Composition = _repository.Set<TeamComposition>().FirstOrDefault(t => t.Id == c),
                         ScoreId = composedScore.Id,
                         Score = composedScore
-                    })
+                    }),
+                    SportModalityId = composedTeams.SportModalityId,
+                    SportModality = _repository.Set<Modality>()
+                        .FirstOrDefault(m => m.Id == composedTeams.SportModalityId)
                 };
 
                 await _repository.Set<ComposedTeamsEvent>().Create(composedTeamsEvent);
@@ -236,11 +242,16 @@ public class EventService : IEventService
                     Location = location,
                     DateTime = eventDto.DateTime,
                     ParticipantScoredTeams = _repository.Set<NormalTeam>()
-                        .Where(t => participantScored.ParticipantScoredId.Any(p => p == t.Id))
+                        .Where(t => participantScored.ParticipantScoredId.Any(p => p == t.Id)),
+                    SportModalityId = participantScored.SportModalityId,
+                    SportModality = _repository.Set<Modality>()
+                        .FirstOrDefault(m => m.Id == participantScored.SportModalityId)
                 };
                 await _repository.Set<Event>().Create(participantScoredEvent);
 
                 var teamScore = new Score { NumberScore = 0 };
+                await _repository.Set<Score>().Create(teamScore);
+
 
                 participantScoredEvent.ParticipantScores = participantScored.TeamParticipantTupleId.Select(p =>
                     new TeamParticipantScore
@@ -274,7 +285,9 @@ public class EventService : IEventService
                     DateTime = eventDto.DateTime,
                     MatchedTeams = _repository.Set<NormalTeam>()
                         .Where(t => matchEvent.TeamIds.Any(p => p == t.Id)),
-                    Matches = _repository.Set<Match>().Where(m => matchEvent.MatchIds.Any(p => p == m.Id))
+                    Matches = _repository.Set<Match>().Where(m => matchEvent.MatchIds.Any(p => p == m.Id)),
+                    SportModalityId = matchEvent.SportModalityId,
+                    SportModality = _repository.Set<Modality>().FirstOrDefault(m => m.Id == matchEvent.SportModalityId)
                 };
 
                 await _repository.Set<MatchEvent>().Create(match);
