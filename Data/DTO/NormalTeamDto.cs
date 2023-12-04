@@ -1,3 +1,5 @@
+using Data.Model;
+
 namespace Data.DTO;
 
 public class NormalTeamDto : TeamDto
@@ -7,4 +9,19 @@ public class NormalTeamDto : TeamDto
     // Changes in a per-event basis.
     public IEnumerable<TeamMemberDto> Participants { get; set; }
     public IEnumerable<TeamMemberDto> Substitutes { get; set; }
+
+    private static NormalTeamDto FromEntity(IEnumerable<TeamMember> members,
+        IEnumerable<TeamMember> participants,
+        IEnumerable<TeamMember> substitutes,
+        int id, int facultyId)
+    {
+        return new NormalTeamDto
+        {
+            Id = id,
+            FacultyId = facultyId,
+            Members = members?.Select(TeamMemberDto.FromEntity),
+            Participants = participants?.Select(TeamMemberDto.FromEntity),
+            Substitutes = substitutes?.Select(TeamMemberDto.FromEntity)
+        };
+    }
 }

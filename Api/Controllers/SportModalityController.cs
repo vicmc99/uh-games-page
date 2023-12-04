@@ -1,4 +1,5 @@
 using Data.DTO;
+using Data.DTO.In;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
 
@@ -16,9 +17,15 @@ public class SportModalityController : ControllerBase
         _sportModalityService = sportModalityService;
     }
 
-    [HttpGet("{id:int}")]
-    public SportModalityDto Get(int id)
+    [HttpGet]
+    public SportModalityDto Get([FromQuery] int id)
     {
         return _sportModalityService.Get(id);
+    }
+
+    [HttpPost]
+    public void Post([FromBody] CreateSportModalityDto sportModalityDto)
+    {
+        _sportModalityService.Post(sportModalityDto);
     }
 }

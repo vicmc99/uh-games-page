@@ -30,7 +30,7 @@ public class FacultyController : ControllerBase
     }
 
     [HttpPost]
-    public void Create([FromBody] CreateFacultyDto createFacultyDto)
+    public void Post([FromBody] CreateFacultyDto createFacultyDto)
     {
         _facultyService.CreateFaculty(createFacultyDto);
     }

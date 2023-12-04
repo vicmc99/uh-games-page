@@ -1,10 +1,11 @@
 using Data.DTO;
+using Data.DTO.In;
 using Data.Model;
 using DataAccess.Repository;
 
 namespace Services.Domain;
 
-public class LeaderboardService
+public class LeaderboardService : ILeaderboardService
 {
     private readonly IDataRepository _repository;
 
@@ -34,5 +35,16 @@ public class LeaderboardService
                     FacultyId = l.FacultyId
                 }).ToList()
         };
+    }
+
+    public async void Post(CreateLeaderboardDto createLeaderboardDto)
+    {
+        var newLeaderboard = new Leaderboard
+        {
+            Year = createLeaderboardDto.Year,
+            LeaderboardLines = new List<LeaderboardLine>()
+        };
+        await _repository.Set<Leaderboard>().Create(newLeaderboard);
+        await _repository.Save(default);
     }
 }
