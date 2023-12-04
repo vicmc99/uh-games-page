@@ -34,7 +34,7 @@ public class EventService : IEventService
             .Include(e => e.TeamParticipants)
             .ThenInclude(p => p.Participant)
             .Include(e => e.TeamSubstitutes)
-            .ThenInclude(p => p.Participant);
+            .ThenInclude(p => p.Substitute);
 
         var composedEvents = events.OfType<ComposedTeamsEvent>()
             .Include(e => e.ComposedTeams)
@@ -72,7 +72,7 @@ public class EventService : IEventService
                 let teamParticipants = e.TeamParticipants.Where(p => p.TeamId == s.TeamId)
                     .Select(p => p.Participant)
                 let teamSubstitutes = e.TeamSubstitutes.Where(p => p.TeamId == s.TeamId)
-                    .Select(p => p.Participant)
+                    .Select(p => p.Substitute)
                 let normalTeamDto = CreateNormalTeamDto(teamMembers, teamParticipants, teamSubstitutes, s.TeamId,
                     s.Team.FacultyId)
                 select new TeamScoreDto
@@ -193,7 +193,7 @@ public class EventService : IEventService
                 team.TeamParticipants = teamEvent.TeamParticipantTupleId.Select(p =>
                     CreateEventTeamParticipant(team.Id, p.Item1, p.Item2));
                 team.TeamSubstitutes = teamEvent.TeamSubstitutesTupleId.Select(s =>
-                    CreateEventTeamParticipant(team.Id, s.Item1, s.Item2));
+                    CreateEventTeamSubstitute(team.Id, s.Item1, s.Item2));
 
                 await _repository.Set<TeamEvent>().Create(team);
                 break;
@@ -253,7 +253,13 @@ public class EventService : IEventService
                         Score = teamScore
                     });
                 participantScoredEvent.TeamSubstitutes = participantScored.TeamSubstitutesTupleId.Select(s =>
-                    CreateEventTeamParticipant(participantScoredEvent.Id, s.Item1, s.Item2));
+                    new ParticipantScoredEventSubstitute
+                    {
+                        EventId = participantScoredEvent.Id,
+                        TeamId = s.Item1,
+                        SubstituteId = s.Item2,
+                        Substitute = _repository.Set<TeamMember>().FirstOrDefault(t => t.Id == s.Item2)
+                    });
 
                 await _repository.Set<ParticipantScoredEvent>().Create(participantScoredEvent);
                 break;
@@ -266,7 +272,7 @@ public class EventService : IEventService
                     LocationId = matchEvent.LocationId,
                     Location = location,
                     DateTime = eventDto.DateTime,
-                    Teams = _repository.Set<NormalTeam>()
+                    MatchedTeams = _repository.Set<NormalTeam>()
                         .Where(t => matchEvent.TeamIds.Any(p => p == t.Id)),
                     Matches = _repository.Set<Match>().Where(m => matchEvent.MatchIds.Any(p => p == m.Id))
                 };
@@ -293,12 +299,12 @@ public class EventService : IEventService
         };
     }
 
-    private EventTeamParticipant CreateEventTeamParticipant(int eventId, int teamId, int participantId)
+    private TeamEventParticipant CreateEventTeamParticipant(int eventId, int teamId, int participantId)
     {
         var team = _repository.Set<NormalTeam>().FirstOrDefault(t => t.Id == teamId);
         var @event = _repository.Set<TeamEvent>().FirstOrDefault(e => e.Id == eventId);
         var participant = _repository.Set<TeamMember>().FirstOrDefault(p => p.Id == participantId);
-        return new EventTeamParticipant
+        return new TeamEventParticipant
         {
             EventId = eventId,
             TeamId = teamId,
@@ -306,6 +312,22 @@ public class EventService : IEventService
             Event = @event,
             Team = team,
             Participant = participant
+        };
+    }
+
+    private EventTeamSubstitute CreateEventTeamSubstitute(int eventId, int teamId, int substituteId)
+    {
+        var team = _repository.Set<NormalTeam>().FirstOrDefault(t => t.Id == teamId);
+        var @event = _repository.Set<TeamEvent>().FirstOrDefault(e => e.Id == eventId);
+        var substitute = _repository.Set<TeamMember>().FirstOrDefault(p => p.Id == substituteId);
+        return new EventTeamSubstitute
+        {
+            EventId = eventId,
+            TeamId = teamId,
+            SubstituteId = substituteId,
+            Event = @event,
+            Team = team,
+            Substitute = substitute
         };
     }
 }
