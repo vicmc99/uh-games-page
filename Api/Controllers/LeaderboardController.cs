@@ -1,4 +1,5 @@
 using Data.DTO;
+using Data.DTO.In;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
 
@@ -21,5 +22,11 @@ public class LeaderboardController : ControllerBase
     public LeaderboardDto Get([FromQuery] int year)
     {
         return _leaderboardService.Get(year);
+    }
+
+    [HttpPost]
+    public void Post([FromBody] CreateLeaderboardDto createLeaderboardDto)
+    {
+        _leaderboardService.Post(createLeaderboardDto);
     }
 }

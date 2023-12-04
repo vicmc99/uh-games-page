@@ -1,3 +1,4 @@
+using Data.DTO.In;
 using Data.DTO.Out;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
@@ -21,5 +22,11 @@ public class EventController : ControllerBase
     public IEnumerable<EventDto> Get()
     {
         return _eventService.Get();
+    }
+
+    [HttpPost]
+    public void Post([FromBody] CreateEventDto createEventDto)
+    {
+        _eventService.PostEvent(createEventDto);
     }
 }
