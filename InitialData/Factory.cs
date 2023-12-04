@@ -10,7 +10,7 @@ public class Factory
     
     private static DateTime _dateTime = new DateTime(2023, 1, 1);
 
-    private List<NewsPost> _newsPosts { get; set; }= NewsPostCommenstSeed.GetNewsPost(5);
+    public List<NewsPost> _newsPosts { get; set; }= NewsPostCommenstSeed.GetNewsPost(5);
     
     private List<User> _users { get; set; } = AdmisFakerSeed.GetUsers();
     
@@ -130,9 +130,9 @@ res.Add(journalist);
             if(i>maxCount+1){break;}
 
            
-               
-            var r = AdmisSeed.GetJournalist(FilterUsers<NewsPost>(_newsPosts, u => random.Next(0, 2) <= 1 / proportion),
-                                            v);
+               //t(FilterUsers<NewsPost>(_newsPosts, u => random.Next(0, 2) <= 1 / proportion),
+              // v);
+            var r = AdmisSeed.GetJournalist(_newsPosts, v);
             result.Add(r);
                          
         }

@@ -44,17 +44,29 @@ public class DatabaseInitializer: IDatabaseInitializer
 
     private void SeedData()
     {
-        
+        var date=new DateTime(2023,1,1);
           var seed = new Factory();
         Helpers<Faculty>.SetSeed(context, Seed.GetFaculties());
-        
-        
+
+        /*var u = new User()
+        {
+            Email = "kjcjnunununudjddkd", FirstName = "Juanijdjnuununuudto", LastName = "Mejnununudjdndc" ,BornDate = date
+            
+        };
+       var news= seed._newsPosts;
+        var j = new Journalist() { User = u, NickName = "jjbnununununudjd", Password = "kdjdjnununuuunudjdk", SignUpDate = date };
+        j.NewsPosts = news;
+        Helpers<Journalist>.SetSeed(context, new List<Journalist>() { j });
+       */
+       //news.Journalist = j;
+//       Helpers<NewsPost>.SetSeed(context, new List<NewsPost>() { news });
+
      
-      //  Helpers<User>.SetSeed(context,seed.GetUsers);
+       Helpers<User>.SetSeed(context,seed.GetUsers);
         Helpers<Moderator>.SetSeed(context, seed.GetModerators);
         Helpers<Journalist>.SetSeed(context, seed.GetJournalist);
         
-        var j = seed.GetJournalist;
+    
         
       
         
@@ -65,7 +77,7 @@ public class DatabaseInitializer: IDatabaseInitializer
         Helpers<SuperUser>.SetSeed(context,seed.GetSuperUsers);
         
         //Helpers<NewsPost>.SetSeed(context,news);
-        var user=j.Select(x=>x.User).ToList();
+      //  var user=j.Select(x=>x.User).ToList();
 
         
 

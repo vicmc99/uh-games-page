@@ -6,5 +6,5 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Journalist :Role
 {
-    public IEnumerable<NewsPost> NewsPosts { get; set; }
+    public ICollection<NewsPost> NewsPosts { get; set; }
 }
