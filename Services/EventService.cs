@@ -219,6 +219,7 @@ public class EventService : IEventService
                         .Where(t => composedTeams.ComposedTeamsId.Contains(t.Id)),
                     ComposedTeamScores = composedTeams.CompositionId.Select(c => new TeamCompositionScore
                     {
+                        
                         CompositionId = c,
                         Composition = _repository.Set<TeamComposition>().FirstOrDefault(t => t.Id == c),
                         ScoreId = composedScore.Id,

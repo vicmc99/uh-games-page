@@ -12,6 +12,7 @@
   <ItemGroup>
     <Folder Include="Domain\" />
     <Folder Include="Mapping\" />
+    <Folder Include="Relations\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.12" />
