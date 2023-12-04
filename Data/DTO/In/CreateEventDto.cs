@@ -15,10 +15,11 @@ public class CreateMatchEventDto : CreateEventDto
 
 public class CreateTeamEventDto : CreateEventDto
 {
-    public IEnumerable<int> TeamParticipantsId { get; set; }
-    public IEnumerable<int> TeamSubstitutesId { get; set; }
-    public IEnumerable<int> TeamId { get; set; }
-    public IEnumerable<int> ParticipantId { get; set; }
+    public IEnumerable<int> TeamIds { get; set; }
+    public IEnumerable<(int, int)> TeamSubstitutesTupleId { get; set; }
+
+    //(TeamId, ParticipantId)
+    public IEnumerable<(int, int)> TeamParticipantTupleId { get; set; }
 }
 
 public class CreateComposedTeamsEventDto : CreateEventDto
@@ -27,9 +28,12 @@ public class CreateComposedTeamsEventDto : CreateEventDto
     public IEnumerable<int> CompositionId { get; set; }
 }
 
-public class ParticipantScoredEventDto : CreateEventDto
+public class CreateParticipantScoredEventDto : CreateEventDto
 {
-    public IEnumerable<int> ParticipantScoredTeamsId { get; set; }
-    public IEnumerable<int> ParticipantScoresId { get; set; }
-    public IEnumerable<int> TeamSubstitutesId { get; set; }
+    public IEnumerable<int> ParticipantScoredId { get; set; }
+
+    public IEnumerable<(int, int)> TeamSubstitutesTupleId { get; set; }
+
+    //(TeamId, ParticipantId)
+    public IEnumerable<(int, int)> TeamParticipantTupleId { get; set; }
 }

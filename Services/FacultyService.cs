@@ -42,12 +42,7 @@ public class FacultyService : IFacultyService
             Name = faculty.Name,
             Mascot = faculty.Mascot,
             Acronym = faculty.Acronym,
-            Athletes = athletes.Select(
-                a => new AthleteDto { Id = a.Id, Name = a.Name }),
-            GoldMedals = goldMedals,
-            SilverMedals = silverMedals,
-            BronzeMedals = bronzeMedals,
-            Ranking = ranking
+            Athletes = athletes.Select(a => new AthleteDto { Id = a.Id, Name = a.Name })
         };
     }
 
@@ -97,14 +92,17 @@ public class FacultyService : IFacultyService
         return facultyDtos;
     }
 
-    public async void CreateFaculty(CreateFacultyDto createFacultyDto)
+    public async void PostFaculty(CreateFacultyDto createFacultyDto)
     {
         var newFaculty = new Faculty
         {
             Acronym = createFacultyDto.Acronym,
             Name = createFacultyDto.Name,
             Mascot = createFacultyDto.Mascot,
-            Logo = createFacultyDto.Logo
+            Logo = createFacultyDto.Logo,
+            Majors = _repository.Set<Major>().Where(m => createFacultyDto.MajorsId.Contains(m.Id)),
+            Representatives = _repository.Set<Representative>()
+                .Where(r => createFacultyDto.RepresentativesId.Contains(r.Id))
         };
 
         await _repository.Set<Faculty>().Create(newFaculty);

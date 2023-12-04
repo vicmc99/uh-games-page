@@ -7,5 +7,5 @@ public interface IFacultyService
 {
     FacultyDto Get(int id, int year);
     IEnumerable<FacultyDto> GetAllFaculties(int year);
-    void CreateFaculty(CreateFacultyDto createFacultyDto);
+    void PostFaculty(CreateFacultyDto createFacultyDto);
 }
