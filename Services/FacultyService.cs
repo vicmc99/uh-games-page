@@ -95,7 +95,7 @@ public class FacultyService : IFacultyService
     public async void PostFaculty(CreateFacultyDto createFacultyDto)
     {
         var newFaculty = new Faculty
-        {
+         {
             Acronym = createFacultyDto.Acronym,
             Name = createFacultyDto.Name,
             Mascot = createFacultyDto.Mascot,
