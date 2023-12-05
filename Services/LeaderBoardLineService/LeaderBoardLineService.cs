@@ -8,7 +8,7 @@ public class LeaderBoardLineService:ILeaderBoardLineService
 {
     private readonly IDataRepository _repository;
 
-    public LeaderBoardLineServiceoardLineService(IDataRepository repository)
+    public LeaderBoardLineService(IDataRepository repository)
     {
         _repository = repository;
     }
