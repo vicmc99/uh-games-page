@@ -12,7 +12,7 @@ public class SportModalityDto
 
     public static SportModalityDto FromEntity(Modality modality)
     {
-        return new SportModalityDto
+        var sportModalityDto = new SportModalityDto
         {
             Id = modality.Id,
             Sport = SportDto.FromEntity(modality.Sport),
@@ -20,5 +20,7 @@ public class SportModalityDto
             Category = CategoryDto.FromEntity(modality.Category),
             Sex = modality.Sex
         };
+        
+        return sportModalityDto;
     }
 }
