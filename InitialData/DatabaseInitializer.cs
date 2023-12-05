@@ -41,13 +41,14 @@ public class DatabaseInitializer: IDatabaseInitializer
 
     private void SeedData()
     {
-        if (context.Set<Faculty>().Count() == 0)
+        
+            if (!context.Set<Faculty>().Any())
             context.Set<Faculty>().AddRange(InitialDomainData.GetFaculties());
 
         //if (context.Set<LeaderboardLine>().Count() == 0)
          //   context.Set<LeaderboardLine>().AddRange(InitialDomainData.GetLeaderboardLines());
-        if (context.Set<Leaderboard>().Count() == 0)
-            context.Set<Leaderboard>().AddRange(InitialDomainData.GetLeaderBoard());
+       // if (!context.Set<Leaderboard>().Any())
+         //   context.Set<Leaderboard>().AddRange(InitialDomainData.GetLeaderBoard());
 
         
         context.SaveChanges();
