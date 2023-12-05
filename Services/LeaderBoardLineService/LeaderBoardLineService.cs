@@ -12,18 +12,20 @@ public class LeaderBoardLineService:ILeaderBoardLineService
     {
         _repository = repository;
     }
-    public void PostLeaderBoardLine(CreateLeaderBoardLineDto createLeaderBoardLineDto)
+    public async void PostLeaderBoardLine(CreateLeaderBoardLineDto createLeaderBoardLineDto)
     {
-        var r=new LeaderboardLine()
+        var r = new LeaderboardLine()
         {
             Year = createLeaderBoardLineDto.Year,
-            BronzeMedals =createLeaderBoardLineDto.Year,
+            BronzeMedals = createLeaderBoardLineDto.Year,
             GoldMedals = createLeaderBoardLineDto.GoldMedals,
             SilverMedals = createLeaderBoardLineDto.SilverMedals,
             Ranking = createLeaderBoardLineDto.Ranking,
-            Faculty=_repository.Set<Faculty>().FirstOrDefault(x=>x.Id==createLeaderBoardLineDto.FacultyId)
-            
+            Faculty = _repository.Set<Faculty>().FirstOrDefault(x => x.Id == createLeaderBoardLineDto.FacultyId)
 
-        }
+
+        };
+      await   _repository.Set<LeaderboardLine>().Create(r);
+      await  _repository.Save(default);
     }
 }
