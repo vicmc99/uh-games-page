@@ -8,7 +8,7 @@ public class InitialDomainData
     {
         return new List<Faculty>()
         {
-            new Faculty {Id = 1, Name="Facultad de Artes y Letras", Acronym="FAyL", Mascot="Elefantes"},
+           /* new Faculty {Id = 1, Name="Facultad de Artes y Letras", Acronym="FAyL", Mascot="Elefantes",Logo = "/fayl.svg"},
             new Faculty {Id = 2, Name="Facultad de Biología", Acronym="Bio", Mascot="Gavilanes"},
             new Faculty {Id = 3, Name="Facultad de Comunicación", Acronym="FCOM", Mascot="Vikingos"},
             new Faculty {Id = 4, Name="Facultad Contabilidad y Finanzas", Acronym="CONFIN", Mascot="Lobos"},
@@ -21,11 +21,11 @@ public class InitialDomainData
             new Faculty {Id = 11, Name="Instituto de Farmacia y Alimentos", Acronym="IFAL", Mascot="Serpientes"},
             new Faculty {Id = 12, Name="Instituto de Ciencias y Tecnologías Aplicadas", Acronym="INSTEC", Mascot="Gatos"},
             new Faculty {Id = 13, Name="Instituto Superior de Diseño", Acronym="ISDi", Mascot="Mapaches"},
-            new Faculty {Id = 14, Name="Facultad de Lenguas Extranjeras", Acronym="FLEX", Mascot="Panteras"},
-            new Faculty {Id = 15, Name="Facultad de Matemática y Computación", Acronym="MATCOM", Mascot="Cuervos"},
-            new Faculty {Id = 16, Name="Facultad de Psicología", Acronym="Psico", Mascot="Fenix"},
+            new Faculty {Id = 14, Name="Facultad de Lenguas Extranjeras", Acronym="FLEX", Mascot="Panteras"},*/
+            new Faculty {Id = 15, Name="Facultad de Matemática y Computación", Acronym="MATCOM", Mascot="Cuervos",Logo = "/matcom.svg"},
+         /*   new Faculty {Id = 16, Name="Facultad de Psicología", Acronym="Psico", Mascot="Fenix"},
             new Faculty {Id= 17, Name="Facultad de Química", Acronym="Qui", Mascot="Pumas"},
-            new Faculty {Id = 18, Name="Facultad de Turismo", Acronym="FTur", Mascot="Aviones"}
+            new Faculty {Id = 18, Name="Facultad de Turismo", Acronym="FTur", Mascot="Aviones"}*/
         };
     }
 
@@ -44,6 +44,34 @@ public class InitialDomainData
             new Leaderboard { Id = 1, Year = 2023, LeaderboardLines = GetLeaderboardLines() }
         };
 
+    }
+
+
+    public static List<Major>GetMajor()
+    {
+        return new List<Major>()
+        {
+            new Major() {Name = "Computación",Faculty = GetFaculties()[0] }
+
+        };
+    }
+
+    public static List<Athlete> GetAthlete()
+    {
+        return new List<Athlete>()
+        {
+            new Athlete()
+            {
+                Name = "Leonardo", DateOfBirth = new DateOnly(2001, 1, 1), Nick = "el leo", Photo = "/leo.jpeg"
+            }
+        };
+    }
+    public static List<Representative>GetRepresentative()
+    {
+      return  new List<Representative>()
+        {
+            new Representative() {Athlete = GetAthlete()[0], Faculty = GetFaculties()[0], Year = 2023}
+        };
     }
     
     
