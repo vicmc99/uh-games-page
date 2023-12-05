@@ -44,9 +44,12 @@ public class DatabaseInitializer: IDatabaseInitializer
         if (context.Set<Faculty>().Count() == 0)
             context.Set<Faculty>().AddRange(InitialDomainData.GetFaculties());
 
-        if (context.Set<LeaderboardLine>().Count() == 0)
-            context.Set<LeaderboardLine>().AddRange(InitialDomainData.GetLeaderboardLines());
+        //if (context.Set<LeaderboardLine>().Count() == 0)
+         //   context.Set<LeaderboardLine>().AddRange(InitialDomainData.GetLeaderboardLines());
+        if (context.Set<Leaderboard>().Count() == 0)
+            context.Set<Leaderboard>().AddRange(InitialDomainData.GetLeaderBoard());
 
+        
         context.SaveChanges();
     }
 

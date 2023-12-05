@@ -3,6 +3,7 @@ using Data.DTO.In;
 using Data.DTO.Out;
 using Data.Model;
 using DataAccess.Repository;
+ 
 using Microsoft.EntityFrameworkCore;
 
 namespace Services.Domain;
@@ -46,6 +47,12 @@ public class FacultyService : IFacultyService
         };
     }
 
+    public bool CheckFaculty(CreateFacultyDto createFacultyDto)
+    {
+        var faculty = _repository.Set<Faculty>().FirstOrDefault(f => f.Name == createFacultyDto.Name);
+        return faculty != null;
+    }
+
     public IEnumerable<FacultyDto> GetAllFaculties(int year)
     {
         var faculties = _repository.Set<Faculty>();
@@ -54,7 +61,23 @@ public class FacultyService : IFacultyService
 
         var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
 
-        if (leaderboard is null) return Array.Empty<FacultyDto>();
+        if (leaderboard is null)
+        {
+            return _repository.Set<Faculty>().Select(f => new FacultyDto
+            {
+                Id = f.Id,
+                Name = f.Name,
+                Mascot = f.Mascot,
+                Acronym = f.Acronym,
+                Athletes = Array.Empty<AthleteDto>(),
+                GoldMedals = 0,
+                SilverMedals = 0,
+                BronzeMedals = 0,
+                Ranking = -1,
+                Logo = f.Logo
+            });
+                
+        } //Array.Empty<FacultyDto>();
 
         var leaderboardLines = leaderboard.LeaderboardLines;
 
@@ -94,6 +117,7 @@ public class FacultyService : IFacultyService
 
     public async void PostFaculty(CreateFacultyDto createFacultyDto)
     {
+      
         var newFaculty = new Faculty
          {
             Acronym = createFacultyDto.Acronym,
@@ -107,8 +131,14 @@ public class FacultyService : IFacultyService
             Representatives = _repository.Set<Representative>()
                 .Where(r => createFacultyDto.RepresentativesId.Contains(r.Id))
         };
-
-        await _repository.Set<Faculty>().Create(newFaculty);
-        await _repository.Save(default);
+       
+            if (CheckFaculty(createFacultyDto))
+            {
+                throw new  ExceptionControllers("The faculty alredy exists", new Exception("400"));
+            }
+            await _repository.Set<Faculty>().Create(newFaculty);
+            await _repository.Save(default);
+       
+       
     }
 }

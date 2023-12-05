@@ -1,6 +1,7 @@
 using Data.DTO.In;
 using Data.DTO.Out;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 using Services.Domain;
 
 namespace Api.Controllers;
@@ -22,7 +23,7 @@ public class FacultyController : ControllerBase
     [HttpGet]
     public IEnumerable<FacultyDto> Get([FromQuery] int year, [FromQuery] int id = -1)
     {
-        if (id != -1) return _facultyService.GetAllFaculties(year);
+        if (id == -1) return _facultyService.GetAllFaculties(year);
 
         var facultyDtos = new FacultyDto[1];
         facultyDtos[0] = _facultyService.Get(id, year);
@@ -32,6 +33,22 @@ public class FacultyController : ControllerBase
     [HttpPost]
     public void Post([FromBody] CreateFacultyDto createFacultyDto)
     {
-        _facultyService.PostFaculty(createFacultyDto);
+        try
+        {
+            if (_facultyService.CheckFaculty(createFacultyDto))
+            {
+                throw new ExceptionControllers("The faculty alredy exists",new Exception("400"));
+            }
+            _facultyService.PostFaculty(createFacultyDto);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+           
+        }
+        
     }
+
+   
+    
 }

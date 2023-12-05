@@ -153,8 +153,11 @@ public class ApplicationDbContext : IdentityDbContext
 
         #region EventTeamParticipant and Substitute
             //.
-        modelBuilder.Entity<EventTeamSubstitute>()
-            .HasKey(t => new { t.EventId, t.TeamId, t.SubstituteId });
+            modelBuilder.Entity<EventTeamSubstitute>()
+                .HasKey(t => new { t.EventId, t.TeamId, t.SubstituteId });
+            
+            modelBuilder.Entity<TeamEventParticipant>()
+                .HasKey(t => new { t.EventId, t.TeamId, t.ParticipantId});
             //.
         modelBuilder.Entity<TeamEventParticipant>()
             .HasOne(t => t.Team)

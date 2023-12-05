@@ -28,5 +28,6 @@ public class EventController : ControllerBase
     public void Post([FromBody] CreateEventDto createEventDto)
     {
         _eventService.PostEvent(createEventDto);
+        
     }
 }

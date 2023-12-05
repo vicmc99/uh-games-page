@@ -1,6 +1,7 @@
 using Data.DTO;
 using Data.DTO.In;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 using Services.Domain;
 
 namespace Api.Controllers;
@@ -27,6 +28,18 @@ public class LeaderboardController : ControllerBase
     [HttpPost]
     public void Post([FromBody] CreateLeaderboardDto createLeaderboardDto)
     {
-        _leaderboardService.Post(createLeaderboardDto);
+        try
+        {
+            if (Get(createLeaderboardDto.Year) != null)
+            {
+                throw new ExceptionControllers("Leaderboard already exists", new Exception("400"));
+            }
+            _leaderboardService.Post(createLeaderboardDto);
+        }
+        catch (Exception e)
+        {
+           _logger.LogError(e.Message);
+        }
+        
     }
 }
