@@ -7,7 +7,7 @@ namespace Services.Domain.AthleteService;
 public class AthleteService : IAthleteService
 {
     private readonly IDataRepository _repository;
-
+    
     public AthleteService(IDataRepository repository)
     {
         _repository = repository;

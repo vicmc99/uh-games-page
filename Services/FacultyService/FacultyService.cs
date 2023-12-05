@@ -100,6 +100,9 @@ public class FacultyService : IFacultyService
             Name = createFacultyDto.Name,
             Mascot = createFacultyDto.Mascot,
             Logo = createFacultyDto.Logo,
+            //TODO:No puedes tener creada la carrera antrs que la facultad pq la carrera tiene como llave foranea la facultad
+            //y no se especificó que no es requerida
+            
             Majors = _repository.Set<Major>().Where(m => createFacultyDto.MajorsId.Contains(m.Id)),
             Representatives = _repository.Set<Representative>()
                 .Where(r => createFacultyDto.RepresentativesId.Contains(r.Id))

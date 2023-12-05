@@ -18,7 +18,7 @@ public class LeaderboardService : ILeaderboardService
     {
         var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
         if (leaderboard is null)
-            return null;
+            return null!;
         return new LeaderboardDto
         {
             Id = leaderboard.Id,

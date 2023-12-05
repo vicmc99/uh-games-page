@@ -16,7 +16,7 @@ public class ComposedTeamService : IComposedTeamService
     public async void PostComposedTeam(CreateComposedTeamDto createComposedTeamDto)
     {
         var temp = Helper.GetTeam(_repository, createComposedTeamDto);
-        var newcComposedTeam = new ComposedTeam
+        var newComposedTeam = new ComposedTeam
         {
             Faculty = temp.Faculty,
             Name = temp.Name,
@@ -24,7 +24,7 @@ public class ComposedTeamService : IComposedTeamService
                 .Where(e => createComposedTeamDto.Compositions.Contains(e.Id)),
             FacultyId = temp.FacultyId
         };
-        await _repository.Set<ComposedTeam>().Create(newcComposedTeam);
+        await _repository.Set<ComposedTeam>().Create(newComposedTeam);
         await _repository.Save(default);
     }
 }
