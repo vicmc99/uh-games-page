@@ -4,6 +4,12 @@ using DataAccess;
 using InitialData;
 using DataAccess.Repository;
 using Services.Domain;
+using Services.Domain.AthleteService;
+using Services.Domain.CategoryService;
+using Services.Domain.CompositionsService.TeamCompositionService;
+using Services.Domain.RepresentativeService;
+using Services.LeaderBoardLineService;
+using Services.MajorsService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +24,13 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 //builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 builder.Services.AddTransient<IDataRepository, DataRepository>();
 builder.Services.AddTransient<IFacultyService, FacultyService>();
+builder.Services.AddTransient<IMajorsService, MajorsService>();
+builder.Services.AddTransient<IAthleteService, AthleteService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ITeamCompositionService, TeamCompositionService>();
+builder.Services.AddTransient<ILeaderBoardLineService, LeaderBoardLineService>();
+builder.Services.AddTransient<ILeaderboardService, LeaderboardService>();
+builder.Services.AddTransient<IRepresentativeService, RepresentativeService>();
 
 // Add controller services to build the api.
 builder.Services.AddControllers();
