@@ -4,7 +4,7 @@ using DataAccess.Repository;
 
 namespace Services.Agregations.TeamMemberService;
 
-public class TeamMemberService:ITeamMemberService
+public class TeamMemberService : ITeamMemberService
 {
     private readonly IDataRepository _repository;
 
@@ -12,17 +12,22 @@ public class TeamMemberService:ITeamMemberService
     {
         _repository = repository;
     }
+
     public async void PostTeamMemberService(CreateTeamMemberDto createTeamMemberDto)
     {
-        var teamMember = new TeamMember()
+        var athlete = _repository.Set<Athlete>()
+            .FirstOrDefault(e => e.Id == createTeamMemberDto.AthleteId);
+        var team = _repository.Set<Team>()
+            .FirstOrDefault(e => e.Id == createTeamMemberDto.TeamId);
+        var teamMember = new TeamMember
         {
             Role = createTeamMemberDto.Role,
-            Athlete = _repository.Set<Athlete>()
-                .FirstOrDefault(e => e.Id == createTeamMemberDto.AthleteId),
-            Team = _repository.Set<Team>()
-                .FirstOrDefault(e => e.Id == createTeamMemberDto.TeamId)
+            Athlete = athlete,
+            Team = team,
+            AthleteId = createTeamMemberDto.AthleteId,
+            TeamId = createTeamMemberDto.TeamId
         };
-       await _repository.Set<TeamMember>().Create(teamMember);
-       await  _repository.Save(default);
+        await _repository.Set<TeamMember>().Create(teamMember);
+        await _repository.Save(default);
     }
 }

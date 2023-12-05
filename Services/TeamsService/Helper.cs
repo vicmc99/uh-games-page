@@ -1,5 +1,4 @@
-﻿using Data.DTO;
-using Data.DTO.In.Teams;
+﻿using Data.DTO.In.Teams;
 using Data.Model;
 using DataAccess.Repository;
 
@@ -9,13 +8,11 @@ internal static class Helper
 {
     public static Team GetTeam(IDataRepository _repository, CreateTeamDto createTeamDto)
     {
-        return  new Team
+        return new Team
         {
-            
             Name = createTeamDto.Name,
             Faculty = _repository.Set<Faculty>()
                 .FirstOrDefault(e => e.Id == createTeamDto.FacultyId)
         };
-        
     }
 }

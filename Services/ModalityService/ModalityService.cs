@@ -1,10 +1,11 @@
-﻿using Data.DTO.In;
+﻿using Data.DTO;
+using Data.DTO.In;
 using Data.Model;
 using DataAccess.Repository;
 
 namespace Services.Domain.ModalityService;
 
-public class ModalityService:IModalityService
+public class ModalityService : ISportModalityService
 {
     private readonly IDataRepository _repository;
 
@@ -14,18 +15,29 @@ public class ModalityService:IModalityService
     }
 
 
-    public async void PostModality(CreateModalityDto createModalityDto)
+    public SportModalityDto Get(int id)
     {
-        var modality = new Modality()
+        var sportModality = _repository.Set<Modality>().FirstOrDefault(m => m.Id == id);
+        return SportModalityDto.FromEntity(sportModality);
+    }
+
+    public async void Post(CreateSportModalityDto createModalityDto)
+    {
+        var sport = _repository.Set<Sport>()
+            .FirstOrDefault(e => e.Id == createModalityDto.SportId);
+        var discipline = _repository.Set<Discipline>()
+            .FirstOrDefault(e => e.Id == createModalityDto.DisciplineId);
+        var category = _repository.Set<Category>()
+            .FirstOrDefault(e => e.Id == createModalityDto.CategoryId);
+        var modality = new Modality
         {
-            Sex = createModalityDto.Sex,
-            Category = _repository.Set<Category>()
-                .FirstOrDefault(e => e.Id==createModalityDto.CategoryId),
-            Sport = _repository.Set<Sport>()
-                .FirstOrDefault(e=>e.Id==createModalityDto.SportId),
-            Discipline = _repository.Set<Discipline>()
-                .FirstOrDefault(e=>e.Id==createModalityDto.DisciplineId)
-            
+            SportId = createModalityDto.SportId,
+            Sport = sport,
+            DisciplineId = createModalityDto.DisciplineId,
+            Discipline = discipline,
+            CategoryId = createModalityDto.CategoryId,
+            Category = category,
+            Sex = createModalityDto.Sex
         };
         await _repository.Set<Modality>().Create(modality);
         await _repository.Save(default);

@@ -1,12 +1,10 @@
-﻿using Data.DTO;
-using Data.DTO.In;
-using Data.DTO.Out;
+﻿using Data.DTO.In;
 using Data.Model;
 using DataAccess.Repository;
-using Microsoft.EntityFrameworkCore;
+
 namespace Services.Domain.RepresentativeService;
 
-public class RepresentativeService:IRepresentativeService
+public class RepresentativeService : IRepresentativeService
 
 {
     private readonly IDataRepository _repository;
@@ -15,24 +13,24 @@ public class RepresentativeService:IRepresentativeService
     {
         _repository = repository;
     }
+
     public async void PostRepresentative(CreateRepresentativeDto createRepresentativeDto)
     {
-        var major = _repository.Set<Major>()
-            .FirstOrDefault(e => e.Id == createRepresentativeDto.MajorId);
-        
-        var newRepresentative = new Representative()
+        var newRepresentative = new Representative
         {
             Athlete = _repository.Set<Athlete>()
-                .FirstOrDefault(e=>e.Id==createRepresentativeDto.AthleteId),
-            Major =major,
+                .FirstOrDefault(e => e.Id == createRepresentativeDto.AthleteId),
+            Major = _repository.Set<Major>()
+                .FirstOrDefault(e => e.Id == createRepresentativeDto.MajorId),
             Faculty = _repository.Set<Faculty>()
-                .FirstOrDefault(e=>e.Id==major.FacultyId),
+                .FirstOrDefault(e => e.Id == createRepresentativeDto.FacultyId),
             Year = createRepresentativeDto.Year,
-            
+            FacultyId = createRepresentativeDto.FacultyId,
+            AthleteId = createRepresentativeDto.AthleteId,
+            MajorId = createRepresentativeDto.MajorId
         };
-        
+
         await _repository.Set<Representative>().Create(newRepresentative);
         await _repository.Save(default);
-
     }
 }

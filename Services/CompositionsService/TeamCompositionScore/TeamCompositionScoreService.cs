@@ -5,7 +5,7 @@ using Services.Domain.CompositionsService.TeamCompositionScore;
 
 namespace Services.CompositionsService.TeamCompositionScore;
 
-public class TeamCompositionScoreService:ITeamCompositionScoreService
+public class TeamCompositionScoreService : ITeamCompositionScoreService
 {
     private readonly IDataRepository _repository;
 
@@ -17,12 +17,14 @@ public class TeamCompositionScoreService:ITeamCompositionScoreService
 
     public async void PostTeamCompositionScoreService(CreateTeamCompositionScoreDto createTeamCompositionScoreDto)
     {
-        var newTeamCompositonScore = new Data.Model.TeamCompositionScore()
+        var newTeamCompositonScore = new Data.Model.TeamCompositionScore
         {
             Composition = _repository.Set<TeamComposition>()
                 .FirstOrDefault(e => e.Id == createTeamCompositionScoreDto.CompositionId),
             Score = _repository.Set<Score>()
-                .FirstOrDefault(e => e.Id == createTeamCompositionScoreDto.ScoreId)
+                .FirstOrDefault(e => e.Id == createTeamCompositionScoreDto.ScoreId),
+            CompositionId = createTeamCompositionScoreDto.CompositionId,
+            ScoreId = createTeamCompositionScoreDto.ScoreId
         };
         await _repository.Set<Data.Model.TeamCompositionScore>().Create(newTeamCompositonScore);
         await _repository.Save(default);

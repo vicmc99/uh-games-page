@@ -13,9 +13,5 @@ public class TeamMember
     public Team Team { get; set; }
     public int AthleteId { get; set; }
     public Athlete Athlete { get; set; }
-    
-    
     public string Role { get; set; }
-    
-    
 }

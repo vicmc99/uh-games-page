@@ -5,5 +5,5 @@ namespace Services.Domain.TeamsService.ComposedTeamComposition;
 public interface IComposedTeamService
 
 {
-    public void PostComposedTeamService(CreateComposedTeamDto createComposedTeamDto);
+    public void PostComposedTeam(CreateComposedTeamDto createComposedTeamDto);
 }
