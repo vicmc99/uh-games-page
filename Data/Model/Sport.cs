@@ -18,4 +18,6 @@ public class Sport
     public int CategoryId { get; set; }
     
     public Category Category { get; set; }
+    
+    //TODO:{Name,CategoryId} is unique???
 }

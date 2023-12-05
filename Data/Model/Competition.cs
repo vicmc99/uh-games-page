@@ -10,7 +10,8 @@ public class Competition
     public int Id { get; set; }
 
     public int ModalityId { get; set; }
-
+    
     public Modality Modality { get; set; }
+    //TODO: la tupla {ModalityI, Year} es única???
     public int Year { get; set; }
 }

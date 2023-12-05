@@ -8,7 +8,7 @@ public class League
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-
+//TODO:{StartDate,EndDate,Rounds} is unique???
     public int Rounds { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
