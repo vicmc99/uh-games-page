@@ -12,7 +12,7 @@ public class LeaderBoardLineService:ILeaderBoardLineService
     {
         _repository = repository;
     }
-    public void PostLeaderBoardLine(CreateLeaderBoardLineDto createLeaderBoardLineDto)
+    public async void PostLeaderBoardLine(CreateLeaderBoardLineDto createLeaderBoardLineDto)
     {
         var r = new LeaderboardLine()
         {
@@ -23,5 +23,7 @@ public class LeaderBoardLineService:ILeaderBoardLineService
             Ranking = createLeaderBoardLineDto.Ranking,
             Faculty = _repository.Set<Faculty>().FirstOrDefault(x => x.Id == createLeaderBoardLineDto.FacultyId)
         };
+      await   _repository.Set<LeaderboardLine>().Create(r);
+      await  _repository.Save(default);
     }
 }
