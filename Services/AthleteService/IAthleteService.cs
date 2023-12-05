@@ -1,7 +1,7 @@
 ﻿using Data.DTO;
 using Data.DTO.In;
 
-namespace Services.Domain.AthleteService;
+namespace Services.Domain;
 
 public interface IAthleteService
 {

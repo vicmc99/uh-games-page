@@ -17,30 +17,28 @@ public class AthleteService : IAthleteService
    
     public async void PostAthlete(CreateAthleteDto createAthleteDto)
     {
-        var newAthete = new Athlete
+        var newAthlete = new Athlete
         {
             Name = createAthleteDto.Name,
             Nick = createAthleteDto.Nick,
             Photo = createAthleteDto.Photo,
             DateOfBirth = createAthleteDto.DateOfBirth
         };
-        await _repository.Set<Athlete>().Create(newAthete);
-
-        //Why are you creating a representative every time you create an Athlete?????
-
-        // var major = _repository.Set<Major>()
-        //     .FirstOrDefault(r => r.Id == createAthleteDto.MajorId);
-        // var faculty = _repository.Set<Faculty>()
-        //     .FirstOrDefault(x => x.Id == major.FacultyId);
-        //
-        // var newRepresentative = new Representative
-        // {
-        //     Athlete = newAthete,
-        //     Year = createAthleteDto.Year,
-        //     Major = major,
-        //     Faculty = faculty
-        // };
-        // await _repository.Set<Representative>().Create(newRepresentative);
+        await _repository.Set<Athlete>().Create(newAthlete);
+        
+        var major = _repository.Set<Major>()
+            .FirstOrDefault(r => r.Id == createAthleteDto.MajorId);
+        var faculty = _repository.Set<Faculty>()
+            .FirstOrDefault(x => x.Id == major.FacultyId);
+        
+        var newRepresentative = new Representative
+        {
+            Athlete = newAthlete,
+            Year = createAthleteDto.Year,
+            Major = major,
+            Faculty = faculty
+        };
+        await _repository.Set<Representative>().Create(newRepresentative);
         await _repository.Save(default);
     }
 }
