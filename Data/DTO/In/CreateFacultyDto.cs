@@ -9,6 +9,7 @@ public class CreateFacultyDto
     public string Mascot { get; set; }
 
     public string Logo { get; set; }
+  
     public IEnumerable<int> MajorsId { get; set; }
     public IEnumerable<int> RepresentativesId { get; set; }
 }

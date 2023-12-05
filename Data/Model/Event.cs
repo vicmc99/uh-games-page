@@ -14,6 +14,9 @@ public class Event
     public int LocationId { get; set; }
 
     public Location Location { get; set; }
+    
+    public int SportModalityId { get; set; }
+    public Modality SportModality { get; set; }
 
     public string Type { get; set; }
 }

@@ -3,12 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Model;
 
-public class Leaderboard
+public class TeamComposition
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-
-    public int Year { get; set; }
-    public ICollection<LeaderboardLine> LeaderboardLines { get; set; }
+    //TODO:Add Name???
+    public IEnumerable<TeamMember> Participants { get; set; }
 }

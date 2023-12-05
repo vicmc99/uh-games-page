@@ -65,8 +65,8 @@ public class ApplicationDbContext : IdentityDbContext
 
         modelBuilder.Entity<Category>()
             .HasMany(c => c.Sports)
-            .WithOne()
-            .HasForeignKey("CategoryId");
+            .WithOne(e=>e.Category)
+            .HasForeignKey(e=>e.CategoryId);
 
         modelBuilder.Entity<ComposedTeam>()
             .HasMany(ct => ct.Compositions)

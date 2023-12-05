@@ -7,6 +7,10 @@ public class EventDto
     public DateTime DateTime { get; set; }
     public LocationDto Location { get; set; }
 
+    public int SportModalityId { get; set; }
+
+    public SportModalityDto SportModality { get; set; }
+
     // type = "Composed"
     public IEnumerable<ComposedTeamDto> ComposedTeams { get; set; }
     public IEnumerable<TeamCompositionScoreDto> CompositionScores { get; set; }

@@ -5,6 +5,7 @@ public class CreateEventDto
     public DateTime DateTime { get; set; }
     public int LocationId { get; set; }
     public string Type { get; set; }
+    public int SportModalityId { get; set; }
 }
 
 public class CreateMatchEventDto : CreateEventDto
