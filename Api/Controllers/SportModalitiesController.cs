@@ -17,15 +17,6 @@ public class SportModalitiesController : ControllerBase
         _sportModalityService = sportModalityService;
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
-    {
-        var sportModality = await _sportModalityService.GetSportModality(id);
-        if (sportModality != null)
-            return Ok(sportModality);
-        return NotFound();
-    }
-
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateSportModalityDto createSportModalityDto)
     {
@@ -36,14 +27,13 @@ public class SportModalitiesController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = newSportModalityId }, newSportModality);
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
     {
         var sportModality = await _sportModalityService.GetSportModality(id);
-        if (sportModality == null)
-            return NotFound();
-        await _sportModalityService.DeleteSportModality(id);
-        return NoContent();
+        if (sportModality != null)
+            return Ok(sportModality);
+        return NotFound();
     }
 
     [HttpPut("{id:int}")]
@@ -53,6 +43,16 @@ public class SportModalitiesController : ControllerBase
         if (sportModality == null)
             return NotFound();
         await _sportModalityService.UpdateSportModality(id, updateSportModalityDto);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var sportModality = await _sportModalityService.GetSportModality(id);
+        if (sportModality == null)
+            return NotFound();
+        await _sportModalityService.DeleteSportModality(id);
         return NoContent();
     }
 }

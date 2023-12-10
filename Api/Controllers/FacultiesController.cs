@@ -17,6 +17,14 @@ public class FacultiesController : ControllerBase
         _facultyService = facultyService;
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Post([FromForm] CreateFacultyDto createFacultyDto)
+    {
+        if (_facultyService.CheckFaculty(createFacultyDto)) return BadRequest("The faculty already exists");
+        var facultyId = await _facultyService.PostFaculty(createFacultyDto);
+        return CreatedAtAction(nameof(Get), new { id = facultyId }, createFacultyDto);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -33,14 +41,6 @@ public class FacultiesController : ControllerBase
         return NotFound();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Post([FromForm] CreateFacultyDto createFacultyDto)
-    {
-        if (_facultyService.CheckFaculty(createFacultyDto)) return BadRequest("The faculty already exists");
-        var facultyId = await _facultyService.PostFaculty(createFacultyDto);
-        return CreatedAtAction(nameof(Get), new { id = facultyId }, createFacultyDto);
-    }
-
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateFacultyDto updateFacultyDto)
     {
@@ -53,7 +53,7 @@ public class FacultiesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var faculty =await _facultyService.GetFaculty(id);
+        var faculty = await _facultyService.GetFaculty(id);
         if (faculty == null) return NotFound();
         await _facultyService.DeleteFaculty(id);
         return NoContent();

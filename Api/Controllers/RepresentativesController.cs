@@ -20,8 +20,47 @@ public class RepresentativesController : ControllerBase
     }
 
     [HttpPost]
-    public void Post([FromForm] CreateRepresentativeDto createRepresentativeDto)
+    public async Task<IActionResult> Post([FromForm] CreateRepresentativeDto createRepresentativeDto)
     {
-        _representativeService.PostRepresentative(createRepresentativeDto);
+        var representativeId = await _representativeService.PostRepresentative(createRepresentativeDto);
+
+        return CreatedAtAction(nameof(Post), new { id = representativeId }, null);
+    }
+
+    [HttpGet("{facultyId:int}")]
+    public Task<IActionResult> GetFromFaculty(int facultyId)
+    {
+        var representatives = _representativeService.GetRepresentatives(facultyId);
+        return representatives.IsFaulted
+            ? Task.FromResult<IActionResult>(BadRequest(representatives.Exception?.Message))
+            : Task.FromResult<IActionResult>(Ok(representatives));
+    }
+
+    [HttpGet]
+    public Task<IActionResult> Get([FromQuery] int id)
+    {
+        var representative = _representativeService.GetRepresentative(id);
+        return representative.Result == null
+            ? Task.FromResult<IActionResult>(NotFound())
+            : Task.FromResult<IActionResult>(Ok(representative));
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CreateRepresentativeDto updateRepresentativeDto)
+    {
+        var representative = await _representativeService.GetRepresentative(id);
+        if (representative == null)
+            return NotFound();
+        await _representativeService.UpdateRepresentative(id, updateRepresentativeDto);
+        return NoContent();
+    }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var representative = await _representativeService.GetRepresentative(id);
+        if (representative == null)
+            return NotFound();
+        await _representativeService.DeleteRepresentative(id);
+        return NoContent();
     }
 }

@@ -17,14 +17,6 @@ public class LeaderboardsController : ControllerBase
         _leaderboardService = leaderboardService;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(int id)
-    {
-        var leaderboard = await _leaderboardService.GetLeaderboard(id);
-        if (leaderboard == null) return NotFound();
-        return Ok(leaderboard);
-    }
-
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateLeaderboardDto createLeaderboardDto)
     {
@@ -35,6 +27,14 @@ public class LeaderboardsController : ControllerBase
         var leaderboardId = _leaderboardService.PostLeaderboard(createLeaderboardDto);
         return CreatedAtAction(nameof(Get), new { id = leaderboardId },
             createLeaderboardDto);
+    }
+
+    [HttpGet("{year:int}")]
+    public async Task<IActionResult> Get(int year)
+    {
+        var leaderboard = await _leaderboardService.GetLeaderboard(year);
+        if (leaderboard == null) return NotFound();
+        return Ok(leaderboard);
     }
 
     [HttpPut("{id}")]

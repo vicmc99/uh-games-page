@@ -17,15 +17,6 @@ public class AthletesController : ControllerBase
         _athleteService = athleteService;
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
-    {
-        var athlete = await _athleteService.GetAthlete(id);
-        if (athlete != null)
-            return Ok(athlete);
-        return NotFound();
-    }
-
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateAthleteDto createAthleteDto)
     {
@@ -36,14 +27,13 @@ public class AthletesController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = newAthleteId }, newAthlete);
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
     {
         var athlete = await _athleteService.GetAthlete(id);
-        if (athlete == null)
-            return NotFound();
-        await _athleteService.DeleteAthlete(id);
-        return NoContent();
+        if (athlete != null)
+            return Ok(athlete);
+        return NotFound();
     }
 
     [HttpPut("{id:int}")]
@@ -53,6 +43,16 @@ public class AthletesController : ControllerBase
         if (athlete == null)
             return NotFound();
         await _athleteService.UpdateAthlete(id, updateAthleteDto);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var athlete = await _athleteService.GetAthlete(id);
+        if (athlete == null)
+            return NotFound();
+        await _athleteService.DeleteAthlete(id);
         return NoContent();
     }
 }

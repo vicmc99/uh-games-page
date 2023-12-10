@@ -17,13 +17,12 @@ public class MajorsController : ControllerBase
         _majorsService = majorsService;
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
+    [HttpPost]
+    public async Task<IActionResult> Post([FromForm] CreateMajorDto majorDto)
     {
-        var majorDto = await _majorsService.GetMajor(id);
-        if (majorDto != null)
-            return Ok(majorDto);
-        return NotFound();
+        var majorId = await _majorsService.PostMajor(majorDto);
+        var newMajor = await _majorsService.GetMajor(majorId);
+        return CreatedAtAction(nameof(Get), new { id = majorId }, newMajor);
     }
 
     [HttpGet]
@@ -33,22 +32,13 @@ public class MajorsController : ControllerBase
         return Ok(majors);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Post([FromForm] CreateMajorDto majorDto)
-    {
-        var majorId = await _majorsService.PostMajor(majorDto);
-        var newMajor = await _majorsService.GetMajor(majorId);
-        return CreatedAtAction(nameof(Get), new { id = majorId }, newMajor);
-    }
-
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
     {
         var majorDto = await _majorsService.GetMajor(id);
-        if (majorDto == null)
-            return NotFound();
-        await _majorsService.DeleteMajor(id);
-        return NoContent();
+        if (majorDto != null)
+            return Ok(majorDto);
+        return NotFound();
     }
 
     [HttpPut("{id:int}")]
@@ -58,6 +48,16 @@ public class MajorsController : ControllerBase
         if (major == null)
             return NotFound();
         await _majorsService.UpdateMajor(id, majorDto);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var majorDto = await _majorsService.GetMajor(id);
+        if (majorDto == null)
+            return NotFound();
+        await _majorsService.DeleteMajor(id);
         return NoContent();
     }
 }

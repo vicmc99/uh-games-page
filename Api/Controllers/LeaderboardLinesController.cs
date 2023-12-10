@@ -18,20 +18,20 @@ public class LeaderboardLinesController : ControllerBase
         _leaderboardLineService = leaderboardLineService;
     }
 
+    [HttpPost]
+    public Task<IActionResult> Post([FromForm] CreateLeaderBoardLineDto createLeaderboardLineDto)
+    {
+        var leaderboardId = _leaderboardLineService.PostLeaderboardLine(createLeaderboardLineDto);
+        return Task.FromResult<IActionResult>(CreatedAtAction(nameof(Get), new { id = leaderboardId },
+            createLeaderboardLineDto));
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
         return await _leaderboardLineService.GetLeaderboardLine(id) != null
             ? Ok(_leaderboardLineService.GetLeaderboardLine(id))
             : NotFound();
-    }
-
-    [HttpPost]
-    public Task<IActionResult> Post([FromBody] CreateLeaderBoardLineDto createLeaderboardLineDto)
-    {
-        var leaderboardId = _leaderboardLineService.PostLeaderboardLine(createLeaderboardLineDto);
-        return Task.FromResult<IActionResult>(CreatedAtAction(nameof(Get), new { id = leaderboardId },
-            createLeaderboardLineDto));
     }
 
     [HttpPut("{id}")]

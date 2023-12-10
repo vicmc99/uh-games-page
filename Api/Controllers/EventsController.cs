@@ -17,6 +17,14 @@ public class EventsController : ControllerBase
         _eventService = eventService;
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Post([FromForm] CreateEventDto createEventDto)
+    {
+        var newEventId = await _eventService.PostEvent(createEventDto);
+        var newEvent = await _eventService.GetEvent(newEventId);
+        return CreatedAtAction(nameof(Get), new { id = newEventId }, newEvent);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Get()
     {
@@ -33,12 +41,14 @@ public class EventsController : ControllerBase
         return NotFound();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Post([FromForm] CreateEventDto createEventDto)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromForm] CreateEventDto updateEventDto)
     {
-        var newEventId = await _eventService.PostEvent(createEventDto);
-        var newEvent = await _eventService.GetEvent(newEventId);
-        return CreatedAtAction(nameof(Get), new { id = newEventId }, newEvent);
+        var eventDto = await _eventService.GetEvent(id);
+        if (eventDto == null)
+            return NotFound();
+        await _eventService.UpdateEvent(id, updateEventDto);
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
@@ -48,16 +58,6 @@ public class EventsController : ControllerBase
         if (eventDto == null)
             return NotFound();
         await _eventService.DeleteEvent(id);
-        return NoContent();
-    }
-
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromForm] CreateEventDto updateEventDto)
-    {
-        var eventDto = await _eventService.GetEvent(id);
-        if (eventDto == null)
-            return NotFound();
-        await _eventService.UpdateEvent(id, updateEventDto);
         return NoContent();
     }
 }

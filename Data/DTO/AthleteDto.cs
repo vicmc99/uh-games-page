@@ -16,7 +16,7 @@ public class AthleteDto
         {
             Id = athlete.Id,
             Name = athlete.Name,
-            DateOfBirth = athlete.DateOfBirth.Year.ToString("dd/mm/yyyy"),
+            DateOfBirth = athlete.DateOfBirth.ToString("dd/MM/yyyy"),
             Photo = athlete.Photo,
             Nick = athlete.Nick
         };
