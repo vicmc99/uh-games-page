@@ -1,0 +1,57 @@
+using Data.DTO.In;
+using Microsoft.AspNetCore.Mvc;
+using Services.Domain;
+
+namespace Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class LeaderboardsController : ControllerBase
+{
+    private readonly ILeaderboardService _leaderboardService;
+    private readonly ILogger<LeaderboardsController> _logger;
+
+    public LeaderboardsController(ILogger<LeaderboardsController> logger, ILeaderboardService leaderboardService)
+    {
+        _logger = logger;
+        _leaderboardService = leaderboardService;
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var leaderboard = await _leaderboardService.GetLeaderboard(id);
+        if (leaderboard == null) return NotFound();
+        return Ok(leaderboard);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromForm] CreateLeaderboardDto createLeaderboardDto)
+    {
+        var existingLeaderboard = await _leaderboardService.GetLeaderboard(createLeaderboardDto.Year);
+        if (existingLeaderboard != null)
+            return BadRequest("The leaderboard already exists");
+
+        var leaderboardId = _leaderboardService.PostLeaderboard(createLeaderboardDto);
+        return CreatedAtAction(nameof(Get), new { id = leaderboardId },
+            createLeaderboardDto);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromForm] CreateLeaderboardDto createLeaderboardDto)
+    {
+        var leaderboard = await _leaderboardService.GetLeaderboard(id);
+        if (leaderboard == null) return NotFound();
+        await _leaderboardService.UpdateLeaderboard(id, createLeaderboardDto);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var faculty = await _leaderboardService.GetLeaderboard(id);
+        if (faculty == null) return NotFound();
+        await _leaderboardService.DeleteLeaderboard(id);
+        return NoContent();
+    }
+}

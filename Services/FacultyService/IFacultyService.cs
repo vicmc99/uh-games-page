@@ -7,7 +7,7 @@ public interface IFacultyService
 {
     Task<FacultyDto?> GetFaculty(int id);
     bool CheckFaculty(CreateFacultyDto createFacultyDto);
-    Task<IEnumerable<FacultyDto>> GetAllFaculties(int year);
+    Task<IEnumerable<FacultyDto>> GetAllFaculties();
     Task<int> PostFaculty(CreateFacultyDto createFacultyDto);
     Task UpdateFaculty(int id, CreateFacultyDto updateFacultyDto);
     Task DeleteFaculty(int id);

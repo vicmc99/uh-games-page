@@ -9,4 +9,5 @@ public interface IMajorsService
     Task<int> PostMajor(CreateMajorDto majorDto);
     Task DeleteMajor(int id);
     Task UpdateMajor(int id, CreateMajorDto majorDto);
+    Task<IEnumerable<MajorDto>?> GetMajors(int facultyId);
 }

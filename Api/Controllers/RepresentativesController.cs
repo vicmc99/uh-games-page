@@ -5,14 +5,14 @@ using Services.Domain.RepresentativeService;
 namespace Api.Controllers;
 
 [Route("api/[controller]")]
-public class RepresentativeController : ControllerBase
+public class RepresentativesController : ControllerBase
 {
-    private readonly ILogger<RepresentativeController> _logger;
+    private readonly ILogger<RepresentativesController> _logger;
 
 
     private readonly IRepresentativeService _representativeService;
 
-    public RepresentativeController(ILogger<RepresentativeController> logger,
+    public RepresentativesController(ILogger<RepresentativesController> logger,
         IRepresentativeService representativeService)
     {
         _logger = logger;
@@ -20,7 +20,7 @@ public class RepresentativeController : ControllerBase
     }
 
     [HttpPost]
-    public void Post([FromBody] CreateRepresentativeDto createRepresentativeDto)
+    public void Post([FromForm] CreateRepresentativeDto createRepresentativeDto)
     {
         _representativeService.PostRepresentative(createRepresentativeDto);
     }

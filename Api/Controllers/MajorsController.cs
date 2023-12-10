@@ -26,8 +26,15 @@ public class MajorsController : ControllerBase
         return NotFound();
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetMajors([FromQuery] int facultyId)
+    {
+        var majors = await _majorsService.GetMajors(facultyId);
+        return Ok(majors);
+    }
+
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateMajorDto majorDto)
+    public async Task<IActionResult> Post([FromForm] CreateMajorDto majorDto)
     {
         var majorId = await _majorsService.PostMajor(majorDto);
         var newMajor = await _majorsService.GetMajor(majorId);
@@ -45,7 +52,7 @@ public class MajorsController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CreateMajorDto majorDto)
+    public async Task<IActionResult> Update(int id, [FromForm] CreateMajorDto majorDto)
     {
         var major = await _majorsService.GetMajor(id);
         if (major == null)

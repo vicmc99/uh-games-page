@@ -6,12 +6,12 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FacultyController : ControllerBase
+public class FacultiesController : ControllerBase
 {
     private readonly IFacultyService _facultyService;
-    private readonly ILogger<FacultyController> _logger;
+    private readonly ILogger<FacultiesController> _logger;
 
-    public FacultyController(ILogger<FacultyController> logger, IFacultyService facultyService)
+    public FacultiesController(ILogger<FacultiesController> logger, IFacultyService facultyService)
     {
         _logger = logger;
         _facultyService = facultyService;
@@ -20,14 +20,14 @@ public class FacultyController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var faculties = await _facultyService.GetAllFaculties(DateTime.Today.Year);
+        var faculties = await _facultyService.GetAllFaculties();
         return Ok(faculties);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        var faculty = _facultyService.GetFaculty(id);
+        var faculty = await _facultyService.GetFaculty(id);
         if (faculty != null)
             return Ok(faculty);
         return NotFound();
@@ -44,7 +44,7 @@ public class FacultyController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateFacultyDto updateFacultyDto)
     {
-        var faculty = _facultyService.GetFaculty(id);
+        var faculty = await _facultyService.GetFaculty(id);
         if (faculty == null) return NotFound();
         await _facultyService.UpdateFaculty(id, updateFacultyDto);
         return NoContent();
@@ -53,7 +53,7 @@ public class FacultyController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var faculty = _facultyService.GetFaculty(id);
+        var faculty =await _facultyService.GetFaculty(id);
         if (faculty == null) return NotFound();
         await _facultyService.DeleteFaculty(id);
         return NoContent();

@@ -22,30 +22,16 @@ public class FacultyService : IFacultyService
         return faculty != null;
     }
 
-    public Task<IEnumerable<FacultyDto>> GetAllFaculties(int year)
+    public Task<IEnumerable<FacultyDto>> GetAllFaculties()
     {
+        var year = DateTime.Now.Year;
         var faculties = _repository.Set<Faculty>();
         if (!faculties.Any())
             return Task.FromResult<IEnumerable<FacultyDto>>(Array.Empty<FacultyDto>());
 
         var leaderboard = _repository.Set<Leaderboard>().FirstOrDefault(l => l.Year == year);
 
-        if (leaderboard is null)
-            return Task.FromResult(_repository.Set<Faculty>().Select(f => new FacultyDto
-            {
-                Id = f.Id,
-                Name = f.Name,
-                Mascot = f.Mascot,
-                Acronym = f.Acronym,
-                Athletes = Array.Empty<AthleteDto>(),
-                GoldMedals = 0,
-                SilverMedals = 0,
-                BronzeMedals = 0,
-                Ranking = -1,
-                Logo = f.Logo
-            }).AsEnumerable());
-
-        var leaderboardLines = leaderboard.LeaderboardLines;
+        var leaderboardLines = leaderboard?.LeaderboardLines;
 
         var athletes = _repository.Set<Representative>()
             .Where(r => r.Year == year)
@@ -124,10 +110,7 @@ public class FacultyService : IFacultyService
             Acronym = createFacultyDto.Acronym,
             Name = createFacultyDto.Name,
             Mascot = createFacultyDto.Mascot,
-            Logo = createFacultyDto.Logo,
-            Majors = _repository.Set<Major>().Where(m => createFacultyDto.MajorsId.Contains(m.Id)).ToList(),
-            Representatives = _repository.Set<Representative>()
-                .Where(r => createFacultyDto.RepresentativesId.Contains(r.Id)).ToList()
+            Logo = createFacultyDto.Logo
         };
 
         if (CheckFaculty(createFacultyDto))

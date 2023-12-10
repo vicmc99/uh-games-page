@@ -6,12 +6,12 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AthleteController : ControllerBase
+public class AthletesController : ControllerBase
 {
     private readonly IAthleteService _athleteService;
-    private readonly ILogger<AthleteController> _logger;
+    private readonly ILogger<AthletesController> _logger;
 
-    public AthleteController(ILogger<AthleteController> logger, IAthleteService athleteService)
+    public AthletesController(ILogger<AthletesController> logger, IAthleteService athleteService)
     {
         _logger = logger;
         _athleteService = athleteService;

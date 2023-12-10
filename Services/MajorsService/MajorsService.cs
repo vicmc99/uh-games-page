@@ -58,6 +58,14 @@ public class MajorsService : IMajorsService
         return _repository.Save(default);
     }
 
+    public async Task<IEnumerable<MajorDto>?> GetMajors(int facultyId)
+    {
+        var majors = _repository.Set<Major>().Where(m => m.FacultyId == facultyId);
+        if (!majors.Any())
+            return await Task.FromResult<IEnumerable<MajorDto>>(Array.Empty<MajorDto>());
+        return majors.AsEnumerable().Select(MajorDto.FromEntity);
+    }
+
     public Task DeleteMajor(int id)
     {
         var major = _repository.Set<Major>().FirstOrDefault(m => m.Id == id);

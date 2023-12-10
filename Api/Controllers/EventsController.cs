@@ -6,12 +6,12 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class EventController : ControllerBase
+public class EventsController : ControllerBase
 {
     private readonly IEventService _eventService;
-    private readonly ILogger<EventController> _logger;
+    private readonly ILogger<EventsController> _logger;
 
-    public EventController(ILogger<EventController> logger, IEventService eventService)
+    public EventsController(ILogger<EventsController> logger, IEventService eventService)
     {
         _logger = logger;
         _eventService = eventService;
@@ -34,7 +34,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateEventDto createEventDto)
+    public async Task<IActionResult> Post([FromForm] CreateEventDto createEventDto)
     {
         var newEventId = await _eventService.PostEvent(createEventDto);
         var newEvent = await _eventService.GetEvent(newEventId);
@@ -52,7 +52,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] CreateEventDto updateEventDto)
+    public async Task<IActionResult> Update(int id, [FromForm] CreateEventDto updateEventDto)
     {
         var eventDto = await _eventService.GetEvent(id);
         if (eventDto == null)
