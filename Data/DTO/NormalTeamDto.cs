@@ -10,7 +10,7 @@ public class NormalTeamDto : TeamDto
     public IEnumerable<TeamMemberDto> Participants { get; set; }
     public IEnumerable<TeamMemberDto> Substitutes { get; set; }
 
-    private static NormalTeamDto FromEntity(IEnumerable<TeamMember> members,
+    public static NormalTeamDto FromEntity(IEnumerable<TeamMember> members,
         IEnumerable<TeamMember> participants,
         IEnumerable<TeamMember> substitutes,
         int id, int facultyId)

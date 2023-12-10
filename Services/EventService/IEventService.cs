@@ -5,6 +5,10 @@ namespace Services.Domain;
 
 public interface IEventService
 {
-    IEnumerable<EventDto> Get();
-    void PostEvent(CreateEventDto eventDto);
+    Task<IEnumerable<EventDto>> GetAllEvents();
+    Task<EventDto?> GetEvent(int id);
+    Task<int> PostEvent(CreateEventDto eventDto);
+
+    Task DeleteEvent(int id);
+    Task UpdateEvent(int id, CreateEventDto eventDto);
 }

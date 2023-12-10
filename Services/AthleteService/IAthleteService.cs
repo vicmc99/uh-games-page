@@ -5,5 +5,8 @@ namespace Services.Domain;
 
 public interface IAthleteService
 {
-    public void PostAthlete(CreateAthleteDto createAthleteDto);
+    Task<int> PostAthlete(CreateAthleteDto createAthleteDto);
+    Task<AthleteDto?> GetAthlete(int id);
+    Task DeleteAthlete(int id);
+    Task UpdateAthlete(int id, CreateAthleteDto updateAthleteDto);
 }

@@ -1,7 +1,5 @@
 using Data.DTO.In;
-using Data.DTO.Out;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 using Services.Domain;
 
 namespace Api.Controllers;
@@ -19,36 +17,45 @@ public class FacultyController : ControllerBase
         _facultyService = facultyService;
     }
 
-
     [HttpGet]
-    public IEnumerable<FacultyDto> Get([FromQuery] int year, [FromQuery] int id = -1)
+    public async Task<IActionResult> GetAll()
     {
-        if (id == -1) return _facultyService.GetAllFaculties(year);
+        var faculties = await _facultyService.GetAllFaculties(DateTime.Today.Year);
+        return Ok(faculties);
+    }
 
-        var facultyDtos = new FacultyDto[1];
-        facultyDtos[0] = _facultyService.Get(id, year);
-        return facultyDtos;
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var faculty = _facultyService.GetFaculty(id);
+        if (faculty != null)
+            return Ok(faculty);
+        return NotFound();
     }
 
     [HttpPost]
-    public void Post([FromBody] CreateFacultyDto createFacultyDto)
+    public async Task<IActionResult> Post([FromForm] CreateFacultyDto createFacultyDto)
     {
-        try
-        {
-            if (_facultyService.CheckFaculty(createFacultyDto))
-            {
-                throw new ExceptionControllers("The faculty alredy exists",new Exception("400"));
-            }
-            _facultyService.PostFaculty(createFacultyDto);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message);
-           
-        }
-        
+        if (_facultyService.CheckFaculty(createFacultyDto)) return BadRequest("The faculty already exists");
+        var facultyId = await _facultyService.PostFaculty(createFacultyDto);
+        return CreatedAtAction(nameof(Get), new { id = facultyId }, createFacultyDto);
     }
 
-   
-    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromForm] CreateFacultyDto updateFacultyDto)
+    {
+        var faculty = _facultyService.GetFaculty(id);
+        if (faculty == null) return NotFound();
+        await _facultyService.UpdateFaculty(id, updateFacultyDto);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var faculty = _facultyService.GetFaculty(id);
+        if (faculty == null) return NotFound();
+        await _facultyService.DeleteFaculty(id);
+        return NoContent();
+    }
 }

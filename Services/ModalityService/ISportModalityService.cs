@@ -5,6 +5,8 @@ namespace Services.Domain;
 
 public interface ISportModalityService
 {
-    SportModalityDto Get(int id);
-    void Post(CreateSportModalityDto sportModalityDto);
+    Task<SportModalityDto?> GetSportModality(int id);
+    Task<int> PostSportModality(CreateSportModalityDto sportModalityDto);
+    Task DeleteSportModality(int id);
+    Task UpdateSportModality(int id, CreateSportModalityDto updateSportModalityDto);
 }

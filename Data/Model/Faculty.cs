@@ -8,6 +8,7 @@ public class Faculty
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
+
     //TODO: Name is unique???
     public string Name { get; set; }
 
@@ -15,7 +16,7 @@ public class Faculty
 
     public string Mascot { get; set; }
 
-    public string Logo { get; set; }
+    public byte[] Logo { get; set; }
 
     public IEnumerable<Major> Majors { get; set; }
 

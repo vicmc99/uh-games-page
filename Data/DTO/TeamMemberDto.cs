@@ -15,14 +15,7 @@ public class TeamMemberDto
         {
             Id = teamMember.Id,
             TeamId = teamMember.TeamId,
-            Athlete = new AthleteDto
-            {
-                Id = teamMember.Athlete.Id,
-                Name = teamMember.Athlete.Name,
-                DateOfBirth = teamMember.Athlete.DateOfBirth,
-                Photo = teamMember.Athlete.Photo,
-                Nick = teamMember.Athlete.Nick
-            },
+            Athlete = AthleteDto.FromEntity(teamMember.Athlete),
             Role = teamMember.Role
         };
     }

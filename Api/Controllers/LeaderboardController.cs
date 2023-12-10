@@ -1,7 +1,5 @@
-using Data.DTO;
 using Data.DTO.In;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 using Services.Domain;
 
 namespace Api.Controllers;
@@ -19,27 +17,38 @@ public class LeaderboardController : ControllerBase
         _leaderboardService = leaderboardService;
     }
 
-    [HttpGet]
-    public LeaderboardDto Get([FromQuery] int year)
+    [HttpGet("{id}")]
+    public Task<IActionResult> Get(int id)
     {
-        return _leaderboardService.Get(year);
+        return Task.FromResult<IActionResult>(_leaderboardService.GetLeaderboard(id) != null
+            ? Ok(_leaderboardService.GetLeaderboard(id))
+            : NotFound());
     }
 
     [HttpPost]
-    public void Post([FromBody] CreateLeaderboardDto createLeaderboardDto)
+    public async Task<IActionResult> Post([FromBody] CreateLeaderboardDto createLeaderboardDto)
     {
-        try
-        {
-            if (Get(createLeaderboardDto.Year) != null)
-            {
-                throw new ExceptionControllers("Leaderboard already exists", new Exception("400"));
-            }
-            _leaderboardService.Post(createLeaderboardDto);
-        }
-        catch (Exception e)
-        {
-           _logger.LogError(e.Message);
-        }
-        
+        if (Get(createLeaderboardDto.Year) != null)
+            return BadRequest("The leaderboard already exists");
+        var leaderboardId = _leaderboardService.PostLeaderboard(createLeaderboardDto);
+        return CreatedAtAction(nameof(Get), new { id = leaderboardId }, createLeaderboardDto);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CreateLeaderboardDto createLeaderboardDto)
+    {
+        var leaderboard = _leaderboardService.GetLeaderboard(id);
+        if (leaderboard == null) return NotFound();
+        await _leaderboardService.UpdateLeaderboard(id, createLeaderboardDto);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var faculty = _leaderboardService.GetLeaderboard(id);
+        if (faculty == null) return NotFound();
+        await _leaderboardService.DeleteLeaderboard(id);
+        return NoContent();
     }
 }

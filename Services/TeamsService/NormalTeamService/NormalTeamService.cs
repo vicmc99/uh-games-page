@@ -15,16 +15,15 @@ public class NormalTeamService : INormalTeamService
 
     public async void PostNormalTeamService(CreateNormalTeamDto createNormalTeamDto)
     {
-            var temp= Helper.GetTeam(_repository, createNormalTeamDto);
-        var normalTeam = new NormalTeam()
+        var temp = Helper.GetTeam(_repository, createNormalTeamDto);
+        var normalTeam = new NormalTeam
         {
             Name = temp.Name,
             Faculty = temp.Faculty,
             Members = _repository.Set<TeamMember>()
-                .Where(e => createNormalTeamDto.Members.Contains(e.Id)),
+                .Where(e => createNormalTeamDto.Members.Contains(e.Id))
         };
         await _repository.Set<NormalTeam>().Create(normalTeam);
         await _repository.Save(default);
     }
-    
 }

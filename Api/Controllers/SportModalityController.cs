@@ -1,4 +1,3 @@
-using Data.DTO;
 using Data.DTO.In;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
@@ -17,15 +16,42 @@ public class SportModalityController : ControllerBase
         _sportModalityService = sportModalityService;
     }
 
-    [HttpGet]
-    public SportModalityDto Get([FromQuery] int id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
     {
-        return _sportModalityService.Get(id);
+        var sportModality = await _sportModalityService.GetSportModality(id);
+        if (sportModality != null)
+            return Ok(sportModality);
+        return NotFound();
     }
 
     [HttpPost]
-    public void Post([FromBody] CreateSportModalityDto sportModalityDto)
+    public async Task<IActionResult> Post([FromForm] CreateSportModalityDto createSportModalityDto)
     {
-        _sportModalityService.Post(sportModalityDto);
+        var newSportModalityId = await _sportModalityService.PostSportModality(createSportModalityDto);
+        if (newSportModalityId == -1)
+            return BadRequest();
+        var newSportModality = await _sportModalityService.GetSportModality(newSportModalityId);
+        return CreatedAtAction(nameof(Get), new { id = newSportModalityId }, newSportModality);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var sportModality = await _sportModalityService.GetSportModality(id);
+        if (sportModality == null)
+            return NotFound();
+        await _sportModalityService.DeleteSportModality(id);
+        return NoContent();
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromForm] CreateSportModalityDto updateSportModalityDto)
+    {
+        var sportModality = await _sportModalityService.GetSportModality(id);
+        if (sportModality == null)
+            return NotFound();
+        await _sportModalityService.UpdateSportModality(id, updateSportModalityDto);
+        return NoContent();
     }
 }
