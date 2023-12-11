@@ -24,41 +24,37 @@ public class FacultyService : IFacultyService
 
     public Task<IEnumerable<FacultyDto>> GetAllFaculties()
     {
-        var year = DateTime.Now.Year;
-        var faculties = _repository.Set<Faculty>();
-        if (!faculties.Any())
-            return Task.FromResult<IEnumerable<FacultyDto>>(Array.Empty<FacultyDto>());
-
+        var faculties = _repository.Set<Faculty>().ToList();
         var leaderboard = _repository.Set<Leaderboard>().Include(l => l.LeaderboardLines)
-            .FirstOrDefault(l => l.Year == year);
+            .FirstOrDefault(l => l.Year == DateTime.Now.Year);
+        var representative = _repository.Set<Representative>().Include(r => r.Athlete).ToList();
 
-        var leaderboardLines = leaderboard?.LeaderboardLines.ToList();
-        if (leaderboardLines == null)
-            return Task.FromResult<IEnumerable<FacultyDto>>(Array.Empty<FacultyDto>());
-        var representatives = _repository.Set<Representative>()
-            .Where(r => r.Year == year)
-            .Include(r => r.Athlete);
+        var facultyDtos = faculties.Select(faculty =>
+        {
+            var leaderboardLine = leaderboard.LeaderboardLines.FirstOrDefault(l => l.FacultyId == faculty.Id);
+            var goldMedals = leaderboardLine?.GoldMedals ?? 0;
+            var silverMedals = leaderboardLine?.SilverMedals ?? 0;
+            var bronzeMedals = leaderboardLine?.BronzeMedals ?? 0;
+            var ranking = leaderboardLine?.Ranking ?? null;
 
-        return Task.FromResult((from faculty in faculties
-            let actualAthletes = representatives.Where(a => a.FacultyId == faculty.Id).Select(r => r.Athlete)
-            let leaderboardLine = leaderboardLines.FirstOrDefault(l => l.FacultyId == faculty.Id)
-            let goldMedals = leaderboardLine != null ? leaderboardLine.GoldMedals : 0
-            let silverMedals = leaderboardLine != null ? leaderboardLine.SilverMedals : 0
-            let bronzeMedals = leaderboardLine != null ? leaderboardLine.BronzeMedals : 0
-            let ranking = leaderboardLine != null ? leaderboardLine.Ranking : -1
-            select new FacultyDto
+            var facultyAthletes = representative.Where(a => a.FacultyId == faculty.Id).Select(a => a.Athlete);
+
+            return new FacultyDto
             {
                 Id = faculty.Id,
                 Name = faculty.Name,
                 Mascot = faculty.Mascot,
                 Acronym = faculty.Acronym,
-                Athletes = actualAthletes.AsEnumerable().Select(AthleteDto.FromEntity),
+                Athletes = facultyAthletes.Select(AthleteDto.FromEntity),
                 GoldMedals = goldMedals,
                 SilverMedals = silverMedals,
                 BronzeMedals = bronzeMedals,
                 Ranking = ranking,
                 Logo = faculty.Logo
-            }).AsEnumerable());
+            };
+        });
+
+        return Task.FromResult(facultyDtos.AsEnumerable());
     }
 
     public Task<FacultyDto?> GetFaculty(int id)
@@ -126,9 +122,11 @@ public class FacultyService : IFacultyService
         faculty.Acronym = updateFacultyDto.Acronym;
         faculty.Mascot = updateFacultyDto.Mascot;
         faculty.Logo = updateFacultyDto.Logo;
-        faculty.Majors = _repository.Set<Major>().Where(m => updateFacultyDto.MajorsId.Contains(m.Id)).ToList();
-        faculty.Representatives = _repository.Set<Representative>()
-            .Where(r => updateFacultyDto.RepresentativesId.Contains(r.Id)).ToList();
+        if (updateFacultyDto.MajorsId != null)
+            faculty.Majors = _repository.Set<Major>().Where(m => updateFacultyDto.MajorsId.Contains(m.Id)).ToList();
+        if (updateFacultyDto.RepresentativesId != null)
+            faculty.Representatives = _repository.Set<Representative>()
+                .Where(r => updateFacultyDto.RepresentativesId.Contains(r.Id)).ToList();
 
         _repository.Set<Faculty>().Update(faculty);
         return _repository.Save(default);

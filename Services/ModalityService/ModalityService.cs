@@ -40,8 +40,7 @@ public class ModalityService : ISportModalityService
             DisciplineId = createModalityDto.DisciplineId,
             Discipline = discipline,
             CategoryId = createModalityDto.CategoryId,
-            Category = category,
-            Sex = createModalityDto.Sex
+            Category = category
         };
         await _repository.Set<Modality>().Create(modality);
         await _repository.Save(default);
@@ -76,7 +75,6 @@ public class ModalityService : ISportModalityService
         modality.Discipline = discipline;
         modality.CategoryId = updateSportModalityDto.CategoryId;
         modality.Category = category;
-        modality.Sex = updateSportModalityDto.Sex;
 
         _repository.Save(default);
         return Task.CompletedTask;

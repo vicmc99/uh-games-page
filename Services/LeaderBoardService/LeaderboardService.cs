@@ -15,10 +15,10 @@ public class LeaderboardService : ILeaderboardService
         _repository = repository;
     }
 
-    public Task<LeaderboardDto?> GetLeaderboard(int year)
+    public Task<LeaderboardDto?> GetLeaderboard(int id)
     {
         var leaderboard = _repository.Set<Leaderboard>().Include(l => l.LeaderboardLines)
-            .FirstOrDefault(l => l.Year == year);
+            .FirstOrDefault(l => l.Id == id);
         if (leaderboard is null)
             return Task.FromResult<LeaderboardDto?>(null);
 
