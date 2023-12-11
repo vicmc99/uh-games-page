@@ -9,6 +9,7 @@ public class SportModalityDto
     public DisciplineDto Discipline { get; set; }
     public CategoryDto Category { get; set; }
     public string Sex { get; set; }
+    private string Name { get; set; }
 
     public static SportModalityDto FromEntity(Modality modality)
     {
@@ -20,7 +21,8 @@ public class SportModalityDto
             Category = CategoryDto.FromEntity(modality.Category),
             Sex = modality.Sex
         };
-        
+        sportModalityDto.Name = sportModalityDto.Sport.Name + " " + sportModalityDto.Discipline.Name + " " +
+                                sportModalityDto.Sex;
         return sportModalityDto;
     }
 }

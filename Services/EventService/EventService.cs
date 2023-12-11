@@ -80,8 +80,7 @@ public class EventService : IEventService
                 {
                     Team = normalTeamDto, Score = new ScoreDto { Id = s.ScoreId, NumberScore = s.Score.NumberScore }
                 },
-            SportModality = SportModalityDto.FromEntity(e.SportModality),
-            SportModalityId = e.SportModalityId
+            SportModality = SportModalityDto.FromEntity(e.SportModality)
         }));
 
         eventDtos.AddRange(composedEvents.Select(e => new EventDto
@@ -110,8 +109,7 @@ public class EventService : IEventService
                     Score = ScoreDto.FromEntity(s.Score),
                     CompositionId = s.CompositionId
                 },
-            SportModality = SportModalityDto.FromEntity(e.SportModality),
-            SportModalityId = e.SportModalityId
+            SportModality = SportModalityDto.FromEntity(e.SportModality)
         }));
 
         eventDtos.AddRange(participantScoredEvents.Select(e => new EventDto
@@ -133,8 +131,7 @@ public class EventService : IEventService
                     ParticipantId = s.ParticipantId,
                     Score = ScoreDto.FromEntity(s.Score)
                 },
-            SportModality = SportModalityDto.FromEntity(e.SportModality),
-            SportModalityId = e.SportModalityId
+            SportModality = SportModalityDto.FromEntity(e.SportModality)
         }));
 
         eventDtos.AddRange(matchEvents.Select(e => new EventDto
@@ -162,8 +159,7 @@ public class EventService : IEventService
                             Score = ScoreDto.FromEntity(p.Score)
                         }
                 },
-            SportModality = SportModalityDto.FromEntity(e.SportModality),
-            SportModalityId = e.SportModalityId
+            SportModality = SportModalityDto.FromEntity(e.SportModality)
         }));
 
         return Task.FromResult<IEnumerable<EventDto>>(eventDtos.OrderBy(e => e.DateTime));
@@ -210,8 +206,7 @@ public class EventService : IEventService
                                 .Select(p => p.Participant), teamEvent.TeamSubstitutes.Where(p => p.TeamId == s.TeamId)
                                 .Select(p => p.Substitute), s.TeamId, s.Team.FacultyId),
                             ScoreDto.FromEntity(s.Score))),
-                    SportModality = SportModalityDto.FromEntity(teamEvent.SportModality),
-                    SportModalityId = teamEvent.SportModalityId
+                    SportModality = SportModalityDto.FromEntity(teamEvent.SportModality)
                 });
             case "Composed":
                 var composedEvent = _repository.Set<ComposedTeamsEvent>()
@@ -266,8 +261,7 @@ public class EventService : IEventService
                             .Select(s => s.Substitute), t.Id, t.FacultyId)),
                     ParticipantScores =
                         participantScoredEvent.ParticipantScores.Select(TeamParticipantScoreDto.FromEntity),
-                    SportModality = SportModalityDto.FromEntity(participantScoredEvent.SportModality),
-                    SportModalityId = participantScoredEvent.SportModalityId
+                    SportModality = SportModalityDto.FromEntity(participantScoredEvent.SportModality)
                 });
             case "MatchEvent":
                 var matchEvent = _repository.Set<MatchEvent>()
@@ -295,8 +289,7 @@ public class EventService : IEventService
                     MatchEventTeams = matchEvent.MatchedTeams.Select(t =>
                         NormalTeamDto.FromEntity(t.Members, null, null, t.Id, t.FacultyId)),
                     Matches = matchEvent.Matches.Select(MatchDto.FromEntity),
-                    SportModality = SportModalityDto.FromEntity(matchEvent.SportModality),
-                    SportModalityId = matchEvent.SportModalityId
+                    SportModality = SportModalityDto.FromEntity(matchEvent.SportModality)
                 });
             default:
                 return Task.FromException<EventDto?>(new ArgumentException("Invalid event type"));
