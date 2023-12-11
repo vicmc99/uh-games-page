@@ -18,7 +18,7 @@ public class Faculty
 
     public byte[] Logo { get; set; }
 
-    public IEnumerable<Major> Majors { get; set; }
+    public List<Major> Majors { get; set; }
 
-    public IEnumerable<Representative> Representatives { get; set; }
+    public List<Representative> Representatives { get; set; }
 }

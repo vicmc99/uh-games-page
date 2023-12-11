@@ -27,14 +27,14 @@ public class LeaderboardsController : ControllerBase
             return BadRequest("The leaderboard already exists");
 
         var leaderboardId = _leaderboardService.PostLeaderboard(createLeaderboardDto);
-        return CreatedAtAction(nameof(Get), new { id = leaderboardId },
+        return CreatedAtAction(nameof(Post), new { id = leaderboardId },
             createLeaderboardDto);
     }
 
-    [HttpGet("{year:int}")]
-    public async Task<IActionResult> Get(int year)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
     {
-        var leaderboard = await _leaderboardService.GetLeaderboard(year);
+        var leaderboard = await _leaderboardService.GetLeaderboard(id);
         if (leaderboard == null) return NotFound();
         return Ok(leaderboard);
     }

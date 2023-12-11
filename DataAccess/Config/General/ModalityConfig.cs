@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DataAccess.Config;
 
-public class ModalityConfig:IEntityTypeConfiguration<Modality>
+public class ModalityConfig : IEntityTypeConfiguration<Modality>
 {
     public void Configure(EntityTypeBuilder<Modality> builder)
     {
-        builder.HasKey(e => new { e.SportId,e.DisciplineId,e.CategoryId,e.Sex });
+        builder.HasKey(e => new { e.SportId, e.DisciplineId, e.CategoryId });
     }
 }

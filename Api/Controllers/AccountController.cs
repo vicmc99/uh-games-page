@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Data.Model;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +12,11 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+    public AccountController(UserManager<IdentityUser> userManager)
     {
         _userManager = userManager;
-        _signInManager = signInManager;
     }
 
     [HttpPost("login")]
@@ -37,7 +37,7 @@ public class AccountController : ControllerBase
             // Add each role as a claim
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            var identity = new ClaimsIdentity(claims);
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(principal);
@@ -46,5 +46,30 @@ public class AccountController : ControllerBase
         }
 
         return Unauthorized();
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+        return Ok();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(LoginDto model)
+    {
+        //TODO: Check if user already exists
+        var user = new IdentityUser { UserName = model.UserName };
+        var result = await _userManager.CreateAsync(user, model.Password);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        await _userManager.AddToRoleAsync(user, "Moderator");
+        return Ok();
+    }
+
+    [HttpGet]
+    public bool IsAuthorized()
+    {
+        return User.IsInRole("Admin") || User.IsInRole("Moderator");
     }
 }

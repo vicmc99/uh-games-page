@@ -1,6 +1,7 @@
 using DataAccess;
 using DataAccess.Repository;
 using InitialData;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -32,11 +33,14 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.ConfigureApplicationCookie(options => { options.LoginPath = "/api/Account/login"; });
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
 builder.Services.AddScoped<UserManager<IdentityUser>>();
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
-builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
+//builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 builder.Services.AddTransient<IDataRepository, DataRepository>();
 builder.Services.AddTransient<IFacultyService, FacultyService>();
 builder.Services.AddTransient<IMajorsService, MajorsService>();
@@ -76,7 +80,7 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "cookie"
                 }
             },
-            new string[] {}
+            new string[] { }
         }
     });
     // Takes only one of the controllers in the same route in case of conflict.
@@ -89,12 +93,15 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider
         .GetRequiredService<ApplicationDbContext>();
+    var roleManager = scope.ServiceProvider
+        .GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider
+        .GetRequiredService<UserManager<IdentityUser>>();
 
     // Applies any pending migrations for the context to the database
     dbContext.Database.Migrate();
 
-    //var dbInitializer = new DatabaseInitializer(dbContext);
-    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDatabaseInitializer>();
+    var dbInitializer = new DatabaseInitializer(dbContext, roleManager, userManager);
     dbInitializer.EnsureInitialData();
 }
 
@@ -107,6 +114,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

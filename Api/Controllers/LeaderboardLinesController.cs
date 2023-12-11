@@ -21,19 +21,19 @@ public class LeaderboardLinesController : ControllerBase
 
     [Authorize(Roles = "Admin, Moderator")]
     [HttpPost]
-    public Task<IActionResult> Post([FromForm] CreateLeaderBoardLineDto createLeaderboardLineDto)
+    public async Task<IActionResult> Post([FromForm] CreateLeaderBoardLineDto createLeaderboardLineDto)
     {
-        var leaderboardId = _leaderboardLineService.PostLeaderboardLine(createLeaderboardLineDto);
-        return Task.FromResult<IActionResult>(CreatedAtAction(nameof(Get), new { id = leaderboardId },
-            createLeaderboardLineDto));
+        var leaderboardId = await _leaderboardLineService.PostLeaderboardLine(createLeaderboardLineDto);
+        return CreatedAtAction(nameof(Post), new { id = leaderboardId },
+            createLeaderboardLineDto);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        return await _leaderboardLineService.GetLeaderboardLine(id) != null
-            ? Ok(_leaderboardLineService.GetLeaderboardLine(id))
-            : NotFound();
+        var leaderboardLineDto = await _leaderboardLineService.GetLeaderboardLine(id);
+        if (leaderboardLineDto == null) return NotFound();
+        return Ok(leaderboardLineDto);
     }
 
     [Authorize(Roles = "Admin, Moderator")]
