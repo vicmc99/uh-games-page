@@ -1,4 +1,5 @@
 ﻿using Data.DTO.In;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain.RepresentativeService;
 
@@ -19,6 +20,7 @@ public class RepresentativesController : ControllerBase
         _representativeService = representativeService;
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateRepresentativeDto createRepresentativeDto)
     {
@@ -45,6 +47,7 @@ public class RepresentativesController : ControllerBase
             : Task.FromResult<IActionResult>(Ok(representative));
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] CreateRepresentativeDto updateRepresentativeDto)
     {
@@ -54,6 +57,8 @@ public class RepresentativesController : ControllerBase
         await _representativeService.UpdateRepresentative(id, updateRepresentativeDto);
         return NoContent();
     }
+
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

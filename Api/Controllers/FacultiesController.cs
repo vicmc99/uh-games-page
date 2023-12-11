@@ -1,4 +1,5 @@
 using Data.DTO.In;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
 
@@ -17,6 +18,7 @@ public class FacultiesController : ControllerBase
         _facultyService = facultyService;
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateFacultyDto createFacultyDto)
     {
@@ -41,6 +43,7 @@ public class FacultiesController : ControllerBase
         return NotFound();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateFacultyDto updateFacultyDto)
     {
@@ -50,6 +53,7 @@ public class FacultiesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

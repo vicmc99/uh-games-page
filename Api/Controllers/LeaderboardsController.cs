@@ -1,4 +1,5 @@
 using Data.DTO.In;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
 
@@ -17,6 +18,7 @@ public class LeaderboardsController : ControllerBase
         _leaderboardService = leaderboardService;
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateLeaderboardDto createLeaderboardDto)
     {
@@ -37,6 +39,7 @@ public class LeaderboardsController : ControllerBase
         return Ok(leaderboard);
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateLeaderboardDto createLeaderboardDto)
     {
@@ -46,6 +49,7 @@ public class LeaderboardsController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

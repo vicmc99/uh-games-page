@@ -1,4 +1,5 @@
 using Data.DTO.In;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
 
@@ -17,6 +18,7 @@ public class EventsController : ControllerBase
         _eventService = eventService;
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateEventDto createEventDto)
     {
@@ -41,6 +43,7 @@ public class EventsController : ControllerBase
         return NotFound();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateEventDto updateEventDto)
     {
@@ -51,6 +54,7 @@ public class EventsController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

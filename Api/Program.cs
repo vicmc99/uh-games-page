@@ -1,8 +1,9 @@
-
-using Microsoft.EntityFrameworkCore;
 using DataAccess;
-using InitialData;
 using DataAccess.Repository;
+using InitialData;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Services.Domain;
 using Services.Domain.AthleteService;
 using Services.Domain.CategoryService;
@@ -21,7 +22,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
+builder.Services.AddIdentityCore<IdentityUser>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 5;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddScoped<UserManager<IdentityUser>>();
+builder.Services.AddScoped<RoleManager<IdentityRole>>();
+
+builder.Services.AddTransient<IDatabaseInitializer, DatabaseInitializer>();
 builder.Services.AddTransient<IDataRepository, DataRepository>();
 builder.Services.AddTransient<IFacultyService, FacultyService>();
 builder.Services.AddTransient<IMajorsService, MajorsService>();
@@ -39,12 +54,34 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(c =>
-{// Takes only one of the controllers in the same route in case of conflict.
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+
+    c.AddSecurityDefinition("cookie", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.ApiKey,
+        In = ParameterLocation.Cookie,
+        Name = ".AspNetCore.Cookies", // Name of the cookie
+        Description = "Cookie authentication"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "cookie"
+                }
+            },
+            new string[] {}
+        }
+    });
+    // Takes only one of the controllers in the same route in case of conflict.
     c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 });
-
-
-
 
 var app = builder.Build();
 
@@ -55,10 +92,10 @@ using (var scope = app.Services.CreateScope())
 
     // Applies any pending migrations for the context to the database
     dbContext.Database.Migrate();
-    
-    var dbInitializer = new DatabaseInitializer(dbContext);
-    dbInitializer.EnsureInitialData();
 
+    //var dbInitializer = new DatabaseInitializer(dbContext);
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDatabaseInitializer>();
+    dbInitializer.EnsureInitialData();
 }
 
 // Configure the HTTP request pipeline.

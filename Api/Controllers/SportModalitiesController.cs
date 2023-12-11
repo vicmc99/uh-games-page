@@ -1,4 +1,5 @@
 using Data.DTO.In;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
 
@@ -17,6 +18,7 @@ public class SportModalitiesController : ControllerBase
         _sportModalityService = sportModalityService;
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateSportModalityDto createSportModalityDto)
     {
@@ -36,6 +38,7 @@ public class SportModalitiesController : ControllerBase
         return NotFound();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateSportModalityDto updateSportModalityDto)
     {
@@ -46,6 +49,7 @@ public class SportModalitiesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

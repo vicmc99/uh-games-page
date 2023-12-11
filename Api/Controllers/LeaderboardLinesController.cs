@@ -1,4 +1,5 @@
 ﻿using Data.DTO.In;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.LeaderBoardLineService;
 
@@ -18,6 +19,7 @@ public class LeaderboardLinesController : ControllerBase
         _leaderboardLineService = leaderboardLineService;
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPost]
     public Task<IActionResult> Post([FromForm] CreateLeaderBoardLineDto createLeaderboardLineDto)
     {
@@ -34,6 +36,7 @@ public class LeaderboardLinesController : ControllerBase
             : NotFound();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateLeaderBoardLineDto createLeaderboardLineDto)
     {
@@ -43,6 +46,7 @@ public class LeaderboardLinesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin, Moderator")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
