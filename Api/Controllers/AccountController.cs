@@ -44,6 +44,10 @@ public class AccountController : ControllerBase
                 IsPersistent = model.RememberMe
             });
 
+            return SignIn(principal, new AuthenticationProperties
+            {
+                IsPersistent = model.RememberMe
+            }, CookieAuthenticationDefaults.AuthenticationScheme);
             return CreatedAtAction("Login", new { model.UserName, model.Password }, model);
         }
 
@@ -77,6 +81,6 @@ public class AccountController : ControllerBase
     [HttpGet]
     public bool IsLogged()
     {
-        return User.IsInRole("Admin") || User.IsInRole("Moderator") || User.IsInRole("User");
+        return User.Identity?.IsAuthenticated ?? false;
     }
 }

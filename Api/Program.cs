@@ -33,7 +33,12 @@ builder.Services.AddIdentityCore<IdentityUser>(options =>
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.ConfigureApplicationCookie(options => { options.LoginPath = "/api/Account/login"; });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/api/Account/login";
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
