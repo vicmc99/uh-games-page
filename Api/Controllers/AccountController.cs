@@ -44,7 +44,7 @@ public class AccountController : ControllerBase
                 IsPersistent = model.RememberMe
             });
 
-            return Ok();
+            return CreatedAtAction("Login", new { model.UserName, model.Password }, model);
         }
 
         return Unauthorized();
@@ -54,7 +54,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
-        return Ok();
+        return CreatedAtAction("Login", new { }, null);
     }
 
     [HttpPost("register")]
@@ -65,7 +65,7 @@ public class AccountController : ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
         await _userManager.AddToRoleAsync(user, "User");
-        return Ok();
+        return CreatedAtAction("Register", new { model.UserName, model.Password }, model);
     }
 
     [HttpGet("modify")]

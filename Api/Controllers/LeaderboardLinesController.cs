@@ -28,7 +28,7 @@ public class LeaderboardLinesController : ControllerBase
             createLeaderboardLineDto);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
         var leaderboardLineDto = await _leaderboardLineService.GetLeaderboardLine(id);
@@ -37,7 +37,7 @@ public class LeaderboardLinesController : ControllerBase
     }
 
     [Authorize(Roles = "Admin, Moderator")]
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateLeaderBoardLineDto createLeaderboardLineDto)
     {
         var leaderboard = await _leaderboardLineService.GetLeaderboardLine(id);
@@ -47,7 +47,7 @@ public class LeaderboardLinesController : ControllerBase
     }
 
     [Authorize(Roles = "Admin, Moderator")]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         var faculty = await _leaderboardLineService.GetLeaderboardLine(id);
