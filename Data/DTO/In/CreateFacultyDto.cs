@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Data.DTO.In;
 
 public class CreateFacultyDto
@@ -9,6 +11,7 @@ public class CreateFacultyDto
     public string Mascot { get; set; }
 
     public byte[] Logo { get; set; }
+    public IFormFile FotoMimeType { get; set; }
 
     public IEnumerable<int> MajorsId { get; set; }
     public IEnumerable<int> RepresentativesId { get; set; }

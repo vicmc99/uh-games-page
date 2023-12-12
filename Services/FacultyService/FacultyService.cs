@@ -51,8 +51,7 @@ public class FacultyService : IFacultyService
                 GoldMedals = goldMedals,
                 SilverMedals = silverMedals,
                 BronzeMedals = bronzeMedals,
-                Ranking = ranking,
-                Logo = faculty.Logo
+                Ranking = ranking
             };
         });
 
@@ -88,8 +87,7 @@ public class FacultyService : IFacultyService
             GoldMedals = goldMedals,
             SilverMedals = silverMedals,
             BronzeMedals = bronzeMedals,
-            Ranking = ranking,
-            Logo = faculty.Logo
+            Ranking = ranking
         };
 
         return Task.FromResult<FacultyDto?>(facultyDto);
@@ -102,9 +100,14 @@ public class FacultyService : IFacultyService
             Acronym = createFacultyDto.Acronym,
             Name = createFacultyDto.Name,
             Mascot = createFacultyDto.Mascot,
-            Logo = createFacultyDto.Logo
+            Logo = createFacultyDto.Logo,
         };
-
+        if (createFacultyDto.Logo != null)
+        {
+            using var memoryStream = new MemoryStream();
+            createFacultyDto.Logo.CopyTo(memoryStream);
+            createFacultyDto.Logo = memoryStream.ToArray();
+        }
         if (CheckFaculty(createFacultyDto))
             throw new Exception("The faculty already exists");
 

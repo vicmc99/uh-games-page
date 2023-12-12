@@ -25,6 +25,7 @@ public class AthleteService : IAthleteService
             Name = createAthleteDto.Name,
             Nick = createAthleteDto.Nick,
             Photo = createAthleteDto.Photo,
+            PhotoMimeType = createAthleteDto.PhotoMimeType,
             DateOfBirth = DateOnly.Parse(createAthleteDto.DateOfBirth, new CultureInfo("es"))
         };
 

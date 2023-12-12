@@ -8,7 +8,6 @@ public class AthleteDto
     public string Name { get; set; }
     public string Nick { get; set; }
     public string DateOfBirth { get; set; }
-    public byte[] Photo { get; set; }
 
     public static AthleteDto FromEntity(Athlete athlete)
     {
@@ -17,7 +16,6 @@ public class AthleteDto
             Id = athlete.Id,
             Name = athlete.Name,
             DateOfBirth = athlete.DateOfBirth.ToString("dd/MM/yyyy"),
-            Photo = athlete.Photo,
             Nick = athlete.Nick
         };
     }

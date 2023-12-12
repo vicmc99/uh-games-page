@@ -17,6 +17,7 @@ public class Faculty
     public string Mascot { get; set; }
 
     public byte[] Logo { get; set; }
+    public string FotoMimeType { get; set; }
 
     public List<Major> Majors { get; set; }
 

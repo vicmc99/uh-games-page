@@ -13,4 +13,5 @@ public class Athlete
     public string Nick { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public byte[] Photo { get; set; }
+    public string PhotoMimeType { get; set; }
 }
