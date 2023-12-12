@@ -26,9 +26,12 @@ public class LeaderBoardLineService : ILeaderBoardLineService
             Ranking = createLeaderBoardLineDto.Ranking,
             Faculty = _repository.Set<Faculty>().FirstOrDefault(x => x.Id == createLeaderBoardLineDto.FacultyId)
         };
+
         var leaderboard = _repository.Set<Leaderboard>().Include(l => l.LeaderboardLines)
             .FirstOrDefault(l => l.Year == createLeaderBoardLineDto.Year);
 
+        // If leaderboard does not exist, create it and add the leaderboard to the 
+        // If leaderboard does not exist, create it and add the leaderboard to the DB
         if (leaderboard == null)
         {
             leaderboard = new Leaderboard

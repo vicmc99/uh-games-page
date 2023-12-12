@@ -34,7 +34,7 @@ public class FacultiesController : ControllerBase
         return Ok(faculties);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
         var faculty = await _facultyService.GetFaculty(id);
@@ -44,7 +44,7 @@ public class FacultiesController : ControllerBase
     }
 
     [Authorize(Roles = "Admin, Moderator")]
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateFacultyDto updateFacultyDto)
     {
         var faculty = await _facultyService.GetFaculty(id);

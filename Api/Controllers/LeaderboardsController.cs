@@ -40,7 +40,7 @@ public class LeaderboardsController : ControllerBase
     }
 
     [Authorize(Roles = "Admin, Moderator")]
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateLeaderboardDto createLeaderboardDto)
     {
         var leaderboard = await _leaderboardService.GetLeaderboard(id);
@@ -50,7 +50,7 @@ public class LeaderboardsController : ControllerBase
     }
 
     [Authorize(Roles = "Admin, Moderator")]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         var faculty = await _leaderboardService.GetLeaderboard(id);
