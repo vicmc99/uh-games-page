@@ -44,7 +44,7 @@ public class AccountController : ControllerBase
                 IsPersistent = model.RememberMe
             });
 
-            return Ok(new { Roles = roles });
+            return Ok();
         }
 
         return Unauthorized();
@@ -68,8 +68,14 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
+    [HttpGet("modify")]
+    public bool CanModify()
+    {
+        return User.IsInRole("Admin") || User.IsInRole("Moderator");
+    }
+
     [HttpGet]
-    public bool IsAuthorized()
+    public bool IsLoged()
     {
         return User.IsInRole("Admin") || User.IsInRole("Moderator") || User.IsInRole("User");
     }
