@@ -18,10 +18,10 @@ public class FacultiesController : ControllerBase
         _facultyService = facultyService;
     }
 
-    [Authorize(Roles = "Admin, Moderator")]
     [HttpPost]
     public async Task<IActionResult> Post([FromForm] CreateFacultyDto createFacultyDto)
     {
+        if (!User.IsInRole("Admin") && !User.IsInRole("Moderator")) return Unauthorized();
         if (_facultyService.CheckFaculty(createFacultyDto)) return BadRequest("The faculty already exists");
         var facultyId = await _facultyService.PostFaculty(createFacultyDto);
         return CreatedAtAction(nameof(Get), new { id = facultyId }, createFacultyDto);
