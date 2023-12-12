@@ -2,7 +2,6 @@ using System.Text;
 using DataAccess;
 using DataAccess.Repository;
 using InitialData;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +31,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("your-secret-key")),  // Replace with your secret key
+            IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.ASCII.GetBytes("your-secret-key")), // Replace with your secret key
             ValidateIssuer = false,
             ValidateAudience = false
         };

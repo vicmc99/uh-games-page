@@ -20,6 +20,20 @@ public class AccountController : ControllerBase
         _userManager = userManager;
     }
 
+    private static string GenerateJwtToken(IEnumerable<Claim> claims)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes("candela"); // Replace with your secret key
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromForm] LoginDto model)
     {
@@ -38,18 +52,8 @@ public class AccountController : ControllerBase
             // Add each role as a claim
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("candela"); // Replace with your secret key
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new { Token = tokenHandler.WriteToken(token) });
+            return Ok(new { Token = GenerateJwtToken(claims) });
         }
 
         return Unauthorized();
@@ -70,7 +74,13 @@ public class AccountController : ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
         await _userManager.AddToRoleAsync(user, "User");
-        return CreatedAtAction("Register", new { model.UserName, model.Password }, model);
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.Role, "User")
+        };
+        return CreatedAtAction("Register", new { Token = GenerateJwtToken(claims) });
     }
 
     [HttpGet("modify")]
@@ -80,19 +90,8 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> IsLogged()
+    public bool IsLogged()
     {
-        // Extract the user's ID from the token's claims
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        // Look up the user in the database
-        var user = await _userManager.FindByIdAsync(userId);
-
-        // If a user with the given ID exists, the token is valid
-        if (user != null)
-        {
-            return Ok("User is logged in");
-        }
-        return Unauthorized("User is not logged in");
+        return User.Identity != null && User.Identity.IsAuthenticated;
     }
 }
