@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Data.DTO.In;
 using Data.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -40,7 +41,10 @@ public class AccountController : ControllerBase
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(principal);
+            await HttpContext.SignInAsync(principal, new AuthenticationProperties
+            {
+                IsPersistent = model.RememberMe
+            });
 
             return Ok(new { Roles = roles });
         }
@@ -55,7 +59,6 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPost("register")]
     public async Task<IActionResult> Register(LoginDto model)
     {
@@ -63,13 +66,14 @@ public class AccountController : ControllerBase
         var user = new IdentityUser { UserName = model.UserName };
         var result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
-        await _userManager.AddToRoleAsync(user, "Moderator");
+        await _userManager.AddToRoleAsync(user, "User");
         return Ok();
     }
 
     [HttpGet]
     public bool IsAuthorized()
     {
-        return User.IsInRole("Admin") || User.IsInRole("Moderator");
+        return User.IsInRole("Admin") || User.IsInRole("Moderator") || User.IsInRole("User");
     }
+    
 }

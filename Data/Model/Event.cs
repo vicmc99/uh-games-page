@@ -14,9 +14,12 @@ public class Event
     public int LocationId { get; set; }
 
     public Location Location { get; set; }
-    
-    public int SportModalityId { get; set; }
-    public Modality SportModality { get; set; }
+
+    public int SportId { get; set; }
+    public Sport Sport { get; set; }
+
+    public int DisciplineId { get; set; }
+    public Discipline Discipline { get; set; }
 
     public string Type { get; set; }
 }

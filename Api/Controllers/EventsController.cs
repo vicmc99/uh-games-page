@@ -1,4 +1,3 @@
-using Data.DTO.In;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Domain;
@@ -18,14 +17,14 @@ public class EventsController : ControllerBase
         _eventService = eventService;
     }
 
-    [Authorize(Roles = "Admin, Moderator")]
-    [HttpPost]
-    public async Task<IActionResult> Post([FromForm] CreateEventDto createEventDto)
-    {
-        var newEventId = await _eventService.PostEvent(createEventDto);
-        var newEvent = await _eventService.GetEvent(newEventId);
-        return CreatedAtAction(nameof(Get), new { id = newEventId }, newEvent);
-    }
+    // [Authorize(Roles = "Admin, Moderator")]
+    // [HttpPost]
+    // public async Task<IActionResult> Post([FromForm] CreateEventDto createEventDto)
+    // {
+    //     var newEventId = await _eventService.PostEvent(createEventDto);
+    //     var newEvent = await _eventService.GetEvent(newEventId);
+    //     return CreatedAtAction(nameof(Get), new { id = newEventId }, newEvent);
+    // }
 
     [HttpGet]
     public async Task<IActionResult> Get()
@@ -43,16 +42,16 @@ public class EventsController : ControllerBase
         return NotFound();
     }
 
-    [Authorize(Roles = "Admin, Moderator")]
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromForm] CreateEventDto updateEventDto)
-    {
-        var eventDto = await _eventService.GetEvent(id);
-        if (eventDto == null)
-            return NotFound();
-        await _eventService.UpdateEvent(id, updateEventDto);
-        return NoContent();
-    }
+    // [Authorize(Roles = "Admin, Moderator")]
+    // [HttpPut("{id:int}")]
+    // public async Task<IActionResult> Update(int id, [FromForm] CreateEventDto updateEventDto)
+    // {
+    //     var eventDto = await _eventService.GetEvent(id);
+    //     if (eventDto == null)
+    //         return NotFound();
+    //     await _eventService.UpdateEvent(id, updateEventDto);
+    //     return NoContent();
+    // }
 
     [Authorize(Roles = "Admin, Moderator")]
     [HttpDelete("{id:int}")]

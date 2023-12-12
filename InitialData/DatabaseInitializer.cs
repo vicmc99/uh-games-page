@@ -74,6 +74,12 @@ public class RoleSeeder
             var moderator = new IdentityRole { Name = "Moderator" };
             await _roleManager.CreateAsync(moderator);
         }
+
+        if (!await _roleManager.RoleExistsAsync("User"))
+        {
+            var user = new IdentityRole { Name = "User" };
+            await _roleManager.CreateAsync(user);
+        }
     }
 }
 
@@ -92,7 +98,7 @@ public class UserSeeder
     {
         if (await _userManager.FindByNameAsync("admin") == null)
         {
-            var user = new IdentityUser { UserName = "admin", Email = "admin@example.com" };
+            var user = new IdentityUser { UserName = "admin" };
             var result = await _userManager.CreateAsync(user, "admin");
             if (result.Succeeded && await _roleManager.RoleExistsAsync("Admin"))
                 await _userManager.AddToRoleAsync(user, "Admin");
@@ -100,7 +106,7 @@ public class UserSeeder
 
         if (await _userManager.FindByNameAsync("moderator") == null)
         {
-            var user = new IdentityUser { UserName = "moderator", Email = "moderator@example.com" };
+            var user = new IdentityUser { UserName = "moderator" };
             var result = await _userManager.CreateAsync(user, "moderator");
             if (result.Succeeded && await _roleManager.RoleExistsAsync("Moderator"))
                 await _userManager.AddToRoleAsync(user, "Moderator");

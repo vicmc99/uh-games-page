@@ -6,8 +6,8 @@ public class EventDto
     public string Type { get; set; }
     public DateTime DateTime { get; set; }
     public LocationDto Location { get; set; }
-
-    public SportModalityDto SportModality { get; set; }
+    public SportDto Sport { get; set; }
+    public DisciplineDto Discipline { get; set; }
 
     // type = "Composed"
     public IEnumerable<ComposedTeamDto> ComposedTeams { get; set; }
