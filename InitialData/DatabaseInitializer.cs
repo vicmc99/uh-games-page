@@ -1,5 +1,4 @@
-﻿using Data.Model;
-using DataAccess;
+﻿using DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -43,8 +42,9 @@ public class DatabaseInitializer : IDatabaseInitializer
 
     private void SeedData()
     {
-        if (!_context.Set<Faculty>().Any())
-            _context.Set<Faculty>().AddRange(InitialDomainData.GetFaculties());
+        // if (!_context.Set<Faculty>().Any())
+        //     _context.Set<Faculty>().AddRange(InitialDomainData.GetFaculties());
+
         var roleSeeder = new RoleSeeder(_roleManager);
         roleSeeder.Seed().Wait();
         var userSeeder = new UserSeeder(_userManager, _roleManager);

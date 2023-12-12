@@ -28,7 +28,19 @@ public class LeaderBoardLineService : ILeaderBoardLineService
         };
         var leaderboard = _repository.Set<Leaderboard>().Include(l => l.LeaderboardLines)
             .FirstOrDefault(l => l.Year == createLeaderBoardLineDto.Year);
+
+        if (leaderboard == null)
+        {
+            leaderboard = new Leaderboard
+            {
+                Year = createLeaderBoardLineDto.Year,
+                LeaderboardLines = new List<LeaderboardLine>()
+            };
+            await _repository.Set<Leaderboard>().Create(leaderboard);
+        }
+
         leaderboard.LeaderboardLines.Add(leaderboardLine);
+
         await _repository.Set<LeaderboardLine>().Create(leaderboardLine);
         await _repository.Save(default);
         return leaderboardLine.Id;

@@ -31,7 +31,7 @@ public class FacultyService : IFacultyService
 
         var facultyDtos = faculties.Select(faculty =>
         {
-            var leaderboardLine = leaderboard.LeaderboardLines.FirstOrDefault(l => l.FacultyId == faculty.Id);
+            var leaderboardLine = leaderboard?.LeaderboardLines.FirstOrDefault(l => l.FacultyId == faculty.Id);
             var goldMedals = leaderboardLine?.GoldMedals ?? 0;
             var silverMedals = leaderboardLine?.SilverMedals ?? 0;
             var bronzeMedals = leaderboardLine?.BronzeMedals ?? 0;
