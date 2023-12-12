@@ -10,9 +10,9 @@ public class CreateFacultyDto
 
     public string Mascot { get; set; }
 
-    public byte[] Logo { get; set; }
-    public IFormFile FotoMimeType { get; set; }
+    public IFormFile Logo { get; set; }
 
+    public string PhotoMimeType { get; set; }
     public IEnumerable<int> MajorsId { get; set; }
     public IEnumerable<int> RepresentativesId { get; set; }
 }

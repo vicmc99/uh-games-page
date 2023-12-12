@@ -29,6 +29,16 @@ public class AthletesController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = newAthleteId }, newAthlete);
     }
 
+    [HttpGet("{id:int}/photo")]
+    public async Task<IActionResult> GetImage(int id)
+    {
+        var (image, mimeType) = await _athleteService.GetAthleteImage(id);
+
+        if (image != null) return File(image, mimeType!);
+
+        return NotFound();
+    }
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {

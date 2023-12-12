@@ -3,6 +3,7 @@ using System;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231212122531_AddedMimeTypes")]
+    partial class AddedMimeTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.14");
@@ -459,6 +462,9 @@ namespace DataAccess.Migrations
                     b.Property<int>("FacultyId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("MajorId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Year")
                         .HasColumnType("INTEGER");
 
@@ -467,6 +473,8 @@ namespace DataAccess.Migrations
                     b.HasIndex("AthleteId");
 
                     b.HasIndex("FacultyId");
+
+                    b.HasIndex("MajorId");
 
                     b.ToTable("Representatives");
                 });
@@ -1287,9 +1295,17 @@ namespace DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Data.Model.Major", "Major")
+                        .WithMany()
+                        .HasForeignKey("MajorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Athlete");
 
                     b.Navigation("Faculty");
+
+                    b.Navigation("Major");
                 });
 
             modelBuilder.Entity("Data.Model.Sport", b =>

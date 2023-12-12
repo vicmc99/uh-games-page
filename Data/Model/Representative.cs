@@ -13,8 +13,8 @@ public class Representative
     public Faculty Faculty { get; set; }
     public int AthleteId { get; set; }
     public Athlete Athlete { get; set; }
-    
-    public int MajorId { get; set; }
-    public Major Major { get; set; }
+
+    // public int MajorId { get; set; }
+    // public Major Major { get; set; }
     public int Year { get; set; }
 }

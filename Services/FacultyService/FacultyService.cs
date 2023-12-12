@@ -58,6 +58,14 @@ public class FacultyService : IFacultyService
         return Task.FromResult(facultyDtos.AsEnumerable());
     }
 
+    public Task<(byte[]?, string?)> GetFacultyImage(int id)
+    {
+        var faculty = _repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
+        return faculty == null
+            ? Task.FromResult<(byte[]?, string?)>((null, null))!
+            : Task.FromResult<(byte[]?, string?)>((faculty.Logo, faculty.PhotoMimeType));
+    }
+
     public Task<FacultyDto?> GetFaculty(int id)
     {
         var faculty = _repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
@@ -100,14 +108,15 @@ public class FacultyService : IFacultyService
             Acronym = createFacultyDto.Acronym,
             Name = createFacultyDto.Name,
             Mascot = createFacultyDto.Mascot,
-            Logo = createFacultyDto.Logo,
+            PhotoMimeType = createFacultyDto.PhotoMimeType
         };
         if (createFacultyDto.Logo != null)
         {
             using var memoryStream = new MemoryStream();
-            createFacultyDto.Logo.CopyTo(memoryStream);
-            createFacultyDto.Logo = memoryStream.ToArray();
+            await createFacultyDto.Logo.CopyToAsync(memoryStream);
+            newFaculty.Logo = memoryStream.ToArray();
         }
+
         if (CheckFaculty(createFacultyDto))
             throw new Exception("The faculty already exists");
 
@@ -117,7 +126,7 @@ public class FacultyService : IFacultyService
         return newFaculty.Id;
     }
 
-    public Task UpdateFaculty(int id, CreateFacultyDto updateFacultyDto)
+    public async Task UpdateFaculty(int id, CreateFacultyDto updateFacultyDto)
     {
         var faculty = _repository.Set<Faculty>().FirstOrDefault(f => f.Id == id);
         if (faculty == null)
@@ -126,7 +135,15 @@ public class FacultyService : IFacultyService
         faculty.Name = updateFacultyDto.Name;
         faculty.Acronym = updateFacultyDto.Acronym;
         faculty.Mascot = updateFacultyDto.Mascot;
-        faculty.Logo = updateFacultyDto.Logo;
+        faculty.PhotoMimeType = updateFacultyDto.PhotoMimeType;
+
+        if (updateFacultyDto.Logo != null)
+        {
+            using var memoryStream = new MemoryStream();
+            await updateFacultyDto.Logo.CopyToAsync(memoryStream);
+            faculty.Logo = memoryStream.ToArray();
+        }
+
         if (updateFacultyDto.MajorsId != null)
             faculty.Majors = _repository.Set<Major>().Where(m => updateFacultyDto.MajorsId.Contains(m.Id)).ToList();
         if (updateFacultyDto.RepresentativesId != null)
@@ -134,7 +151,7 @@ public class FacultyService : IFacultyService
                 .Where(r => updateFacultyDto.RepresentativesId.Contains(r.Id)).ToList();
 
         _repository.Set<Faculty>().Update(faculty);
-        return _repository.Save(default);
+        await _repository.Save(default);
     }
 
     public async Task DeleteFaculty(int id)

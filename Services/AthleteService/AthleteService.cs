@@ -24,21 +24,26 @@ public class AthleteService : IAthleteService
         {
             Name = createAthleteDto.Name,
             Nick = createAthleteDto.Nick,
-            Photo = createAthleteDto.Photo,
             PhotoMimeType = createAthleteDto.PhotoMimeType,
             DateOfBirth = DateOnly.Parse(createAthleteDto.DateOfBirth, new CultureInfo("es"))
         };
+
+        if (createAthleteDto.Photo != null)
+        {
+            using var memoryStream = new MemoryStream();
+            await createAthleteDto.Photo.CopyToAsync(memoryStream);
+            newAthlete.Photo = memoryStream.ToArray();
+        }
 
         //Save the new athlete to the database
         await _repository.Set<Athlete>().Create(newAthlete);
 
         //Get the major and faculty from the database
-        var major = _repository.Set<Major>()
-            .FirstOrDefault(r => r.Id == createAthleteDto.MajorId);
-        if (major == null) return -1;
+        // var major = _repository.Set<Major>()
+        //     .FirstOrDefault(r => r.Id == createAthleteDto.MajorId);
+        // if (major == null) return -1;
         var faculty = _repository.Set<Faculty>()
-            .FirstOrDefault(x => x.Id == major.FacultyId);
-
+            .FirstOrDefault(x => x.Id == createAthleteDto.FacultyId);
 
         if (faculty == null) return -1;
 
@@ -47,7 +52,7 @@ public class AthleteService : IAthleteService
         {
             Athlete = newAthlete,
             Year = createAthleteDto.Year,
-            Major = major,
+            // Major = major,
             Faculty = faculty
         };
         await _repository.Set<Representative>().Create(newRepresentative);
@@ -79,9 +84,25 @@ public class AthleteService : IAthleteService
         {
             athlete.Name = updateAthleteDto.Name;
             athlete.Nick = updateAthleteDto.Nick;
-            athlete.Photo = updateAthleteDto.Photo;
+            athlete.PhotoMimeType = updateAthleteDto.PhotoMimeType;
+
+            if (updateAthleteDto.Photo != null)
+            {
+                using var memoryStream = new MemoryStream();
+                await updateAthleteDto.Photo.CopyToAsync(memoryStream);
+                athlete.Photo = memoryStream.ToArray();
+            }
+
             athlete.DateOfBirth = DateOnly.Parse(updateAthleteDto.DateOfBirth, new CultureInfo("es"));
             await _repository.Save(default);
         }
+    }
+
+    public Task<(byte[]?, string?)> GetAthleteImage(int id)
+    {
+        var athlete = _repository.Set<Athlete>().FirstOrDefault(f => f.Id == id);
+        return athlete == null
+            ? Task.FromResult<(byte[]?, string?)>((null, null))!
+            : Task.FromResult<(byte[]?, string?)>((athlete.Photo, athlete.PhotoMimeType));
     }
 }

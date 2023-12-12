@@ -22,14 +22,14 @@ public class RepresentativeService : IRepresentativeService
         {
             Athlete = _repository.Set<Athlete>()
                 .FirstOrDefault(e => e.Id == createRepresentativeDto.AthleteId),
-            Major = _repository.Set<Major>()
-                .FirstOrDefault(e => e.Id == createRepresentativeDto.MajorId),
+            // Major = _repository.Set<Major>()
+            //     .FirstOrDefault(e => e.Id == createRepresentativeDto.MajorId),
             Faculty = _repository.Set<Faculty>()
                 .FirstOrDefault(e => e.Id == createRepresentativeDto.FacultyId),
             Year = createRepresentativeDto.Year,
             FacultyId = createRepresentativeDto.FacultyId,
-            AthleteId = createRepresentativeDto.AthleteId,
-            MajorId = createRepresentativeDto.MajorId
+            AthleteId = createRepresentativeDto.AthleteId
+            // MajorId = createRepresentativeDto.MajorId
         };
 
         await _repository.Set<Representative>().Create(newRepresentative);
@@ -53,7 +53,7 @@ public class RepresentativeService : IRepresentativeService
         if (representative != null)
         {
             representative.AthleteId = updateRepresentativeDto.AthleteId;
-            representative.MajorId = updateRepresentativeDto.MajorId;
+            // representative.MajorId = updateRepresentativeDto.MajorId;
             representative.FacultyId = updateRepresentativeDto.FacultyId;
             representative.Year = updateRepresentativeDto.Year;
             await _repository.Save(default);
@@ -74,6 +74,5 @@ public class RepresentativeService : IRepresentativeService
         if (representative == null) return Task.CompletedTask;
         _repository.Set<Representative>().Remove(representative);
         return _repository.Save(default);
-
     }
 }

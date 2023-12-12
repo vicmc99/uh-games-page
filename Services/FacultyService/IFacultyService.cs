@@ -18,5 +18,6 @@ public interface IFacultyService
     Task<int> PostFaculty(CreateFacultyDto createFacultyDto);
     Task UpdateFaculty(int id, CreateFacultyDto updateFacultyDto);
     Task DeleteFaculty(int id);
-    byte[] GetImage(int id);
+
+    Task<(byte[]?, string?)> GetFacultyImage(int id);
 }

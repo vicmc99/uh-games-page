@@ -10,6 +10,8 @@ public class CreateAthleteDto
     public IFormFile Photo { get; set; }
     public string PhotoMimeType { get; set; }
 
-    public int MajorId { get; set; }
+    public int FacultyId { get; set; }
+
+    // public int MajorId { get; set; }
     public int Year { get; set; }
 }

@@ -9,4 +9,6 @@ public interface IAthleteService
     Task<AthleteDto?> GetAthlete(int id);
     Task DeleteAthlete(int id);
     Task UpdateAthlete(int id, CreateAthleteDto updateAthleteDto);
+
+    Task<(byte[]?, string?)> GetAthleteImage(int id);
 }

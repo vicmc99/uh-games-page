@@ -43,12 +43,13 @@ public class FacultiesController : ControllerBase
         return NotFound();
     }
 
-    [HttpGet("image/{id:int}")]
+    [HttpGet("{id:int}/photo")]
     public async Task<IActionResult> GetImage(int id)
     {
-        var faculty = await _facultyService.GetImage(id);
-        if (faculty != null)
-            return File(faculty.Image, "image/jpeg");
+        var (image, mimeType) = await _facultyService.GetFacultyImage(id);
+
+        if (image != null) return File(image, mimeType!);
+
         return NotFound();
     }
 
