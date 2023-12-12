@@ -23,7 +23,7 @@ public class AccountController : ControllerBase
     private static string GenerateJwtToken(IEnumerable<Claim> claims)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes("candela"); // Replace with your secret key
+        var key = Encoding.ASCII.GetBytes("candelacandelacandela"); // Replace with your secret key
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
@@ -58,13 +58,7 @@ public class AccountController : ControllerBase
 
         return Unauthorized();
     }
-
-    [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
-    {
-        await HttpContext.SignOutAsync();
-        return CreatedAtAction("Logout", new { }, null);
-    }
+    
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromForm] LoginDto model)
