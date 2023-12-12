@@ -58,7 +58,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(LoginDto model)
+    public async Task<IActionResult> Register([FromForm] LoginDto model)
     {
         //TODO: Check if user already exists
         var user = new IdentityUser { UserName = model.UserName };
@@ -75,7 +75,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet]
-    public bool IsLoged()
+    public bool IsLogged()
     {
         return User.IsInRole("Admin") || User.IsInRole("Moderator") || User.IsInRole("User");
     }
