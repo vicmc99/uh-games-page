@@ -54,7 +54,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
-        return CreatedAtAction("Login", new { }, null);
+        return CreatedAtAction("Logout", new { }, null);
     }
 
     [HttpPost("register")]
