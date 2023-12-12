@@ -1,9 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Data.Model;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers;
 
@@ -36,19 +38,18 @@ public class AccountController : ControllerBase
             // Add each role as a claim
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(principal, new AuthenticationProperties
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("candela"); // Replace with your secret key
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                IsPersistent = model.RememberMe
-            });
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return SignIn(principal, new AuthenticationProperties
-            {
-                IsPersistent = model.RememberMe
-            }, CookieAuthenticationDefaults.AuthenticationScheme);
-            return CreatedAtAction("Login", new { model.UserName, model.Password }, model);
+            return Ok(new { Token = tokenHandler.WriteToken(token) });
         }
 
         return Unauthorized();
@@ -79,8 +80,19 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet]
-    public bool IsLogged()
+    public async Task<IActionResult> IsLogged()
     {
-        return User.Identity?.IsAuthenticated ?? false;
+        // Extract the user's ID from the token's claims
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        // Look up the user in the database
+        var user = await _userManager.FindByIdAsync(userId);
+
+        // If a user with the given ID exists, the token is valid
+        if (user != null)
+        {
+            return Ok("User is logged in");
+        }
+        return Unauthorized("User is not logged in");
     }
 }
