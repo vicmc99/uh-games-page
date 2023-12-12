@@ -7,11 +7,16 @@ namespace DataAccess.Config;
 public class TeamConfig:IEntityTypeConfiguration<Team>
 {
     public void Configure(EntityTypeBuilder<Team> builder)
-    {
-       /* builder.HasDiscriminator<string>("TeamType")
+    {//Keys
+        builder.HasIndex(e => e.Name).IsUnique();
+        builder.Property(e => e.Name).IsRequired();
+       
+        //Partitions
+        
+        builder.HasDiscriminator<string>("TeamType")
             .HasValue<NormalTeam>("NormalTeam")
             .HasValue<ComposedTeam>("ComposedTeam");
 
-        builder.HasKey(e => e.Name);*/
+        
     }
 }

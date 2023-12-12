@@ -16,5 +16,5 @@ public class Modality
     public int CategoryId { get; set; }
 
     public Category Category { get; set; }
-    //TODO:{SportID,DisciplineID,CategoryID,Sex} is KEY???
+
 }

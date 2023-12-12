@@ -24,7 +24,7 @@ public class AthleteService : IAthleteService
         {
             Name = createAthleteDto.Name,
             Nick = createAthleteDto.Nick,
-            Photo = createAthleteDto.Photo,
+           // Photo = createAthleteDto.Photo,
             PhotoMimeType = createAthleteDto.PhotoMimeType,
             DateOfBirth = DateOnly.Parse(createAthleteDto.DateOfBirth, new CultureInfo("es"))
         };
@@ -79,7 +79,7 @@ public class AthleteService : IAthleteService
         {
             athlete.Name = updateAthleteDto.Name;
             athlete.Nick = updateAthleteDto.Nick;
-            athlete.Photo = updateAthleteDto.Photo;
+          //  athlete.Photo = updateAthleteDto.Photo;
             athlete.DateOfBirth = DateOnly.Parse(updateAthleteDto.DateOfBirth, new CultureInfo("es"));
             await _repository.Save(default);
         }

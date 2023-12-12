@@ -43,7 +43,7 @@ public class FacultiesController : ControllerBase
         return NotFound();
     }
 
-    [HttpGet("image/{id:int}")]
+  /*  [HttpGet("image/{id:int}")]
     public async Task<IActionResult> GetImage(int id)
     {
         var faculty = await _facultyService.GetImage(id);
@@ -51,7 +51,7 @@ public class FacultiesController : ControllerBase
             return File(faculty.Image, "image/jpeg");
         return NotFound();
     }
-
+*/
     [Authorize(Roles = "Admin, Moderator")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromForm] CreateFacultyDto updateFacultyDto)

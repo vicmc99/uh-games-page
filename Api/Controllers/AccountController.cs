@@ -8,18 +8,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers;
-
+/// <summary>
+/// Controller for user account management.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
 
+    /// <summary>
+    /// Constructor for AccountController.
+    /// </summary>
+    /// <param name="userManager">The user manager.</param>
     public AccountController(UserManager<IdentityUser> userManager)
     {
         _userManager = userManager;
     }
-
+    /// <summary>
+    /// Method for logging in.
+    /// </summary>
+    /// <param name="model">The login model.</param>
+    /// <returns>A token if login is successful, otherwise Unauthorized.</returns>
     private static string GenerateJwtToken(IEnumerable<Claim> claims)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -33,7 +43,10 @@ public class AccountController : ControllerBase
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-
+    /// <summary>
+    /// Method to check if the current user is logged in.
+    /// </summary>
+    /// <returns>Ok if the user is logged in, Unauthorized otherwise.</returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromForm] LoginDto model)
     {
@@ -59,7 +72,12 @@ public class AccountController : ControllerBase
         return Unauthorized();
     }
     
-
+    
+    /// <summary>
+    /// Method for registering a new user.
+    /// </summary>
+    /// <param name="model">The registration model.</param>
+    /// <returns>A result indicating whether the registration was successful or not.</returns>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromForm] LoginDto model)
     {
@@ -76,13 +94,20 @@ public class AccountController : ControllerBase
         };
         return CreatedAtAction("Register", new { Token = GenerateJwtToken(claims) });
     }
-
+    /// <summary>
+    /// Method for logging out.
+    /// </summary>
+    /// <returns>A result indicating that the session was successfully closed.</returns>
     [HttpGet("modify")]
     public bool CanModify()
     {
         return User.IsInRole("Admin") || User.IsInRole("Moderator");
     }
-
+    
+    /// <summary>
+    /// Method to check if the current user can modify.
+    /// </summary>
+    /// <returns>True if the user can modify, false otherwise.</returns>
     [HttpGet]
     public bool IsLogged()
     {

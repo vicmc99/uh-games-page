@@ -7,8 +7,14 @@ namespace DataAccess.Config;
 public class TournamentConfig:IEntityTypeConfiguration<Tournament>
 {
     public void Configure(EntityTypeBuilder<Tournament> builder)
-    {
-        builder.HasKey(e => new {e.StartDate,e.EndDate,e.Rounds});
+    { //Keys 
+        builder.HasIndex(e => new { e.StartDate, e.EndDate, e.Rounds }).IsUnique();
+        builder.Property(e =>  e.StartDate).IsRequired();
+        builder.Property(e =>  e.EndDate).IsRequired();
+        builder.Property(e =>  e.Rounds).IsRequired();
+        
+        //Relationships 
+        //Locations
         builder
             .HasMany(t => t.Locations)
             .WithMany();

@@ -29,8 +29,7 @@ public class FacultyService : IFacultyService
         var leaderboard = _repository.Set<Leaderboard>().Include(l => l.LeaderboardLines)
             .FirstOrDefault(l => l.Year == DateTime.Now.Year);
         var representative = _repository.Set<Representative>().Include(r => r.Athlete).ToList();
-
-        //Map to DTO
+ 
         var facultyDtos = faculties.Select(faculty =>
         {
             var leaderboardLine = leaderboard?.LeaderboardLines.FirstOrDefault(l => l.FacultyId == faculty.Id);
@@ -105,8 +104,8 @@ public class FacultyService : IFacultyService
         if (createFacultyDto.Logo != null)
         {
             using var memoryStream = new MemoryStream();
-            createFacultyDto.Logo.CopyTo(memoryStream);
-            createFacultyDto.Logo = memoryStream.ToArray();
+          //  createFacultyDto.Logo.CopyTo(memoryStream);
+          //  createFacultyDto.Logo = memoryStream.ToArray();
         }
         if (CheckFaculty(createFacultyDto))
             throw new Exception("The faculty already exists");
@@ -145,5 +144,10 @@ public class FacultyService : IFacultyService
 
         _repository.Set<Faculty>().Remove(faculty);
         await _repository.Save(default);
+    }
+//TODO: Lo añadi para poder compilar tienes que descometar el resto 
+    public byte[] GetImage(int id)
+    {
+        throw new NotImplementedException();
     }
 }
