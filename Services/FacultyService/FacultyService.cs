@@ -24,11 +24,13 @@ public class FacultyService : IFacultyService
 
     public Task<IEnumerable<FacultyDto>> GetAllFaculties()
     {
+        //Get repository data
         var faculties = _repository.Set<Faculty>().ToList();
         var leaderboard = _repository.Set<Leaderboard>().Include(l => l.LeaderboardLines)
             .FirstOrDefault(l => l.Year == DateTime.Now.Year);
         var representative = _repository.Set<Representative>().Include(r => r.Athlete).ToList();
 
+        //Map to DTO
         var facultyDtos = faculties.Select(faculty =>
         {
             var leaderboardLine = leaderboard?.LeaderboardLines.FirstOrDefault(l => l.FacultyId == faculty.Id);
