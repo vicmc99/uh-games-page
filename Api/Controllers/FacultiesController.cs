@@ -43,8 +43,8 @@ public class FacultiesController : ControllerBase
         return NotFound();
     }
 
-  /*  [HttpGet("image/{id:int}")]
-    public async Task<IActionResult> GetImage(int id)
+    [HttpGet("image/{id:int}")]
+ /*   public async Task<IActionResult> GetImage(int id)
     {
         var faculty = await _facultyService.GetImage(id);
         if (faculty != null)

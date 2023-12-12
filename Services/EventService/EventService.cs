@@ -1,5 +1,4 @@
 using Data.DTO;
-using Data.DTO.In;
 using Data.DTO.Out;
 using Data.Model;
 using DataAccess.Repository;
@@ -7,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services.Domain;
 
-public class EventService// : IEventService
-{/*
+public class EventService : IEventService
+{
     private readonly IDataRepository _repository;
 
     public EventService(IDataRepository repository)
@@ -305,139 +304,15 @@ public class EventService// : IEventService
         }
     }
 
-    public async Task<int> PostEvent(CreateEventDto eventDto)
-    {
-        var location = _repository.Set<Location>().FirstOrDefault(l => l.Id == eventDto.LocationId);
-        var id = -1;
-        switch (eventDto.Type)
-        {
-            case "TeamScored":
-                var teamScoredScore = new Score { NumberScore = 0 };
-
-                var team = new TeamEvent
-                {
-                    Type = eventDto.Type,
-                    LocationId = eventDto.LocationId,
-                    Location = location,
-                    DateTime = eventDto.DateTime,
-                    SportModalityId = eventDto.SportModalityId,
-                    SportModality = _repository.Set<Modality>()
-                        .FirstOrDefault(m => m.Id == eventDto.SportModalityId)
-                };
-
-                await _repository.Set<Score>().Create(teamScoredScore);
-                await _repository.Set<Event>().Create(team);
-
-                team.TeamScores = eventDto.TeamEventTeamIds.Select(t => new TeamEventScore
-                {
-                    EventId = team.Id,
-                    Event = team,
-                    TeamId = t,
-                    Team = _repository.Set<NormalTeam>().FirstOrDefault(n => n.Id == t),
-                    ScoreId = teamScoredScore.Id,
-                    Score = teamScoredScore
-                });
-                team.TeamParticipants = eventDto.TeamEventTeamParticipantTupleId.Select(p =>
-                    CreateEventTeamParticipant(team.Id, p.Item1, p.Item2));
-                team.TeamSubstitutes = eventDto.TeamEventTeamSubstitutesTupleId.Select(s =>
-                    CreateEventTeamSubstitute(team.Id, s.Item1, s.Item2));
-
-                await _repository.Set<TeamEvent>().Create(team);
-                id = team.Id;
-                break;
-            case "Composed":
-
-                var composedScore = new Score { NumberScore = 0 };
-
-                await _repository.Set<Score>().Create(composedScore);
-
-                var composedTeamsEvent = new ComposedTeamsEvent
-                {
-                    Type = eventDto.Type,
-                    LocationId = eventDto.LocationId,
-                    Location = location,
-                    DateTime = eventDto.DateTime,
-                    ComposedTeams = _repository.Set<ComposedTeam>()
-                        .Where(t => eventDto.ComposedTeamsId.Contains(t.Id)),
-                    ComposedTeamScores = eventDto.ComposedTeamCompositionId.Select(c => new TeamCompositionScore
-                    {
-                        CompositionId = c,
-                        Composition = _repository.Set<TeamComposition>().FirstOrDefault(t => t.Id == c),
-                        ScoreId = composedScore.Id,
-                        Score = composedScore
-                    }),
-                    SportModalityId = eventDto.SportModalityId,
-                    SportModality = _repository.Set<Modality>()
-                        .FirstOrDefault(m => m.Id == eventDto.SportModalityId)
-                };
-
-                await _repository.Set<ComposedTeamsEvent>().Create(composedTeamsEvent);
-                id = composedTeamsEvent.Id;
-                break;
-            case "ParticipantScored":
-
-                var participantScoredEvent = new ParticipantScoredEvent
-                {
-                    Type = eventDto.Type,
-                    LocationId = eventDto.LocationId,
-                    Location = location,
-                    DateTime = eventDto.DateTime,
-                    ParticipantScoredTeams = _repository.Set<NormalTeam>()
-                        .Where(t => eventDto.ParticipantScoredId.Any(p => p == t.Id)),
-                    SportModalityId = eventDto.SportModalityId,
-                    SportModality = _repository.Set<Modality>()
-                        .FirstOrDefault(m => m.Id == eventDto.SportModalityId)
-                };
-                await _repository.Set<Event>().Create(participantScoredEvent);
-
-                var teamScore = new Score { NumberScore = 0 };
-                await _repository.Set<Score>().Create(teamScore);
-
-
-                participantScoredEvent.ParticipantScores = eventDto.ParticipantScoredTeamParticipantTupleId.Select(p =>
-                    new TeamParticipantScore
-                    {
-                        EventId = participantScoredEvent.Id,
-                        TeamId = p.Item1,
-                        ParticipantId = p.Item2,
-                        Participant = _repository.Set<TeamMember>().FirstOrDefault(t => t.Id == p.Item2),
-                        ScoreId = teamScore.Id,
-                        Score = teamScore
-                    });
-                participantScoredEvent.TeamSubstitutes = eventDto.ParticipantScoredTeamSubstitutesTupleId.Select(s =>
-                    new ParticipantScoredEventSubstitute
-                    {
-                        EventId = participantScoredEvent.Id,
-                        TeamId = s.Item1,
-                        SubstituteId = s.Item2,
-                        Substitute = _repository.Set<TeamMember>().FirstOrDefault(t => t.Id == s.Item2)
-                    });
-
-                await _repository.Set<ParticipantScoredEvent>().Create(participantScoredEvent);
-                id = participantScoredEvent.Id;
-                break;
-            case "MatchEvent":
-                var match = new MatchEvent
-                {
-                    Type = eventDto.Type,
-                    LocationId = eventDto.LocationId,
-                    Location = location,
-                    DateTime = eventDto.DateTime,
-                    MatchedTeams = _repository.Set<NormalTeam>()
-                        .Where(t => eventDto.MatchTeamIds.Any(p => p == t.Id)),
-                    Matches = _repository.Set<Match>().Where(m => eventDto.MatchIds.Any(p => p == m.Id)),
-                    SportModalityId = eventDto.SportModalityId,
-                    SportModality = _repository.Set<Modality>()
-                        .FirstOrDefault(m => m.Id == eventDto.SportModalityId)
-                };
-                await _repository.Set<MatchEvent>().Create(match);
-                id = match.Id;
-                break;
-        }
-
-        await _repository.Save(default);
-        return id;
-    }
+    // public async Task<int> PostEvent(CreateEventDto eventDto)
+    // {
+    //     var @event = new Event
+    //     {
+    //         DateTime = eventDto.DateTime,
+    //         LocationId = eventDto.LocationId,
+    //         Type = eventDto.Type
+    //     };
+    // }
 
     public Task DeleteEvent(int id)
     {
@@ -484,5 +359,5 @@ public class EventService// : IEventService
             Team = team,
             Substitute = substitute
         };
-    }*/
+    }
 }

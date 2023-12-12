@@ -8,6 +8,6 @@ public class SportConfig:IEntityTypeConfiguration<Sport>
 {
     public void Configure(EntityTypeBuilder<Sport> builder)
     {
-       // builder.HasKey(e => new {e.Name,e.CategoryId});
+        builder.HasKey(e => new {e.Name,e.CategoryId});
     }
 }

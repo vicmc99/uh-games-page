@@ -98,7 +98,7 @@ public class UserSeeder
     {
         if (await _userManager.FindByNameAsync("admin") == null)
         {
-            var user = new IdentityUser { UserName = "admin", Email = "admin@example.com" };
+            var user = new IdentityUser { UserName = "admin" };
             var result = await _userManager.CreateAsync(user, "admin");
             if (result.Succeeded && await _roleManager.RoleExistsAsync("Admin"))
                 await _userManager.AddToRoleAsync(user, "Admin");

@@ -8,6 +8,6 @@ public class ScoreConfig:IEntityTypeConfiguration<Score>
 {
     public void Configure(EntityTypeBuilder<Score> builder)
     {
-        //builder.HasKey(e => e.NumberScore);
+        builder.HasKey(e => e.NumberScore);
     }
 }

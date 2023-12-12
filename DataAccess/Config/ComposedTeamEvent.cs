@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DataAccess.Config;
 
-public class ComposedTeamEventConfig:IEntityTypeConfiguration<ComposedTeamsEvent>
+public class ComposedTeamEvent:IEntityTypeConfiguration<ComposedTeamsEvent>
 {
     public void Configure(EntityTypeBuilder<ComposedTeamsEvent> builder)
     {
