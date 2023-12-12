@@ -1,9 +1,7 @@
 using System.Security.Claims;
-using Data.DTO.In;
 using Data.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +19,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto model)
+    public async Task<IActionResult> Login([FromForm] LoginDto model)
     {
         var user = await _userManager.FindByNameAsync(model.UserName);
         if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
@@ -75,5 +73,4 @@ public class AccountController : ControllerBase
     {
         return User.IsInRole("Admin") || User.IsInRole("Moderator") || User.IsInRole("User");
     }
-    
 }
